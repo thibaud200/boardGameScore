@@ -32,6 +32,15 @@ Board Game Score Tracker propose une stack moderne, des outils de qualité et un
 - **Husky 8**
 - **VS Code settings**
 
+
+## Documentation API
+
+Consultez la documentation complète des endpoints backend ici : [API_DOC.md](./API_DOC.md)
+
+## Tests automatisés
+
+Consultez la documentation des tests backend ici : [__tests__/backend/README.md](./__tests__/backend/README.md)
+
 ## Project Structure
 
 ```

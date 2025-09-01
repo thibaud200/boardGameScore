@@ -42,6 +42,7 @@ import {
   getAllPlayerGameStats,
   getPlayerGameStatsById
 } from './services/playerGameStatsService'
+import db from './initDatabase'
 
 const app = express()
 app.use(express.json())
@@ -55,6 +56,19 @@ app.get('/api/players/:id', (req, res) => {
   if (!player) return res.status(404).json({ error: 'Player not found' })
   res.json(player)
 })
+
+app.post('/api/players', (req, res) => {
+  try {
+    const { player_name } = req.body;
+    if (!player_name) return res.status(400).json({ error: 'player_name is required' });
+    const stmt = db.prepare('INSERT INTO players (player_name, created_at) VALUES (?, ?)'); 
+    const info = stmt.run(player_name, new Date().toISOString());
+    const created = db.prepare('SELECT * FROM players WHERE player_id = ?').get(info.lastInsertRowid);
+    res.status(201).json(created);
+  } catch (e) {
+    res.status(400).json({ error: 'Insert failed', details: String(e) });
+  }
+});
 
 // Games
 app.get('/api/games', (req, res) => {
@@ -209,3 +223,4 @@ app.get('/api/player-game-stats/:id', (req, res) => {
 app.listen(3001, () => {
   console.log('Server running on port 3001')
 })
+export default app;
