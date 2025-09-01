@@ -1,2 +1,7 @@
 #!/usr/bin/env sh
+msg=$(cat "$1")
+# Si le message ne commence pas par un type conventionnel, on le préfixe
+if ! echo "$msg" | grep -Eq '^(feat|fix|docs|chore|test|refactor)(\(.+\))?: '; then
+	echo "chore: $msg" > "$1"
+fi
 npx --no-install commitlint --edit "$1"

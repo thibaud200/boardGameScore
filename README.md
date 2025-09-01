@@ -1,3 +1,17 @@
+## Commit automatique au format Conventional Commits
+
+Un hook Husky corrige automatiquement le message de commit si le format Conventional Commit n'est pas respecté.
+Si tu fais un commit avec un message libre, il sera préfixé par `chore:` pour garantir la conformité.
+
+Exemple :
+```
+git commit -m "ajout doc et tests"
+```
+devient automatiquement :
+```
+chore: ajout doc et tests
+```
+Ce mécanisme permet de ne jamais bloquer les commits à cause du format.
 # Board Game Score Tracker
 
 Application web pour gérer les parties de jeux de société, suivi multi-modes, gestion des personnages, statistiques avancées, et intégration BoardGameGeek.
