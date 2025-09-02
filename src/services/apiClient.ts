@@ -30,18 +30,18 @@ export class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
-    
+
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...options.headers
       },
-      ...options,
+      ...options
     }
 
     try {
       const response = await fetch(url, config)
-      
+
       if (!response.ok) {
         const errorText = await response.text()
         throw new ApiError(
@@ -61,7 +61,7 @@ export class ApiClient {
       if (error instanceof ApiError) {
         throw error
       }
-      
+
       // Erreurs réseau ou de parsing
       throw new ApiError(
         `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -77,14 +77,14 @@ export class ApiClient {
   async post<T>(endpoint: string, data: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     })
   }
 
   async put<T>(endpoint: string, data: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     })
   }
 

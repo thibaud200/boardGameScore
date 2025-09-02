@@ -15,7 +15,7 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Dashboard', href: '/', icon: '🏠' },
     { name: 'Joueurs', href: '/players', icon: '👥' },
     { name: 'Jeux', href: '/games', icon: '🎮' },
-    { name: 'Sessions', href: '/sessions', icon: '🎯' },
+    { name: 'Sessions', href: '/sessions', icon: '🎯' }
   ]
 
   const isActive = (href: string) => {
@@ -36,7 +36,7 @@ export default function Layout({ children }: LayoutProps) {
                 🎲 Board Game Score Tracker
               </h1>
             </div>
-            
+
             {/* Navigation */}
             <nav className="flex space-x-8">
               {navigation.map((item) => (
@@ -60,9 +60,7 @@ export default function Layout({ children }: LayoutProps) {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {children}
-        </div>
+        <div className="px-4 py-6 sm:px-0">{children}</div>
       </main>
 
       {/* Footer */}

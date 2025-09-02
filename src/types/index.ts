@@ -90,7 +90,7 @@ export interface CreateGameRequest {
   default_mode?: string
 }
 
-export interface UpdateGameRequest extends Partial<CreateGameRequest> {}
+export type UpdateGameRequest = Partial<CreateGameRequest>
 
 // Types d'état pour l'UI
 export interface ApiState<T> {

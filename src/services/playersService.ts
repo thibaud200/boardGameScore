@@ -2,11 +2,7 @@
  * Service pour gérer les joueurs via l'API backend
  */
 import { apiClient } from './apiClient'
-import type { 
-  Player, 
-  CreatePlayerRequest, 
-  UpdatePlayerRequest 
-} from '../types'
+import type { Player, CreatePlayerRequest, UpdatePlayerRequest } from '../types'
 
 export class PlayersService {
   /**
@@ -34,7 +30,7 @@ export class PlayersService {
    * Met à jour un joueur existant
    */
   static async updatePlayer(
-    id: number, 
+    id: number,
     data: UpdatePlayerRequest
   ): Promise<Player> {
     return apiClient.put<Player>(`/players/${id}`, data)

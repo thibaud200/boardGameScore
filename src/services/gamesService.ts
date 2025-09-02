@@ -3,11 +3,7 @@
  * Préparé pour future intégration API BoardGameGeek
  */
 import { apiClient } from './apiClient'
-import type { 
-  Game, 
-  CreateGameRequest, 
-  UpdateGameRequest 
-} from '../types'
+import type { Game, CreateGameRequest, UpdateGameRequest } from '../types'
 
 export class GamesService {
   /**
@@ -34,10 +30,7 @@ export class GamesService {
   /**
    * Met à jour un jeu existant
    */
-  static async updateGame(
-    id: number, 
-    data: UpdateGameRequest
-  ): Promise<Game> {
+  static async updateGame(id: number, data: UpdateGameRequest): Promise<Game> {
     return apiClient.put<Game>(`/games/${id}`, data)
   }
 

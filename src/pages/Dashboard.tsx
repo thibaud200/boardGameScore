@@ -24,8 +24,8 @@ export default function Dashboard() {
 
   const loadDashboardData = async () => {
     try {
-      setStats(prev => ({ ...prev, loading: true, error: null }))
-      
+      setStats((prev) => ({ ...prev, loading: true, error: null }))
+
       const [players, games] = await Promise.all([
         PlayersService.getAllPlayers(),
         GamesService.getAllGames()
@@ -42,13 +42,12 @@ export default function Dashboard() {
       // Données récentes (3 derniers)
       setRecentPlayers(players.slice(-3).reverse())
       setRecentGames(games.slice(-3).reverse())
-
     } catch (error) {
       console.error('Erreur lors du chargement du dashboard:', error)
-      setStats(prev => ({ 
-        ...prev, 
-        loading: false, 
-        error: 'Erreur lors du chargement des données' 
+      setStats((prev) => ({
+        ...prev,
+        loading: false,
+        error: 'Erreur lors du chargement des données'
       }))
     }
   }
@@ -65,7 +64,7 @@ export default function Dashboard() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-md p-4">
         <div className="text-red-800">{stats.error}</div>
-        <button 
+        <button
           onClick={loadDashboardData}
           className="mt-2 text-red-600 hover:text-red-800 underline"
         >
@@ -81,7 +80,7 @@ export default function Dashboard() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="mt-2 text-gray-600">
-          Vue d'ensemble de votre collection de jeux et statistiques
+          Vue d&apos;ensemble de votre collection de jeux et statistiques
         </p>
       </div>
 
@@ -107,7 +106,10 @@ export default function Dashboard() {
           </div>
           <div className="bg-gray-50 px-5 py-3">
             <div className="text-sm">
-              <Link to="/players" className="font-medium text-purple-600 hover:text-purple-500">
+              <Link
+                to="/players"
+                className="font-medium text-purple-600 hover:text-purple-500"
+              >
                 Voir tous les joueurs
               </Link>
             </div>
@@ -134,7 +136,10 @@ export default function Dashboard() {
           </div>
           <div className="bg-gray-50 px-5 py-3">
             <div className="text-sm">
-              <Link to="/games" className="font-medium text-purple-600 hover:text-purple-500">
+              <Link
+                to="/games"
+                className="font-medium text-purple-600 hover:text-purple-500"
+              >
                 Voir tous les jeux
               </Link>
             </div>
@@ -152,17 +157,13 @@ export default function Dashboard() {
                   <dt className="text-sm font-medium text-gray-500 truncate">
                     Sessions
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    0
-                  </dd>
+                  <dd className="text-lg font-medium text-gray-900">0</dd>
                 </dl>
               </div>
             </div>
           </div>
           <div className="bg-gray-50 px-5 py-3">
-            <div className="text-sm text-gray-500">
-              Bientôt disponible
-            </div>
+            <div className="text-sm text-gray-500">Bientôt disponible</div>
           </div>
         </div>
 
@@ -185,16 +186,16 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="bg-gray-50 px-5 py-3">
-            <div className="text-sm text-gray-500">
-              33/33 tests passent
-            </div>
+            <div className="text-sm text-gray-500">33/33 tests passent</div>
           </div>
         </div>
       </div>
 
       {/* Actions rapides */}
       <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Actions rapides</h2>
+        <h2 className="text-lg font-medium text-gray-900 mb-4">
+          Actions rapides
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link
             to="/players?action=create"
@@ -202,8 +203,12 @@ export default function Dashboard() {
           >
             <span className="text-2xl mr-3">➕</span>
             <div>
-              <div className="font-medium text-purple-900">Ajouter un joueur</div>
-              <div className="text-sm text-purple-600">Créer un nouveau profil joueur</div>
+              <div className="font-medium text-purple-900">
+                Ajouter un joueur
+              </div>
+              <div className="text-sm text-purple-600">
+                Créer un nouveau profil joueur
+              </div>
             </div>
           </Link>
 
@@ -214,7 +219,9 @@ export default function Dashboard() {
             <span className="text-2xl mr-3">🎲</span>
             <div>
               <div className="font-medium text-blue-900">Ajouter un jeu</div>
-              <div className="text-sm text-blue-600">Ajouter un jeu à votre collection</div>
+              <div className="text-sm text-blue-600">
+                Ajouter un jeu à votre collection
+              </div>
             </div>
           </Link>
         </div>
@@ -224,7 +231,9 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Joueurs récents */}
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Joueurs récents</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">
+            Joueurs récents
+          </h2>
           {recentPlayers.length > 0 ? (
             <div className="space-y-3">
               {recentPlayers.map((player) => (
@@ -235,9 +244,12 @@ export default function Dashboard() {
                     </span>
                   </div>
                   <div className="ml-3">
-                    <div className="text-sm font-medium text-gray-900">{player.player_name}</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {player.player_name}
+                    </div>
                     <div className="text-xs text-gray-500">
-                      Ajouté le {new Date(player.created_at).toLocaleDateString('fr-FR')}
+                      Ajouté le{' '}
+                      {new Date(player.created_at).toLocaleDateString('fr-FR')}
                     </div>
                   </div>
                 </div>
@@ -250,7 +262,9 @@ export default function Dashboard() {
 
         {/* Jeux récents */}
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Jeux récents</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">
+            Jeux récents
+          </h2>
           {recentGames.length > 0 ? (
             <div className="space-y-3">
               {recentGames.map((game) => (
@@ -259,7 +273,9 @@ export default function Dashboard() {
                     <span className="text-sm">🎮</span>
                   </div>
                   <div className="ml-3">
-                    <div className="text-sm font-medium text-gray-900">{game.game_name}</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {game.game_name}
+                    </div>
                     <div className="text-xs text-gray-500">
                       {game.min_players}-{game.max_players} joueurs
                     </div>

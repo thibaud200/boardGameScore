@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview --port 3000",
-    "lint": "eslint . --ext .ts,.tsx,.js",
+    "lint": "eslint src backend/src __tests__ --ext .ts,.tsx",
     "prepare": "husky install",
     "test": "vitest",
     "test:seq": "vitest run __tests__/integration/players.integration.test.ts",
