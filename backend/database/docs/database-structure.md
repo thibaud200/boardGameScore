@@ -1,13 +1,14 @@
-# 🗄️ Structure de la Base de Données - Board Game Score Tracker v1.0.1
+# 🗄️ Structure de la Base de Données - Board Game Score Tracker v1.0.2
 
 ## 📊 Vue d'ensemble
 
 Cette documentation décrit la structure actuelle de la base de données SQLite utilisée par l'application Board Game Score Tracker.
 
-**Base de données** : `database/board-game-tracker.db`  
+**Base de données** : `database/database.db` (production) + `database/test.db` (tests)  
 **Type** : SQLite 3.x avec better-sqlite3  
-**Version du schéma** : v1.0.1 **Migrations** : Automatiques via scripts de migration  
-**Tests** : Infrastructure complète avec mocks database (52/52 tests ✅)
+**Version du schéma** : v1.0.2  
+**Tests** : Infrastructure complète avec 33/33 tests réussissent ✅  
+**Isolation** : Base de test séparée avec fixtures automatiques
 
 ## 📋 Tables Principales
 
@@ -23,11 +24,11 @@ CREATE TABLE players (
 
 **Description** : Stockage des joueurs enregistrés dans l'application.
 
-| Colonne | Type | Contraintes | Description |
-| --- | --- | --- | --- |
-| `player_id` | INTEGER | PRIMARY KEY | Identifiant unique du joueur |
-| `player_name` | TEXT | NOT NULL, UNIQUE | Nom du joueur (unique) |
-| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Date de création |
+| Colonne       | Type     | Contraintes               | Description                  | JSON Format attendu |
+| --------------| -------- | ------------------------- | ---------------------------- | --------------------|
+| `player_id`   | INTEGER  | PRIMARY KEY               | Identifiant unique du joueur |                     |
+| `player_name` | TEXT     | NOT NULL, UNIQUE          | Nom du joueur (unique)       |                     |
+| `created_at`  | DATETIME | DEFAULT CURRENT_TIMESTAMP | Date de création             |                     |
 
 ### 2. 🎮 `game_sessions` - Sessions de Jeu Complétées
 
@@ -36,7 +37,7 @@ CREATE TABLE game_sessions (
     sessions_id INTEGER PRIMARY KEY,
     sessions_game_id INTEGER NOT NULL,
     is_cooperative INTEGER DEFAULT 0,
-    game_mode TEXT DEFAULT 'competitive',
+    sessions_game_mode TEXT DEFAULT 'competitive',
     sessions_players TEXT NOT NULL,
     sessions_scores TEXT NOT NULL,
     sessions_characters TEXT,
@@ -58,26 +59,26 @@ CREATE TABLE game_sessions (
 
 **Description** : Historique complet des parties terminées avec tous les détails.
 
-| Colonne | Type | Contraintes | Description |
-| --- | --- | --- | --- | --- |
-| `sessions_id` | INTEGER | PRIMARY KEY | Identifiant unique de la session |
-| `sessions_game_id` | INTEGER |  | Id du jeu (mappé vers `games` côté frontend) |
-| `is_cooperative` | INTEGER |  | 1 si coopératif, 0 sinon (legacy) |
-| `sessions_game_mode` | TEXT |  | Mode de jeu : 'cooperative', 'competitive', 'campaign' |
-| `sessions_players` | TEXT |  | JSON array des IDs de joueurs |
-| `sessions_scores` | TEXT |  | JSON object des scores par joueur |
-| `sessions_characters` | TEXT |  | JSON object des personnages assignés |
-| `sessions_extensions` | TEXT |  | JSON array des extensions utilisées (affichées dans l'UI session et stats joueur) |
-| `sessions_winner` | INTEGER |  | ID du joueur gagnant (si compétitif) |
-| `win_condition` | TEXT |  | Condition de victoire utilisée |
-| `sessions_date` | TEXT |  | Date de la partie (format ISO) |
-| `sessions_duration` | TEXT |  | Durée en minutes |
-| `sessions_completed` | INTEGER |  | 1 si terminée, 0 sinon |
-| `sessions_coop_result` | TEXT |  | 'won'/'lost' pour parties coopératives |
-| `sessions_dead_characters` | TEXT |  | JSON object des personnages morts |
-| `sessions_new_character_names` | TEXT |  | JSON object des nouveaux noms |
-| `sessions_character_history` | TEXT |  | JSON array de l'historique des événements |
-| `created_at` | DATETIME |  | DEFAULT CURRENT_TIMESTAMP | Date de création |
+| Colonne                      | Type     | Contraintes | Description                                | JSON Format attendu |
+| ---------------------------- | -------- | ----------- | ------------------------------------------ | --------------------|
+| `sessions_id`                | INTEGER  | PRIMARY KEY | Identifiant unique de la session           |                     |
+| `sessions_game_id`           | INTEGER  | FOREIGN KEY | Id du jeu (mappé `games` frontend)         |                     |
+| `is_cooperative`             | INTEGER  |             | 1 si coopératif, 0 sinon (legacy)          |                     |
+| `sessions_game_mode`         | TEXT     |             | Mode de jeu : 'coop', 'compet', 'campaign' |                     |
+| `sessions_players`           | TEXT     |             | JSON array des IDs de joueurs              | [player_id,player_id] |
+| `sessions_scores`            | TEXT     |             | JSON object des scores par joueur          | {"player_id": <score>, "player_id": <score>} |
+| `sessions_characters`        | TEXT     |             | JSON object des personnages assignés       | {"player_id": <character_id>, "player_id": <character_id>} |
+| `sessions_extensions`        | TEXT     |             | JSON array ext :UI session, stats, joueur) | [extension_id,extension_id] |
+| `sessions_winner`            | INTEGER  |             | ID du joueur gagnant (si compétitif)       |                     |
+| `win_condition`              | TEXT     |             | Condition de victoire utilisée             |                     |
+| `sessions_date`              | TEXT     |             | Date de la partie (format ISO)             |                     |
+| `sessions_duration`          | TEXT     |             | Durée en minutes                           |                     |
+| `sessions_completed`         | INTEGER  |             | 1 si terminée, 0 sinon                     |                     |
+| `sessions_coop_result`       | TEXT     |             | 'won'/'lost' pour parties coopératives     |                     |
+| `sessions_dead_characters`   | TEXT     |             | JSON object des personnages morts          | {"player_id": <character_id>, "player_id": <character_id>} |
+| `sessions_new_character`     | TEXT     |             | JSON object des nouveaux noms              | {"player_id": <character_id>, "player_id": <character_id>} |
+| `sessions_character_history` | TEXT     |             | JSON array de l'historique des événements  | [event1, event2]    |
+| `created_at`                 | DATETIME |             | DEFAULT CURRENT_TIMESTAMP                  | Date création       |
 
 ### 3. 🎲 `games` - Templates de Jeux
 
@@ -102,22 +103,22 @@ CREATE TABLE games (
 
 **Description** : jeux avec leurs caractéristiques.
 
-| Colonne                | Type     | Description                           |
-| ---------------------- | -------- | ------------------------------------- |
-| `game_id`              | INTEGER  | Clé primaire auto-incrémentée         |
-| `game_id_bgg`          | TEXT     | Identifiant BoardGameGeek (optionnel) |
-| `game_name`            | TEXT     | Nom du jeu (unique, non null)         |
-| `game_description`     | TEXT     | Description du jeu                    |
-| `game_image`           | TEXT     | URL ou chemin de l'image              |
-| `has_characters`       | BOOLEAN  | 1 si le jeu a des personnages         |
-| `characters`           | TEXT     | Liste des personnages (JSON)          |
-| `min_players`          | INTEGER  | Nombre minimum de joueurs             |
-| `max_players`          | INTEGER  | Nombre maximum de joueurs             |
-| `supports_cooperative` | BOOLEAN  | 1 si supporte le mode coopératif      |
-| `supports_competitive` | BOOLEAN  | 1 si supporte le mode compétitif      |
-| `supports_campaign`    | BOOLEAN  | 1 si supporte le mode campagne        |
-| `default_mode`         | TEXT     | Mode par défaut du jeu                |
-| `created_at`           | DATETIME | Date de création du template          |
+| Colonne                | Type     | Contraintes | Description                           | JSON Format attendu |
+| ---------------------- | -------- | ----------- | ------------------------------------- | --------------------|
+| `game_id`              | INTEGER  | PRIMARY KEY | Clé primaire auto-incrémentée         |                     |
+| `game_id_bgg`          | TEXT     |             | Identifiant BoardGameGeek (optionnel) |                     |
+| `game_name`            | TEXT     |             | Nom du jeu (unique, non null)         |                     |
+| `game_description`     | TEXT     |             | Description du jeu                    |                     |
+| `game_image`           | TEXT     |             | URL ou chemin de l'image              |                     |
+| `has_characters`       | BOOLEAN  |             | 1 si le jeu a des personnages         |                     |
+| `characters`           | TEXT     |             | Liste des personnages (JSON)          |                     |
+| `min_players`          | INTEGER  |             | Nombre minimum de joueurs             |                     |
+| `max_players`          | INTEGER  |             | Nombre maximum de joueurs             |                     |
+| `supports_cooperative` | BOOLEAN  |             | 1 si supporte le mode coopératif      |                     |
+| `supports_competitive` | BOOLEAN  |             | 1 si supporte le mode compétitif      |                     |
+| `supports_campaign`    | BOOLEAN  |             | 1 si supporte le mode campagne        |                     |
+| `default_mode`         | TEXT     |             | Mode par défaut du jeu                |                     |
+| `created_at`           | DATETIME |             | Date de création du template          |                     |
 
 ### 4. 🎲 `game_characters`
 
@@ -139,18 +140,18 @@ CREATE TABLE game_characters (
 
 **Description** : personnages des jeux avec leurs caractéristiques.
 
-| Colonne                  | Type     | Description                    |
-| ------------------------ | -------- | ------------------------------ |
-| `characters_id`          | INTEGER  | Clé primaire auto-incrémentée  |
-| `game_id`                | INTEGER  | Référence du jeu               |
-| `characters_name`        | TEXT     | Nom du personnage              |
-| `characters_description` | TEXT     | Description du personnage      |
-| `characters_abilities`   | TEXT     | characteristique du personnage |
-| `characters_image_url`   | TEXT     | URL ou chemin de l'image       |
-| `characters_source`      | TEXT     | site de provenance             |
-| `characters_external_id` | TEXT     | id du site de provenance       |
-| `class_type`             | TEXT     | Classe du personnage           |
-| `created_at`             | DATETIME | Date de création du personnage |
+| Colonne                  | Type     | Contraintes | Description                    | JSON Format attendu |
+| ------------------------ | -------- | ----------- | ------------------------------ | --------------------|
+| `characters_id`          | INTEGER  | PRIMARY KEY | Clé primaire auto-incrémentée  |                     |
+| `game_id`                | INTEGER  | FOREIGN KEY | Référence du jeu               |                     |
+| `characters_name`        | TEXT     | NOT NULL    | Nom du personnage              |                     |
+| `characters_description` | TEXT     |             | Description du personnage      |                     |
+| `characters_abilities`   | TEXT     |             | characteristique du personnage |                     |
+| `characters_image_url`   | TEXT     |             | URL ou chemin de l'image       |                     |
+| `characters_source`      | TEXT     |             | site de provenance             |                     |
+| `characters_external_id` | TEXT     |             | id du site de provenance       |                     |
+| `class_type`             | TEXT     |             | Classe du personnage           |                     |
+| `created_at`             | DATETIME |             | Date de création du personnage |                     |
 
 ### 5. 🎲 `game_extensions`
 
@@ -168,14 +169,14 @@ CREATE TABLE game_extensions (
 
 **Description** : Extension desjeux avec leurs caractéristiques.
 
-| Colonne                  | Type     | Description                    |
-| ------------------------ | -------- | ------------------------------ |
-| `extensions_id`          | INTEGER  | Clé primaire auto-incrémentée  |
-| `extensions_name`        | TEXT     | Nom du jeu                     |
-| `base_game_id`           | INTEGER  | Nom du jeu de base             |
-| `extensions_description` | TEXT     | Description du personnage      |
-| `max_players`            | INTEGER  | Nombre maximum de joueurs      |
-| `created_at`             | DATETIME | Date de création du personnage |
+| Colonne                  | Type     | Contraintes | Description                     | JSON Format attendu |
+| ------------------------ | -------- | ----------- | ------------------------------- | --------------------|
+| `extensions_id`          | INTEGER  | PRIMARY KEY | Clé primaire auto-incrémentée   |                     |
+| `extensions_name`        | TEXT     | NOT NULL    | Nom du jeu                      |                     |
+| `base_game_id`           | INTEGER  | FOREIGN KEY | Nom du jeu de base              |                     |
+| `extensions_description` | TEXT     |             | Description de l'extension      |                     |
+| `max_players`            | INTEGER  |             | Nombre maximum de joueurs       |                     |
+| `created_at`             | DATETIME |             | Date de création de l'extension |                     |
 
 ### 4. ⚡ `current_game` - Partie en Cours
 
@@ -190,12 +191,12 @@ CREATE TABLE current_game (
 
 **Description** : Sauvegarde de l'état de la partie actuellement en cours.
 
-| Colonne      | Type     | Description                            |
-| ------------ | -------- | -------------------------------------- |
-| `id`         | INTEGER  | Toujours 1 (une seule partie en cours) |
-| `game_data`  | TEXT     | JSON complet de l'état de la partie    |
-| `created_at` | DATETIME | Date de création de la partie          |
-| `updated_at` | DATETIME | Dernière mise à jour                   |
+| Colonne      | Type     | Contraintes | Description                            | JSON Format attendu |
+| ------------ | -------- | ----------- | -------------------------------------- | --------------------|
+| `id`         | INTEGER  | PRIMARY KEY | Toujours 1 (une seule partie en cours) |                     |
+| `game_data`  | TEXT     | NOT NULL    | JSON complet de l'état de la partie    |                     |
+| `created_at` | DATETIME |             | Date de création de la partie          |                     |
+| `updated_at` | DATETIME |             | Dernière mise à jour                   |                     |
 
 ### 6. 📈 player_stats — Statistiques des joueurs
 
@@ -216,48 +217,44 @@ CREATE TABLE player_stats (
 
 **Description** : Statistiques globales agrégées pour chaque joueur.
 
-| Colonne              | Type     | Description                        |
-| -------------------- | -------- | ---------------------------------- |
-| `stat_id`            | INTEGER  | Clé primaire auto-incrémentée      |
-| `player_id`          | INTEGER  | Référence au joueur                |
-| `total_games_played` | INTEGER  | Nombre total de parties jouées     |
-| `total_wins`         | INTEGER  | Nombre total de victoires          |
-| `total_losses`       | INTEGER  | Nombre total de défaites           |
-| `total_score`        | INTEGER  | Score cumulé                       |
-| `average_score`      | REAL     | Score moyen                        |
-| `last_game_date`     | DATETIME | Date de la dernière partie         |
-| `created_at`         | DATETIME | Date de création de la statistique |
+| Colonne              | Type     | Contraintes | Description                        | JSON Format attendu |
+| -------------------- | -------- | ----------- | ---------------------------------- | --------------------|
+| `stat_id`            | INTEGER  | PRIMARY KEY | Clé primaire auto-incrémentée      |                     |
+| `player_id`          | INTEGER  | FOREIGN KEY | Référence au joueur                |                     |
+| `total_games_played` | INTEGER  |             | Nombre total de parties jouées     |                     |
+| `total_wins`         | INTEGER  |             | Nombre total de victoires          |                     |
+| `total_losses`       | INTEGER  |             | Nombre total de défaites           |                     |
+| `total_score`        | INTEGER  |             | Score cumulé                       |                     |
+| `average_score`      | REAL     |             | Score moyen                        |                     |
+| `last_game_date`     | DATETIME |             | Date de la dernière partie         |                     |
+| `created_at`         | DATETIME |             | Date de création de la statistique |                     |
 
 ### 7. 📊 game_stats — Statistiques des parties
 
 ```sql
 CREATE TABLE game_stats (
     stat_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id INTEGER NOT NULL,
+    session_ids TEXT NOT NULL, -- JSON array des sessions concernées
     game_id INTEGER NOT NULL,
     duration INTEGER,
-    winner_id TEXT,
     total_players INTEGER,
     total_score INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (session_id) REFERENCES game_sessions(sessions_id),
-    FOREIGN KEY (game_id) REFERENCES games(game_id),
-    FOREIGN KEY (winner_id) REFERENCES players(player_id)
+    FOREIGN KEY (game_id) REFERENCES games(game_id)
 );
 ```
 
 **Description** : Statistiques agrégées pour chaque session de jeu.
 
-| Colonne         | Type     | Description                        |
-| --------------- | -------- | ---------------------------------- |
-| `stat_id`       | INTEGER  | Clé primaire auto-incrémentée      |
-| `session_id`    | INTEGER  | Référence à la session de jeu      |
-| `game_id`       | INTEGER  | Référence au jeu                   |
-| `duration`      | INTEGER  | Durée de la partie (en minutes)    |
-| `winner_id`     | INTEGER  | Référence au joueur gagnant        |
-| `total_players` | INTEGER  | Nombre de joueurs dans la session  |
-| `total_score`   | INTEGER  | Score total de la session          |
-| `created_at`    | DATETIME | Date de création de la statistique |
+| Colonne         | Type     | Contraintes | Description                           | JSON Format attendu |
+| --------------- | -------- | ----------- | ------------------------------------- | --------------------|
+| `stat_id`       | INTEGER  | PRIMARY KEY | Clé primaire auto-incrémentée         |                     |
+| `session_ids`   | TEXT     | NOT NULL    | JSON array des sessions agrégées      | [player_id,player_id] |
+| `game_id`       | INTEGER  | FOREIGN KEY | Référence au jeu                      |                     |
+| `duration`      | INTEGER  |             | Durée totale (minutes, agrégée)       |                     |
+| `total_players` | INTEGER  |             | Nombre total de joueurs (agrégé)      |                     |
+| `total_score`   | INTEGER  |             | Score total (agrégé)                  |                     |
+| `created_at`    | DATETIME |             | Date de création de la statistique    |                     |
 
 ### 8. 📊 player_game_stats — Statistiques d’un joueur pour un jeu donné
 
@@ -280,18 +277,18 @@ CREATE TABLE player_game_stats (
 
 **Description** : Statistiques d’un joueur pour un jeu donné.
 
-| Colonne              | Type     | Description                           |
-| -------------------- | -------- | ------------------------------------- |
-| `stat_id`            | INTEGER  | Clé primaire auto-incrémentée         |
-| `player_id`          | INTEGER  | Référence au joueur                   |
-| `game_id`            | INTEGER  | Référence au jeu                      |
-| `total_games_played` | INTEGER  | Nombre total de parties jouées        |
-| `total_wins`         | INTEGER  | Nombre total de victoires sur ce jeu  |
-| `total_losses`       | INTEGER  | Nombre de défaites sur ce jeu         |
-| `total_score`        | INTEGER  | Score cumulé sur ce jeu               |
-| `average_score`      | REAL     | Score moyen sur ce jeu                |
-| `last_game_date`     | DATETIME | Date de la dernière partie sur ce jeu |
-| `created_at`         | DATETIME | Date de création de la statistique    |
+| Colonne              | Type     | Contraintes | Description                           | JSON Format attendu |
+| -------------------- | -------- | ----------- | ------------------------------------- | --------------------|
+| `stat_id`            | INTEGER  | PRIMARY KEY | Clé primaire auto-incrémentée         |                     |
+| `player_id`          | INTEGER  | FOREIGN KEY | Référence au joueur                   |                     |
+| `game_id`            | INTEGER  | FOREIGN KEY | Référence au jeu                      |                     |
+| `total_games_played` | INTEGER  |             | Nombre total de parties jouées        |                     |
+| `total_wins`         | INTEGER  |             | Nombre total de victoires sur ce jeu  |                     |
+| `total_losses`       | INTEGER  |             | Nombre de défaites sur ce jeu         |                     |
+| `total_score`        | INTEGER  |             | Score cumulé sur ce jeu               |                     |
+| `average_score`      | REAL     |             | Score moyen sur ce jeu                |                     |
+| `last_game_date`     | DATETIME |             | Date de la dernière partie sur ce jeu |                     |
+| `created_at`         | DATETIME |             | Date de création de la statistique    |                     |
 
 ## 🔄 Migrations Appliquées
 

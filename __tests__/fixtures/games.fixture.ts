@@ -1,5 +1,20 @@
 /**
- * Fixture de jeux pour tests unitaires
+ * Fixture de je  {
+    game_id: 2,
+    game_id_bgg: '67890',
+    game_name: 'Gloomhaven',
+    game_description: 'Jeu d'aventure coopératif.',
+    game_image: '/images/gloomhaven.png',
+    has_characters: 1,
+    characters: '[{"id":"brute","name":"Brute"}]',
+    min_players: 1,
+    max_players: 4,
+    supports_cooperative: 1,
+    supports_competitive: 0,
+    supports_campaign: 1,
+    default_mode: 'cooperative',
+    created_at: '2025-09-01T10:10:00Z'
+  }itaires
  * @description Données de test pour la table games
  */
 export const gamesFixture = [
@@ -9,13 +24,13 @@ export const gamesFixture = [
     game_name: 'Catan',
     game_description: 'Jeu de gestion et de stratégie.',
     game_image: '/images/catan.png',
-    has_characters: false,
-    characters: null,
+    has_characters: 0,
+    characters: '[]',
     min_players: 3,
     max_players: 4,
-    supports_cooperative: false,
-    supports_competitive: true,
-    supports_campaign: false,
+    supports_cooperative: 0,
+    supports_competitive: 1,
+    supports_campaign: 0,
     default_mode: 'competitive',
     created_at: '2025-09-01T10:00:00Z'
   },

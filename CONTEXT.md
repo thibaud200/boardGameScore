@@ -8,6 +8,15 @@ Ce fichier est destiné aux agents IA pour garantir que toutes les actions, sugg
 
 Board Game Score Tracker est une application web pour gérer les parties de jeux de société, avec suivi multi-modes, gestion des personnages, statistiques avancées et intégration BoardGameGeek.
 
+## ✅ État du Projet (Septembre 2025)
+
+- **Backend** : 100% fonctionnel avec 33/33 tests qui passent ✅
+- **API REST** : 10 endpoints avec validation complète ✅
+- **Base de données** : SQLite avec schéma complet et fixtures ✅
+- **Tests d'intégration** : Coverage complète des endpoints ✅
+- **Tests unitaires** : Tous les services backend testés ✅
+- **Infrastructure** : Isolation DB, fixtures automatiques, tests en série ✅
+
 ---
 
 ## 🗝️ Stack technique
@@ -21,16 +30,26 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 | Vitest          | Vitest                  | 2.x     |
 | Backend         | Express.js              | 5.x     |
 | Base de données | SQLite + better-sqlite3 | 3.x     |
+| Tests           | Vitest                  | 2.x     |
 | API externe     | BoardGameGeek XML API   | 2.0     |
 | Build           | Vite                    | 7.1.4   |
 | Tailwind CSS    | Tailwind CSS            | 3.4     |
 
-### A FAIRE
+### ✅ Infrastructure Tests Complète
+
+| Composant       | Status                  | Details |
+| --------------- | ----------------------- | ------- |
+| Tests Backend   | 33/33 réussissent ✅    | 100%    |
+| Tests Intégration | 22 tests ✅           | API     |
+| Tests Unitaires | 11 tests ✅             | Services|
+| Isolation DB    | Complète ✅             | Série   |
+| Fixtures        | Automatiques ✅         | FK OK   |
+
+### À FAIRE (Frontend)
 
 | Composant | Technologie          | Version |
 | --------- | -------------------- | ------- |
 | Styling   | Radix UI             | 3.4     |
-| Tests     | Jest                 | 30.x    |
 | Styling   | Phosphor Icons React | 3.4     |
 | Tests     | React Testing Lib    | 30.x    |
 

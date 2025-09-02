@@ -1,4 +1,4 @@
-import db from '../database'
+import db from '../initDatabase'
 
 export function getAllGames() {
   return db.prepare('SELECT * FROM games').all()

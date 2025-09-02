@@ -1,4 +1,4 @@
-import db from '../database'
+import db from '../initDatabase'
 
 export function getAllPlayerGameStats() {
   return db.prepare('SELECT * FROM player_game_stats').all()

@@ -5,20 +5,18 @@
 export const gameStatsFixture = [
   {
     stat_id: 1,
-    session_id: 1,
+    session_ids: [1],
     game_id: 1,
     duration: 60,
-    winner_id: 1,
     total_players: 2,
     total_score: 18,
     created_at: '2025-09-01T11:00:00Z'
   },
   {
     stat_id: 2,
-    session_id: 2,
+    session_ids: [2],
     game_id: 2,
     duration: 120,
-    winner_id: null,
     total_players: 2,
     total_score: 27,
     created_at: '2025-09-01T13:00:00Z'

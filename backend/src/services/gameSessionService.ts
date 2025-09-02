@@ -1,4 +1,4 @@
-import db from '../database'
+import db from '../initDatabase'
 
 export interface GameSessionInput {
   sessions_game_id: number

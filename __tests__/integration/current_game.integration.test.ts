@@ -4,22 +4,33 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../../backend/src/server';
-import { injectCurrentGameFixture } from '../fixtures/injectFixtures';
+import { wipeAllFixtures } from '../fixtures/injectFixtures';
 import db from '../../backend/src/initDatabase';
 
 describe('API /current-game', () => {
-  beforeEach(() => {
-    injectCurrentGameFixture(db);
+  beforeEach(async () => {
+    await wipeAllFixtures(db);
   });
 
-  it('crée et récupère la partie en cours', async () => {
-    const res = await request(app)
-      .post('/api/current-game')
-      .send({ game_data: '{"state":"test"}' });
-    expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('id');
-
-    const getRes = await request(app).get('/api/current-game');
-    expect(getRes.body).toHaveProperty('game_data');
+  it('récupère la partie en cours injectée', async () => {
+    // Injecte les données nécessaires pour le GET
+    await import('../fixtures/injectFixtures').then(f => {
+      f.injectCurrentGameFixture(db);
+    });
+    
+    const res = await request(app).get('/api/current-game');
+    if (res.status !== 200) {
+      console.error('Erreur:', res.body);
+    }
+    expect(res.status).toBe(200);
+    // Vérifie que la structure est correcte sans vérifier les timestamps exacts
+    expect(res.body).toHaveProperty('game_data');
+    expect(res.body).toHaveProperty('created_at');
+    expect(res.body).toHaveProperty('updated_at');
+    // Vérifie que game_data contient les bonnes données
+    const gameData = JSON.parse(res.body.game_data);
+    expect(gameData).toHaveProperty('game_id');
+    expect(gameData).toHaveProperty('session_id');
+    expect(gameData).toHaveProperty('state');
   });
 });

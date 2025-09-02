@@ -1,4 +1,4 @@
-import db from '../database'
+import db from '../initDatabase'
 
 export interface GameCharacterInput {
   game_id: number

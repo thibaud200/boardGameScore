@@ -117,16 +117,13 @@ CREATE TABLE IF NOT EXISTS player_stats (
 
 CREATE TABLE IF NOT EXISTS game_stats (
   stat_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  session_id INTEGER NOT NULL,
+  session_ids TEXT NOT NULL, -- JSON array des sessions concernées
   game_id INTEGER NOT NULL,
   duration INTEGER,
-  winner_id INTEGER,
   total_players INTEGER,
   total_score INTEGER,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (session_id) REFERENCES game_sessions(sessions_id),
-  FOREIGN KEY (game_id) REFERENCES games(game_id),
-  FOREIGN KEY (winner_id) REFERENCES players(player_id)
+  FOREIGN KEY (game_id) REFERENCES games(game_id)
 );
 
 CREATE TABLE IF NOT EXISTS player_game_stats (

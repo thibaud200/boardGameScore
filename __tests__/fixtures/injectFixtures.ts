@@ -26,11 +26,7 @@ export function injectCurrentGameFixture(db: any) {
   }
 }
 export function injectPlayersFixture(db: any) {
-  // Supprimer d'abord les tables enfants qui référencent players
-  db.prepare('DELETE FROM player_stats').run();
-  db.prepare('DELETE FROM player_game_stats').run();
-  // Puis supprimer la table parent
-  db.prepare('DELETE FROM players').run();
+  // Ne pas supprimer ici car wipeAllFixtures s'en charge déjà
   for (const player of playersFixture) {
     db.prepare('INSERT INTO players (player_id, player_name, created_at) VALUES (?, ?, ?)')
       .run(
@@ -41,7 +37,7 @@ export function injectPlayersFixture(db: any) {
   }
 }
 export function injectGamesFixture(db: any) {
-  db.prepare('DELETE FROM games').run();
+  // Ne pas supprimer ici car wipeAllFixtures s'en charge déjà
   for (const game of gamesFixture) {
     db.prepare(`INSERT INTO games (
       game_id, game_id_bgg, game_name, game_description, game_image, has_characters,
@@ -138,14 +134,13 @@ export function injectGameStatsFixture(db: any) {
   db.prepare('DELETE FROM game_stats').run();
   for (const stat of gameStatsFixture) {
     db.prepare(`INSERT INTO game_stats (
-      stat_id, session_id, game_id, duration, winner_id, total_players, total_score, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+      stat_id, session_ids, game_id, duration, total_players, total_score, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)`)
       .run(
         Array.isArray(stat.stat_id) || typeof stat.stat_id === 'object' ? JSON.stringify(stat.stat_id) : stat.stat_id,
-        Array.isArray(stat.session_id) || typeof stat.session_id === 'object' ? JSON.stringify(stat.session_id) : stat.session_id,
+        JSON.stringify(stat.session_ids),
         Array.isArray(stat.game_id) || typeof stat.game_id === 'object' ? JSON.stringify(stat.game_id) : stat.game_id,
         Array.isArray(stat.duration) || typeof stat.duration === 'object' ? JSON.stringify(stat.duration) : stat.duration,
-        Array.isArray(stat.winner_id) || typeof stat.winner_id === 'object' ? JSON.stringify(stat.winner_id) : stat.winner_id,
         Array.isArray(stat.total_players) || typeof stat.total_players === 'object' ? JSON.stringify(stat.total_players) : stat.total_players,
         Array.isArray(stat.total_score) || typeof stat.total_score === 'object' ? JSON.stringify(stat.total_score) : stat.total_score,
         Array.isArray(stat.created_at) || typeof stat.created_at === 'object' ? JSON.stringify(stat.created_at) : stat.created_at
@@ -192,4 +187,41 @@ export function injectPlayerGameStatsFixture(db: any) {
         Array.isArray(stat.created_at) || typeof stat.created_at === 'object' ? JSON.stringify(stat.created_at) : stat.created_at
       );
   }
+}
+/**
+ * Injection complète dans l'ordre correct
+ */
+export function wipeAllFixtures(db: any) {
+  // Désactiver temporairement les contraintes FK pour TOUT le processus
+  db.pragma('foreign_keys = OFF');
+
+  // Vider toutes les tables pour éviter les doublons
+  db.prepare('DELETE FROM player_game_stats').run();
+  db.prepare('DELETE FROM player_stats').run();
+  db.prepare('DELETE FROM game_stats').run();
+  db.prepare('DELETE FROM game_sessions').run();
+  db.prepare('DELETE FROM game_extensions').run();
+  db.prepare('DELETE FROM game_characters').run();
+  db.prepare('DELETE FROM games').run();
+  db.prepare('DELETE FROM players').run();
+  db.prepare('DELETE FROM current_game').run();
+  db.prepare('DELETE FROM sqlite_sequence').run();
+
+  // Injection dans le bon ordre (toujours avec FK OFF)
+  injectPlayersFixture(db);
+  injectGamesFixture(db);
+
+  injectGameCharactersFixture(db);
+  injectGameExtensionsFixture(db);
+
+  injectGameSessionsFixture(db);
+
+  injectPlayerStatsFixture(db);
+  injectPlayerGameStatsFixture(db);
+  injectGameStatsFixture(db);
+
+  injectCurrentGameFixture(db);
+  
+  // SEULEMENT maintenant réactiver les FK
+  db.pragma('foreign_keys = ON');
 }

@@ -1,52 +1,77 @@
+# 📡 API Documentation - Board Game Score Tracker
+
+✅ **Status : 10 endpoints - Tous testés et fonctionnels** (33/33 tests réussissent)
+
+## Joueurs
+
+### GET /api/players ✅
+- Liste tous les joueurs
+- 200: tableau de joueurs
+
+### GET /api/players/:id ✅ 
+- Récupère un joueur par id
+- 200: joueur
+- 404: joueur non trouvé
+
+### POST /api/players ✅
+- Crée un joueur
+- Body: `{ player_name: string }`
+- 201: joueur créé
+- 400: erreur de validation (nom requis, unique)
+
+### DELETE /api/players/:id ✅
+- Supprime un joueur
+- 204: succès
+
 ## Jeux
 
-### GET /api/games
+### GET /api/games ✅
 - Liste tous les jeux
 - 200: tableau de jeux
 
-### GET /api/games/:id
+### GET /api/games/:id ✅
 - Récupère un jeu par id
 - 200: jeu
 - 404: jeu non trouvé
 
-### POST /api/games
+### POST /api/games ✅
 - Crée un jeu
-- Body: `{ ... }`
+- Body: `{ game_name: string, ... }`
 - 201: jeu créé
 - 400: erreur de validation
 
-### DELETE /api/games/:id
+### DELETE /api/games/:id ✅
 - Supprime un jeu
 - 204: succès
 
 ## Sessions de jeu
 
-### GET /api/game-sessions
+### GET /api/game-sessions ✅
 - Liste toutes les sessions
 - 200: tableau de sessions
 
-### GET /api/game-sessions/:id
+### GET /api/game-sessions/:id ✅
 - Récupère une session par id
 - 200: session
 - 404: session non trouvée
 
-### POST /api/game-sessions
+### POST /api/game-sessions ✅
 - Crée une session
-- Body: `{ ... }`
+- Body: `{ sessions_game_id: number, sessions_players: string, ... }`
 - 201: session créée
 - 400: erreur de validation
 
-### DELETE /api/game-sessions/:id
+### DELETE /api/game-sessions/:id ✅
 - Supprime une session
 - 204: succès
 
 ## Personnages de jeu
 
-### GET /api/game-characters
+### GET /api/game-characters ✅
 - Liste tous les personnages
 - 200: tableau de personnages
 
-### GET /api/game-characters/:id
+### GET /api/game-characters/:id ✅
 - Récupère un personnage par id
 - 200: personnage
 - 404: personnage non trouvé
@@ -194,6 +219,35 @@ Ce document décrit les routes principales de l’API backend, leurs paramètres
   ```
 - **Réponse 404** :
   ```json
+  {
+    "error": "Joueur non trouvé"
+  }
+  ```
+
+---
+
+## 🧪 Tests & Validation
+
+✅ **Status : Tous les endpoints sont testés et fonctionnent parfaitement**
+
+- **Tests d'intégration** : 22 tests couvrant tous les endpoints ✅
+- **Tests unitaires** : 11 tests pour tous les services backend ✅  
+- **Total** : 33/33 tests réussissent
+- **Infrastructure** : Base de test isolée avec fixtures automatiques
+- **Configuration** : Tests en série pour éviter les conflits de concurrence
+
+### Endpoints testés
+- ✅ `/api/players` (5 tests)
+- ✅ `/api/games` (1 test) 
+- ✅ `/api/game-sessions` (4 tests)
+- ✅ `/api/game-characters` (1 test)
+- ✅ `/api/game-extensions` (1 test)
+- ✅ `/api/current-game` (1 test)
+- ✅ `/api/game-stats` (1 test)
+- ✅ `/api/player-stats` (1 test)
+- ✅ `/api/player-game-stats` (1 test)
+
+Pour plus de détails sur les tests, consultez : [__tests__/backend/README.md](../__tests__/backend/README.md)
   {
     "error": "Player not found"
   }

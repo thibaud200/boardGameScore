@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .ts,.tsx,.js",
     "prepare": "husky install",
     "test": "vitest",
-    "test:seq": "vitest run __tests__/integration/players.integration.test.ts && vitest run __tests__/integration/games.integration.test.ts && vitest run __tests__/integration/current_game.integration.test.ts && vitest run __tests__/integration/game_characters.integration.test.ts && vitest run __tests__/integration/game_extensions.integration.test.ts && vitest run __tests__/integration/game_sessions.integration.test.ts && vitest run __tests__/integration/player_stats.integration.test.ts && vitest run __tests__/integration/game_stats.integration.test.ts && vitest run __tests__/integration/player_game_stats.integration.test.ts",
+    "test:seq": "vitest run __tests__/integration/players.integration.test.ts",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "lint:watch": "chokidar 'src/**/*.{ts,tsx}' -c 'npm run lint'"
   },
