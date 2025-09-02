@@ -6,6 +6,25 @@ import {
   createGame,
   deleteGame
 } from './services/gameService'
+import { bggService } from './services/bggService'
+
+const app = express()
+
+// Configuration CORS pour permettre les requêtes depuis le frontend
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+  // Gérer les requêtes OPTIONS (preflight)
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200)
+  }
+
+  next()
+})
+
+app.use(express.json())
 import {
   getAllGameSessions,
   getGameSessionById,
@@ -44,8 +63,8 @@ import {
 } from './services/playerGameStatsService'
 import db from './initDatabase'
 
-const app = express()
-app.use(express.json())
+// Initialisation de la base de données
+// db est utilisé pour l'initialisation
 
 app.get('/api/players', (req, res) => {
   res.json(getAllPlayers())
@@ -75,6 +94,68 @@ app.post('/api/players', (req, res) => {
   }
 })
 
+app.put('/api/players/:id', (req, res) => {
+  try {
+    const playerId = Number(req.params.id)
+    const { player_name } = req.body
+
+    if (!player_name) {
+      return res.status(400).json({ error: 'player_name is required' })
+    }
+
+    // Vérifier que le joueur existe
+    const existingPlayer = db
+      .prepare('SELECT * FROM players WHERE player_id = ?')
+      .get(playerId)
+
+    if (!existingPlayer) {
+      return res.status(404).json({ error: 'Player not found' })
+    }
+
+    // Mettre à jour le joueur
+    const stmt = db.prepare(
+      'UPDATE players SET player_name = ? WHERE player_id = ?'
+    )
+    stmt.run(player_name, playerId)
+
+    // Récupérer le joueur mis à jour
+    const updated = db
+      .prepare('SELECT * FROM players WHERE player_id = ?')
+      .get(playerId)
+
+    res.json(updated)
+  } catch (e) {
+    res.status(400).json({ error: 'Update failed', details: String(e) })
+  }
+})
+
+app.delete('/api/players/:id', (req, res) => {
+  try {
+    const playerId = Number(req.params.id)
+
+    // Vérifier que le joueur existe
+    const existingPlayer = db
+      .prepare('SELECT * FROM players WHERE player_id = ?')
+      .get(playerId)
+
+    if (!existingPlayer) {
+      return res.status(404).json({ error: 'Player not found' })
+    }
+
+    // Supprimer le joueur
+    const stmt = db.prepare('DELETE FROM players WHERE player_id = ?')
+    const info = stmt.run(playerId)
+
+    if (info.changes === 0) {
+      return res.status(404).json({ error: 'Player not found' })
+    }
+
+    res.status(204).send()
+  } catch (e) {
+    res.status(400).json({ error: 'Delete failed', details: String(e) })
+  }
+})
+
 // Games
 app.get('/api/games', (req, res) => {
   res.json(getAllGames())
@@ -92,6 +173,80 @@ app.post('/api/games', (req, res) => {
     res.status(400).json({ error: 'Invalid game data', details: String(e) })
   }
 })
+
+app.put('/api/games/:id', (req, res) => {
+  try {
+    const gameId = Number(req.params.id)
+
+    // Vérifier que le jeu existe
+    const existingGame = db
+      .prepare('SELECT * FROM games WHERE game_id = ?')
+      .get(gameId)
+
+    if (!existingGame) {
+      return res.status(404).json({ error: 'Game not found' })
+    }
+
+    // Mettre à jour le jeu
+    const {
+      game_id_bgg,
+      game_name,
+      game_description,
+      game_image,
+      has_characters,
+      characters,
+      min_players,
+      max_players,
+      supports_cooperative,
+      supports_competitive,
+      supports_campaign,
+      default_mode
+    } = req.body
+
+    const stmt = db.prepare(`
+      UPDATE games SET 
+        game_id_bgg = COALESCE(?, game_id_bgg),
+        game_name = COALESCE(?, game_name),
+        game_description = COALESCE(?, game_description),
+        game_image = COALESCE(?, game_image),
+        has_characters = COALESCE(?, has_characters),
+        characters = COALESCE(?, characters),
+        min_players = COALESCE(?, min_players),
+        max_players = COALESCE(?, max_players),
+        supports_cooperative = COALESCE(?, supports_cooperative),
+        supports_competitive = COALESCE(?, supports_competitive),
+        supports_campaign = COALESCE(?, supports_campaign),
+        default_mode = COALESCE(?, default_mode)
+      WHERE game_id = ?
+    `)
+
+    stmt.run(
+      game_id_bgg,
+      game_name,
+      game_description,
+      game_image,
+      has_characters ? 1 : 0,
+      characters,
+      min_players,
+      max_players,
+      supports_cooperative ? 1 : 0,
+      supports_competitive ? 1 : 0,
+      supports_campaign ? 1 : 0,
+      default_mode,
+      gameId
+    )
+
+    // Récupérer le jeu mis à jour
+    const updated = db
+      .prepare('SELECT * FROM games WHERE game_id = ?')
+      .get(gameId)
+
+    res.json(updated)
+  } catch (e) {
+    res.status(400).json({ error: 'Update failed', details: String(e) })
+  }
+})
+
 app.delete('/api/games/:id', (req, res) => {
   deleteGame(Number(req.params.id))
   res.status(204).end()
@@ -223,6 +378,63 @@ app.get('/api/player-game-stats/:id', (req, res) => {
   if (!stat)
     return res.status(404).json({ error: 'Player game stat not found' })
   res.json(stat)
+})
+
+// BGG Integration Routes
+app.get('/api/bgg/search', async (req, res) => {
+  try {
+    const query = req.query.q as string
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter required' })
+    }
+
+    const results = await bggService.searchGames(query)
+    res.json(results)
+  } catch (error) {
+    res.status(500).json({ error: 'BGG search failed', details: String(error) })
+  }
+})
+
+app.get('/api/bgg/game/:id', async (req, res) => {
+  try {
+    const gameId = req.params.id
+    const gameDetails = await bggService.getGameDetails(gameId)
+    res.json(gameDetails)
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: 'BGG game details failed', details: String(error) })
+  }
+})
+
+app.post('/api/bgg/import/:id', async (req, res) => {
+  try {
+    const gameId = req.params.id
+    const bggGame = await bggService.getGameDetails(gameId)
+    const gameData = bggService.convertToGameFormat(bggGame)
+
+    // Convertir null vers undefined pour compatibilité avec createGame
+    const convertedData = {
+      game_id_bgg: gameData.game_id_bgg || undefined,
+      game_name: gameData.game_name,
+      game_description: gameData.game_description || undefined,
+      game_image: gameData.game_image || undefined,
+      has_characters: gameData.has_characters,
+      characters: gameData.characters || undefined,
+      min_players: gameData.min_players || undefined,
+      max_players: gameData.max_players || undefined,
+      supports_cooperative: gameData.supports_cooperative,
+      supports_competitive: gameData.supports_competitive,
+      supports_campaign: gameData.supports_campaign,
+      default_mode: gameData.default_mode
+    }
+
+    // Créer le jeu dans notre base
+    const created = createGame(convertedData)
+    res.status(201).json(created)
+  } catch (error) {
+    res.status(500).json({ error: 'BGG import failed', details: String(error) })
+  }
 })
 
 app.listen(3001, () => {

@@ -30,13 +30,13 @@ export function createGame(data: {
     data.game_name,
     data.game_description ?? null,
     data.game_image ?? null,
-    data.has_characters,
+    data.has_characters ? 1 : 0,
     data.characters ?? null,
     data.min_players ?? null,
     data.max_players ?? null,
-    data.supports_cooperative ?? null,
-    data.supports_competitive ?? null,
-    data.supports_campaign ?? null,
+    data.supports_cooperative ? 1 : 0,
+    data.supports_competitive ? 1 : 0,
+    data.supports_campaign ? 1 : 0,
     data.default_mode ?? null
   )
   return getGameById(info.lastInsertRowid as number)

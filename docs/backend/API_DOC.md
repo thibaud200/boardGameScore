@@ -247,6 +247,38 @@ Ce document décrit les routes principales de l’API backend, leurs paramètres
 - ✅ `/api/player-stats` (1 test)
 - ✅ `/api/player-game-stats` (1 test)
 
+## Intégration BoardGameGeek ✅
+
+### Service BGG (bggService)
+**Statut** : Typage TypeScript complet, 0 erreurs ESLint
+
+#### Fonctionnalités
+- **Recherche de jeux** : `searchGames(query)` - API BGG search
+- **Détails de jeu** : `getGameDetails(gameId)` - API BGG thing avec stats
+- **Cache intelligent** : 24h TTL, rate limiting 1s entre requêtes
+- **Conversion automatique** : BGG → format base de données local
+- **Détection intelligente** : Modes de jeu, personnages, mécaniques
+
+#### Types TypeScript
+```typescript
+interface BGGXMLSearchResponse {
+  items?: { item?: BGGXMLSearchItem | BGGXMLSearchItem[] }
+}
+
+interface BGGXMLGameItem {
+  $: { id: string }
+  name?: BGGXMLName[]
+  // ... structure XML complète typée
+}
+```
+
+#### Rate Limiting
+- 1 seconde minimum entre requêtes API BGG
+- Cache 24h pour éviter requêtes répétées
+- Gestion automatique des timeouts
+
+---
+
 Pour plus de détails sur les tests, consultez : [__tests__/backend/README.md](../__tests__/backend/README.md)
   {
     "error": "Player not found"

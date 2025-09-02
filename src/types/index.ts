@@ -12,19 +12,18 @@ export interface Player {
 
 export interface Game {
   game_id: number
-  game_id_bgg?: number
+  game_id_bgg?: string | null
   game_name: string
-  min_players: number
-  max_players: number
-  play_time_min?: number
-  complexity?: number
-  year_published?: number
-  game_description?: string
-  image_url?: string
-  manual_url?: string
-  bgg_url?: string
-  supports_campaign: boolean
-  default_mode: string
+  game_description?: string | null
+  game_image?: string | null
+  has_characters: boolean
+  characters?: string | null
+  min_players?: number | null
+  max_players?: number | null
+  supports_cooperative?: boolean | null
+  supports_competitive?: boolean | null
+  supports_campaign?: boolean | null
+  default_mode?: string | null
   created_at: string
 }
 
@@ -67,30 +66,32 @@ export interface GameExtension {
 }
 
 // Types pour les formulaires
+// Types de requêtes pour les opérations CRUD
 export interface CreatePlayerRequest {
   player_name: string
 }
 
-export interface UpdatePlayerRequest {
-  player_name?: string
-}
+export type UpdatePlayerRequest = Partial<CreatePlayerRequest>
 
 export interface CreateGameRequest {
+  game_id_bgg?: string | null
   game_name: string
-  min_players: number
-  max_players: number
-  play_time_min?: number
-  complexity?: number
-  year_published?: number
-  game_description?: string
-  image_url?: string
-  manual_url?: string
-  bgg_url?: string
-  supports_campaign?: boolean
-  default_mode?: string
+  game_description?: string | null
+  game_image?: string | null
+  has_characters: boolean
+  characters?: string | null
+  min_players?: number | null
+  max_players?: number | null
+  supports_cooperative?: boolean | null
+  supports_competitive?: boolean | null
+  supports_campaign?: boolean | null
+  default_mode?: string | null
 }
 
 export type UpdateGameRequest = Partial<CreateGameRequest>
+
+// Types BGG
+export * from './bgg.types'
 
 // Types d'état pour l'UI
 export interface ApiState<T> {

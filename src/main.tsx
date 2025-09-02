@@ -3,11 +3,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
+import Players from './pages/Players'
+import Games from './pages/Games'
 import './index.css'
 
 // TODO: Importer les autres pages quand elles seront créées
-// import Players from './pages/Players'
-// import Games from './pages/Games'
 // import Sessions from './pages/Sessions'
 
 createRoot(document.getElementById('root') as HTMLElement).render(
@@ -16,9 +16,9 @@ createRoot(document.getElementById('root') as HTMLElement).render(
       <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/players" element={<Players />} />
+          <Route path="/games" element={<Games />} />
           {/* TODO: Ajouter les autres routes */}
-          {/* <Route path="/players" element={<Players />} /> */}
-          {/* <Route path="/games" element={<Games />} /> */}
           {/* <Route path="/sessions" element={<Sessions />} /> */}
 
           {/* Route de fallback temporaire */}

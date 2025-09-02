@@ -1,101 +1,207 @@
 # 🚀 Backend - Board Game Score Tracker
 
-> **Serveur Express minimal** servant principalement de proxy pour l'API BoardGameGeek et bypass CORS. L'application fonctionne principalement côté client avec SQLite.
+> **Serveur Express.js complet** avec API REST, intégration BoardGameGeek et base de données SQLite.
 
-## 🎯 **Rôle du Backend**
+## 🎯 **Architecture Backend**
 
-### 🌐 **Proxy BGG** (Principal)
-- **Contournement CORS** : Proxy pour API XML BoardGameGeek
-- **Headers appropriés** : User-Agent et gestion des réponses XML
-- **Gestion d'erreurs** : Retry et timeout pour requêtes BGG
-- **Logs structurés** : Monitoring des requêtes API
+### 🗄️ **Base de Données SQLite**
+- **Production** : `database/database.db` - Base principale 
+- **Tests** : `database/test.db` - Base isolée pour tests
+- **Initialisation automatique** : Schéma créé au démarrage
+- **Services modulaires** : Un service par table (players, games, etc.)
 
-### 🗄️ **Architecture Simplifiée**
-- **Client-side first** : La majorité de la logique est dans le frontend
-- **SQLite local** : Base de données directement dans le frontend avec better-sqlite3
-- **Stateless** : Serveur sans état, pas de session ou authentification
-- **Optionnel** : L'application peut fonctionner sans le backend pour la plupart des fonctionnalités
+### 🌐 **API REST Complète**
+- **10 endpoints** CRUD pour toutes les entités
+- **Validation des entrées** côté serveur
+- **Gestion d'erreurs** structurée
+- **Types TypeScript** stricts
 
-## 🚀 **Démarrage Rapide**
+### � **Intégration BoardGameGeek**
+- **Service BGG** : Recherche et détails de jeux
+- **Cache intelligent** : 24h TTL, rate limiting
+- **Conversion automatique** : BGG → format base locale
+- **Types complets** : Structures XML typées
 
+## 🚀 **Démarrage du Backend**
+
+### 📋 **Prérequis**
 ```bash
-# Installation et lancement
-cd backend
-npm install
-npm run dev
+# Node.js 18+ requis
+node --version  # Vérifier >= 18.0.0
+```
+
+### ⚡ **Démarrage Rapide**
+```bash
+# Depuis la racine du projet
+npm run dev:backend
 # ➡️ Serveur sur http://localhost:3001
+
+# Ou démarrage complet (frontend + backend)
+npm run dev:full
 ```
 
-### ⚙️ **Configuration**
-```javascript
-// server.js - Configuration principale
-const PORT = process.env.PORT || 3001
-const BGG_API_BASE = 'https://boardgamegeek.com/xmlapi2'
-
-// Proxy BGG avec CORS
-app.use('/api/bgg/*', bggProxyMiddleware)
+### � **Démarrage Manuel**
+```bash
+# Depuis backend/
+cd backend
+npm install                    # Installation dépendances
+npm run dev                   # Serveur développement
+# OU
+tsx src/server.ts             # Lancement direct avec tsx
 ```
 
-## 📁 **Structure Minimale**
+### ✅ **Vérification du Démarrage**
+Le serveur affiche au démarrage :
+```
+Base de données initialisée avec le schéma.
+Server running on port 3001
+```
+
+### 🌐 **Test de Connectivité**
+```bash
+# Test endpoint health
+curl http://localhost:3001/api/players
+# Réponse : [] (liste vide si aucun joueur)
+
+# Test intégration BGG
+curl "http://localhost:3001/api/bgg/search?q=Gloomhaven"
+# Réponse : JSON avec résultats de recherche
+```
+
+## 📁 **Structure Backend**
 
 ```
 backend/
 ├── src/
-│   ├── server.js          # Serveur Express principal
-│   └── lib/
-│       └── logger.ts      # Système de logs
-├── database/              # Documentation et scripts (optionnels)
-│   ├── docs/             # Documentation structure DB
-│   └── migrations/       # Scripts de migration legacy
+│   ├── server.ts                    # Serveur Express principal
+│   ├── database.ts                  # Configuration SQLite
+│   ├── initDatabase.ts              # Initialisation base production
+│   ├── initTestDatabase.ts          # Initialisation base test
+│   └── services/                    # Services métier
+│       ├── playerService.ts         # CRUD Players
+│       ├── gameService.ts           # CRUD Games
+│       ├── gameSessionService.ts    # CRUD Sessions
+│       ├── gameCharacterService.ts  # CRUD Characters
+│       ├── gameExtensionService.ts  # CRUD Extensions
+│       ├── gameStatsService.ts      # CRUD Game Stats
+│       ├── playerGameStatsService.ts # CRUD Player Stats
+│       ├── playerStatsService.ts    # CRUD Player Stats
+│       ├── currentGameService.ts    # État partie courante
+│       └── bggService.ts            # Intégration BoardGameGeek
+├── database/
+│   ├── database.db                  # Base production
+│   ├── test.db                     # Base tests
+│   └── docs/
+│       └── database-structure.md   # Documentation DB
 ├── package.json
+├── tsconfig.json
 └── README.md
 ```
 
-## 🌐 **Routes API**
+## 🌐 **API Endpoints**
 
-### 🔍 **Proxy BGG** (`/api/bgg/*`)
-```javascript
-// Exemples d'utilisation
-GET /api/bgg/search?query=Citadels&type=boardgame
-GET /api/bgg/thing?id=478&stats=1
-
-// Réponse : XML direct de BoardGameGeek
-Content-Type: application/xml
-```
-
-**Fonctionnalités** :
-- ✅ Contournement CORS automatique
-- ✅ Headers User-Agent appropriés
-- ✅ Gestion d'erreurs et status codes
-- ✅ Logs détaillés des requêtes
-- ✅ Support de tous les endpoints BGG
-
-### 📊 **Endpoints Disponibles**
+### � **Players** (`/api/players`)
 ```bash
-# Recherche de jeux
-curl "http://localhost:3001/api/bgg/search?query=Gloomhaven&type=boardgame"
-
-# Détails d'un jeu
-curl "http://localhost:3001/api/bgg/thing?id=174430&stats=1"
-
-# Status du serveur
-curl "http://localhost:3001/health"
+GET    /api/players           # Liste tous les joueurs
+GET    /api/players/:id       # Détails d'un joueur
+POST   /api/players           # Créer un joueur
+DELETE /api/players/:id       # Supprimer un joueur
 ```
 
-## 🛠️ **Développement**
+### 🎮 **Games** (`/api/games`)
+```bash
+GET    /api/games             # Liste tous les jeux
+GET    /api/games/:id         # Détails d'un jeu
+POST   /api/games             # Créer un jeu
+DELETE /api/games/:id         # Supprimer un jeu
+```
+
+### 🕹️ **Game Sessions** (`/api/game-sessions`)
+```bash
+GET    /api/game-sessions     # Liste toutes les sessions
+GET    /api/game-sessions/:id # Détails d'une session
+POST   /api/game-sessions     # Créer une session
+DELETE /api/game-sessions/:id # Supprimer une session
+```
+
+### 🔍 **BoardGameGeek** (`/api/bgg`)
+```bash
+GET    /api/bgg/search?q=nom     # Rechercher des jeux BGG
+GET    /api/bgg/game/:id         # Détails d'un jeu BGG
+POST   /api/bgg/import/:id       # Importer un jeu BGG (optionnel)
+```
+
+**Exemples d'utilisation :**
+```bash
+# Créer un joueur
+curl -X POST http://localhost:3001/api/players \
+  -H "Content-Type: application/json" \
+  -d '{"player_name":"Alice"}'
+
+# Rechercher un jeu sur BGG
+curl "http://localhost:3001/api/bgg/search?q=Gloomhaven"
+
+# Créer un jeu
+curl -X POST http://localhost:3001/api/games \
+  -H "Content-Type: application/json" \
+  -d '{"game_name":"Citadels","min_players":2,"max_players":6}'
+```
+
+## 🛠️ **Développement & Maintenance**
 
 ### 📦 **Technologies**
-- **Express 5** : Serveur web minimal
-- **CORS** : Gestion des en-têtes cross-origin
-- **Node.js 18+** : Runtime moderne
-- **Logger custom** : Système de logs structurés
+- **Express.js 5** : Serveur web moderne
+- **TypeScript 5** : Typage strict
+- **SQLite + better-sqlite3** : Base de données intégrée
+- **Node.js 20+** : Runtime LTS
+- **xml2js** : Parsing XML BoardGameGeek
+- **node-fetch** : Client HTTP pour BGG
 
 ### ⚡ **Scripts Disponibles**
 ```bash
-npm run dev        # Développement avec nodemon
-npm start          # Production
-npm run lint       # ESLint (si configuré)
-npm test           # Tests (si implémentés)
+# Depuis la racine
+npm run dev:backend       # Serveur développement
+npm run dev:full          # Frontend + Backend ensemble
+
+# Depuis backend/
+npm run dev               # Serveur développement
+npm run build             # Build TypeScript
+npm start                 # Production (après build)
+npm test                  # Tests backend (33 tests)
+```
+
+### 🔧 **Configuration**
+```typescript
+// server.ts - Configuration principale
+const PORT = process.env.PORT || 3001
+
+// CORS pour frontend
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173')
+  // ...
+})
+```
+
+### 🐛 **Dépannage**
+```bash
+# Port déjà utilisé
+lsof -ti:3001 | xargs kill -9  # macOS/Linux
+netstat -ano | findstr :3001   # Windows
+
+# Réinitialiser la base
+rm backend/database/database.db
+npm run dev:backend  # Recrée automatiquement
+
+# Vérifier les logs
+# Les erreurs s'affichent dans la console du serveur
+```
+
+### 📊 **Tests**
+```bash
+# Tests complets (33/33)
+npm test
+# ✅ 22 tests d'intégration API
+# ✅ 11 tests unitaires services
 ```
 
 ### 🔧 **Variables d'Environnement**

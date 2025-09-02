@@ -1,15 +1,22 @@
 # 🧪 Tests Backend — Board Game Score Tracker
 
 ✅ **Status : 33/33 tests réussissent** (Septembre 2025)
+🚨 **Manques identifiés : BGGService non testé**
 
 Ce dossier contient les tests automatisés pour le backend (Express.js + SQLite).
 
 ## 📊 Vue d'ensemble
 
-- **Tests d'intégration** : 22 tests couvrant tous les endpoints API
-- **Tests unitaires** : 11 tests pour tous les services backend
-- **Coverage** : 100% des fonctionnalités critiques
+- **Tests d'intégration** : 22 tests couvrant tous les endpoints API ✅
+- **Tests unitaires** : 11 tests pour tous les services backend ✅
+- **🚨 BGGService** : Non testé (critique pour intégration BGG) ❌
+- **Coverage** : 100% des fonctionnalités critiques database/API
 - **Framework** : Vitest avec configuration série pour éviter les conflits de DB
+
+### ❌ Tests Manquants Critiques
+- **bggService.ts** : Parsing XML, cache, rate limiting, conversion BGG
+- **Endpoints BGG** : `/api/bgg/search`, `/api/bgg/game/:id`
+- **Integration BGG** : CORS, timeout, gestion erreurs API
 
 ## Base de données utilisée
 
