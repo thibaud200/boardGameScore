@@ -1,102 +1,240 @@
-# 🎯 Board Game Score - Roadmap de Développement
+# 🎯 Board Game Score - Roadmap de Développement UI-First
 
-## ✅ Phase 1 : Infrastructure Tests - COMPLÉTÉ
+## ✅ ÉTAT ACTUEL - Infrastructure Technique Solide
 
-**Durée** : Semaine 1-2 | **Status** : 100% ✅
+**Date** : 3 septembre 2025 | **Status** : Architecture prête, UI à refondre
 
-### Tests Framework Setup
+### Infrastructure Backend 100% ✅
+- ✅ **SQLite Database** : Schéma complet avec toutes tables
+- ✅ **Express API** : 33 endpoints, 33/33 tests passent
+- ✅ **BGG Integration** : Service complet avec cache et rate limiting
+- ✅ **Tests Backend** : 67/67 tests stables en CI
+- ✅ **Type Safety** : TypeScript strict everywhere
 
-- ✅ **React Testing Library 14.x** ## 📚 Références et Documentation
+### Infrastructure Frontend 100% ✅
+- ✅ **React 19** : Components fonctionnels
+- ✅ **TypeScript** : Types complets frontend ↔ backend
+- ✅ **Tailwind** : CSS utilitaire configuré
+- ✅ **Vite** : Build et dev server optimisés
+- ✅ **Tests Framework** : Vitest + RTL configurés
 
-### Documentation Technique Complète
-- `docs/TECH_REFERENCES.md` - Technologies et APIs (13,500+ lignes)
-- `docs/tests/PROGRESS_REPORT.md` - Status détaillé Phase 3
-- `docs/tests/TEST_COMMANDS.md` - **Guide complet des commandes de test**
-- `docs/TECHNICAL_ISSUES.md` - Problèmes et solutions
-- `docs/DEV_JOURNAL.md` - Journal de développement session
-- `docs/EXECUTIVE_SUMMARY.md` - Résumé exécutif complet
+### Pages Existantes (Fonctionnelles mais UI basique)
+- ✅ **Dashboard** : Stats basiques, layout simple
+- ✅ **Players** : CRUD complet, UI minimaliste
+- ✅ **Games** : CRUD + BGG import, UI fonctionnelle
+- 🔶 **Current Game** : Structure existante, UI incomplete
+- 🔶 **Game Sessions** : Backend complet, UI basique
+- 🔶 **Stats** : Backend OK, UI très basique
 
-### Architecture et Patterns
-- **Test Isolation** : DOM cleanup systématique
-- **Mock Strategies** : Unit vs Integration vs E2E
-- **Multi-Environment** : Frontend (jsdom) / Backend (node)
-- **Type Safety** : TypeScript strict + runtime validation
+---
 
-**Dernière mise à jour** : 2 septembre 2025  
-**Version** : Phase 3 Complétée - BGG Critical Path Validateddom
-- ✅ **Vitest 3.x** avec configuration frontend/backend séparées
-- ✅ **Jest-dom matchers** avec déclarations TypeScript
-- ✅ **Mock strategies** pour API calls et services
-- ✅ **Test utilities** et helpers établis
+## 🎯 PHASE 1 : AUDIT BGG → BASE DE DONNÉES
+**Priorité** : CRITIQUE | **Durée** : 2-3 jours | **Statut** : À faire
 
-### Configuration Validée
+### 🔍 Audit Extensions & Characters BGG
 
-```bash
-# Backend tests infrastructure
-npm run test:backend  # 33/33 tests passing
+**Objectif** : Déterminer si BGG fournit des données exploitables pour extensions et characters
 
-# Frontend tests infrastructure
-npm run test:frontend # React Testing Library opérationnel
+#### Extensions BGG ✅
+- ✅ **BGG dispose d'extensions** : Field `expansions` dans API confirmé
+- ✅ **Qualité suffisante** : Données exploitables pour auto-import
+- ✅ **Décision** : Intégration BGG pour extensions (gain de temps utilisateur)
+
+#### Characters BGG ⚠️  
+- ⚠️ **BGG characters** : À vérifier - données semblent limitées mais investigation requise
+- 🔍 **Investigation nécessaire** : Vérifier si BGG fournit des données characters exploitables
+- 📋 **Décision en attente** : Gestion manuelle vs intégration BGG (selon investigation)
+
+#### Structure BDD finale
+```sql
+-- Extensions (avec intégration BGG)
+game_extensions : 
+  - extension_bgg_id (pour auto-import BGG)
+  - extension_name
+  - extension_description
+  - extension_image (depuis BGG)
+  - extension_year_published (depuis BGG)
+
+-- Characters (à déterminer selon investigation BGG)
+game_characters :
+  - character_name (manuel ou BGG selon investigation)
+  - character_description (manuel ou BGG selon investigation)
+  - character_abilities (optionnel, manuel)
+  - character_bgg_id? (si BGG integration possible)
 ```
 
----
-
-## ✅ Phase 2 : BGGService Backend - COMPLÉTÉ
-
-**Durée** : Semaine 2 | **Status** : 91% ✅ (6/6 unit + 5/9 integration)
-
-### Tests Unitaires BGGService ✅
-
-- ✅ **Parsing XML** avec fixtures réelles BoardGameGeek
-- ✅ **Cache système** avec TTL et gestion mémoire
-- ✅ **Rate limiting** avec délais respectés
-- ✅ **Conversion données** BGG vers format interne
-- ✅ **Détection modes** : cooperative/competitive/campaign
-- ✅ **Gestion erreurs** et fallbacks
-
-### Tests Intégration BGG ⚠️
-
-- ✅ **API Search** `/api/bgg/search` fonctionnel
-- ✅ **API Game Details** `/api/bgg/game/:id` fonctionnel
-- ✅ **CORS Headers** validation passée
-- ⚠️ **Error Handling** : Backend retourne 500 au lieu de 404/400
-- ✅ **Rate Limiting** respecté dans tests réels
+### 🔧 Mise à jour Schéma BDD si nécessaire
+- **Champs BGG** : Ajouter `extension_bgg_id`, métadonnées enrichies
+- **Migration** : Scripts pour adapter structure
+- **Tests** : Validation nouveau schéma
+- **Types** : Mise à jour TypeScript
 
 ---
 
-## ✅ Phase 3a : BGGSearch Component - COMPLÉTÉ
+## 🎨 PHASE 2 : REFONTE UI/UX GLOBALE  
+**Priorité** : HAUTE | **Durée** : 2-3 semaines | **Statut** : Planifié
 
-**Durée** : Semaine 3 | **Status** : 100% ✅ (24/24 tests)
+### 🎯 Objectif : Interface Moderne et Intuitive
 
-### BGGSearch Workflow Complet ✅
+**Problème actuel** : UI fonctionnelle mais "moche" et incohérente
+**Solution** : Design system unifié + composants modernes
 
-- ✅ **Rendu initial** avec état vide et interface complète
-- ✅ **Recherche BGG** avec loading states et validation
-- ✅ **Affichage résultats** avec navigation et actions
-- ✅ **Vue détails** avec toutes données BGG enrichies
-- ✅ **Workflow import** complet vers formulaire Games
-- ✅ **Gestion erreurs** API, timeout et UX appropriée
-- ✅ **States management** complet (idle/loading/success/error)
-- ✅ **Data conversion** BGG vers format interne avec business rules
-- ✅ **Détection intelligente** : coopératif/campagne/personnages basée sur BGG data
+### 🏗️ Design System & Foundation
+
+#### Composants de Base
+- **Button** : Variants (primary, secondary, danger), sizes, icons
+- **Card** : Game cards, player cards, stat cards unifiées  
+- **Form** : Inputs, selects, textareas avec validation visuelle
+- **Modal** : Confirmations, forms, détails
+- **Table** : Listes players, games, sessions avec tri/filtre
+- **Navigation** : Header moderne, sidebar responsive
+
+#### Thème & Cohérence
+- **Palette couleurs** : Système cohérent (primary, secondary, success, warning, error)
+- **Typography** : Hiérarchie claire (h1-h6, body, caption)
+- **Spacing** : System grid Tailwind cohérent
+- **Icons** : Remplacement emoji par Lucide React
+- **States** : Loading, empty, error states visuellement cohérents
+
+### 📱 Pages à Redesigner (par priorité)
+
+#### 1. Dashboard (Hub central)
+- **Stats Cards** : Vue d'ensemble parties, joueurs, jeux
+- **Graphiques** : Charts.js pour trends et répartitions
+- **Actions rapides** : Nouvelle partie, ajouter joueur/jeu
+- **Navigation** : Quick access vers toutes sections
+
+#### 2. Players (Gestion équipe)
+- **Player Cards** : Photos, stats, dernière activité
+- **Table moderne** : Tri, filtre, actions bulk
+- **Formulaire** : Modal avec validation en temps réel
+- **Stats individuelles** : Modal détaillée par joueur
+
+#### 3. Games (Bibliothèque jeux)
+- **Game Grid/List** : Toggle vue, images BGG, métadonnées
+- **BGG Integration** : UI améliorée pour import, preview
+- **Filtres** : Par catégorie, nb joueurs, durée, mode
+- **Game Details** : Modal enrichie avec extensions, characters
+
+#### 4. Current Game (Partie en cours)
+- **Setup Wizard** : Sélection jeu → joueurs → mode → démarrage
+- **Game Board** : Interface pendant la partie (scores, timer)
+- **Quick Actions** : Pause, notes, ajustements
+- **Completion** : Finalisation avec résultats
+
+#### 5. Game Sessions (Historique)
+- **Timeline** : Vue chronologique des parties
+- **Session Cards** : Résumé visuel (jeu, joueurs, résultat)
+- **Filtres avancés** : Par jeu, joueur, période, mode
+- **Analytics** : Trends et insights sur l'historique
+
+#### 6. Stats Pages (Analytics)
+- **Player Stats** : Graphiques performances individuelles
+- **Game Stats** : Popularité, durées moyennes, taux victoire
+- **Global Stats** : Vue d'ensemble collection et activité
+- **Comparaisons** : Head-to-head players, games analytics
+
+#### 7. Extensions Management (Si BGG OK)
+- **Extensions Library** : Catalogue disponible (BGG + manuel)
+- **Game Extensions** : Gestion par jeu, activation/désactivation
+- **Import BGG** : Auto-discovery extensions depuis BGG
+- **Custom Extensions** : Création manuelle si BGG insuffisant
+
+### 🔧 Améliorations Techniques UI
+
+#### Performance & UX
+- **Lazy Loading** : Components et data grandes listes
+- **Optimistic Updates** : UI reactive pendant API calls
+- **Error Boundaries** : Gestion gracieuse des erreurs
+- **Loading States** : Skeletons et progress indicators
+
+#### Responsive & Accessibilité
+- **Mobile First** : Design responsive pour tous devices
+- **Keyboard Navigation** : Support complet clavier
+- **Screen Readers** : ARIA labels et semantic HTML
+- **Color Contrast** : Conformité WCAG guidelines
 
 ---
 
-## ✅ Phase 3b : Games Page CRUD - COMPLÉTÉ
+## 🧪 PHASE 3 : TESTS FRONTEND COMPLETS
+**Priorité** : MOYENNE | **Durée** : 1-2 semaines | **Statut** : Après UI
 
-**Durée** : Semaine 3 | **Status** : 100% ✅ (7/7 tests)
+### 🎯 Objectif : Couverture Tests UI Nouvelles
 
-### Tests Games CRUD Complets ✅
+**Timing** : Après refonte UI pour tester les composants finaux
 
-- ✅ **Games Listing** : Affichage avec données complètes
-- ✅ **Game Creation** : Formulaire avec validation et soumission
-- ✅ **Game Modification** : Édition avec pré-remplissage données
-- ✅ **Game Deletion** : Processus avec confirmation utilisateur
-- ✅ **BGGSearch Integration** : Import workflow end-to-end
-- ✅ **Form Validation** : Gestion erreurs et états
-- ✅ **Service Integration** : API calls et responses
+#### Tests Composants UI
+- **Design System** : Tests unitaires tous composants base
+- **Pages** : Tests intégration nouveaux UI
+- **Forms** : Validation et soumission
+- **Navigation** : Routing et user flows
 
-### Corrections Techniques Appliquées ✅
+#### Tests d'Intégration Frontend
+- **BGG Workflow** : Search → preview → import complet
+- **CRUD Operations** : Create/Read/Update/Delete end-to-end
+- **Error Handling** : Network errors, validation errors
+- **State Management** : React state et data flow
+
+---
+
+## 🚀 PHASES FUTURES (Post-UI)
+
+### Phase 4 : Fonctionnalités Avancées
+- **Multi-modes** : Templates configurables par jeu
+- **Export/Import** : CSV, JSON data portability
+- **PWA** : Installation et mode offline
+- **Performance** : Optimisations large datasets
+
+### Phase 5 : Features Premium  
+- **Multiplayer** : Sessions collaborative time réel
+- **Cloud Sync** : Sauvegarde cloud optionnelle
+- **Community** : Partage stats et achievements
+- **Mobile App** : Application native iOS/Android
+
+---
+
+## 📋 ACTIONS IMMÉDIATES (Cette semaine)
+
+### Jour 1-2 : Audit BGG Extensions & Characters
+1. **✅ Extensions BGG** : Données disponibles et exploitables via API BGG
+2. **⚠️ Characters BGG** : Investigation requise - données potentiellement disponibles
+3. **🔍 Investigation Characters** : Tester API BGG pour données characters réelles
+4. **📋 Décision architecture finale** :
+   - **Extensions** : Intégration BGG confirmée
+   - **Characters** : À décider selon résultats investigation
+5. **🔧 Update schéma BDD** : Selon décisions finales
+
+### Jour 3-5 : Design System Foundation
+1. **Audit UI actuel** : Screenshots et identification problèmes
+2. **Palette couleurs** : Définir système cohérent
+3. **Composants base** : Button, Card, Form components
+4. **Premier redesign** : Dashboard comme proof of concept
+
+---
+
+## 🎯 PRIORITÉS CLAIRES
+
+### ❤️ CRITIQUE (Bloquer le reste)
+1. **Audit BGG → BDD** : Structure finale avant UI
+2. **Design System** : Foundation pour toutes les pages
+
+### 🧡 IMPORTANT (Qualité finale)  
+3. **Dashboard redesign** : Hub central moderne
+4. **Players & Games UI** : Pages principales
+
+### 💛 NICE TO HAVE (Polish)
+5. **Stats & Analytics** : Pages avancées
+6. **Tests Frontend** : Après UI stable
+
+### 💚 FUTUR (Post-MVP)
+7. **Features avancées** : PWA, export, etc.
+
+---
+
+**Philosophie** : UI d'abord, fonctionnalités ensuite. 
+**Objectif** : Interface moderne et intuitive qui donne envie d'utiliser l'app.
+
+_Dernière mise à jour : 3 septembre 2025_
 
 - ✅ **Multiple Element Selection** : Fix sélecteurs ambigus
 - ✅ **Test Isolation** : DOM cleanup entre tests
