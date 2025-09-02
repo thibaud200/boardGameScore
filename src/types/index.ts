@@ -31,7 +31,7 @@ export interface GameSession {
   sessions_id: number
   sessions_game_id: number
   is_cooperative: boolean
-  sessions_game_mode: string
+  game_mode: string
   sessions_players: string
   sessions_scores: string
   sessions_characters?: string
@@ -104,4 +104,86 @@ export interface ListState<T> {
   items: T[]
   loading: boolean
   error: string | null
+}
+
+// Types pour current_game
+export interface CurrentGame {
+  id: number
+  game_data: string // JSON string
+  created_at: string
+  updated_at: string
+}
+
+export interface CurrentGameData {
+  game_id: number
+  game_name: string
+  players: Player[]
+  current_mode: string
+  started_at: string
+  current_round?: number
+  game_state?: Record<string, unknown> // État spécifique au jeu
+}
+
+// Types pour les statistiques
+export interface PlayerStats {
+  stat_id: number
+  player_id: number
+  total_games_played: number
+  total_wins: number
+  total_losses: number
+  total_score: number
+  average_score: number
+  last_game_date?: string
+  created_at: string
+}
+
+export interface GameStats {
+  stat_id: number
+  session_ids: string // JSON array
+  game_id: number
+  duration?: number
+  total_players: number
+  total_score: number
+  created_at: string
+}
+
+export interface PlayerGameStats {
+  stat_id: number
+  player_id: number
+  game_id: number
+  total_games_played: number
+  total_wins: number
+  total_losses: number
+  total_score: number
+  average_score: number
+  last_game_date?: string
+  created_at: string
+}
+
+// Types de requêtes pour les statistiques
+export interface CreateCurrentGameRequest {
+  game_id: number
+  players: number[] // IDs des joueurs
+  game_mode: string
+}
+
+export interface UpdateCurrentGameRequest {
+  game_state?: Record<string, unknown>
+  current_round?: number
+}
+
+// Types étendus avec relations
+export interface PlayerWithStats extends Player {
+  stats?: PlayerStats
+}
+
+export interface GameWithStats extends Game {
+  stats?: GameStats
+  sessions_count?: number
+}
+
+export interface SessionWithDetails extends GameSession {
+  game?: Game
+  players_details?: Player[]
+  winner_details?: Player
 }

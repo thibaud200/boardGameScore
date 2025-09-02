@@ -386,18 +386,32 @@ export default function Games() {
               <h3 className="text-xl font-semibold text-gray-900">
                 {game.game_name}
               </h3>
-              <div className="flex space-x-2">
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href={`/stats/game/${game.game_id}`}
+                  className="text-purple-600 hover:text-purple-800 text-sm font-medium"
+                  title="Voir les statistiques"
+                >
+                  📊 Stats
+                </a>
+                <a
+                  href={`/sessions/game/${game.game_id}`}
+                  className="text-green-600 hover:text-green-800 text-sm font-medium"
+                  title="Voir l'historique des parties"
+                >
+                  📋 Parties
+                </a>
                 <button
                   onClick={() => handleEdit(game)}
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                 >
-                  Modifier
+                  ✏️ Modifier
                 </button>
                 <button
                   onClick={() => handleDelete(game.game_id)}
                   className="text-red-600 hover:text-red-800 text-sm font-medium"
                 >
-                  Supprimer
+                  🗑️ Supprimer
                 </button>
               </div>
             </div>

@@ -155,15 +155,24 @@ export default function Dashboard() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">
-                    Sessions
+                    Partie en cours
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">0</dd>
+                  <dd className="text-lg font-medium text-gray-900">
+                    Disponible
+                  </dd>
                 </dl>
               </div>
             </div>
           </div>
           <div className="bg-gray-50 px-5 py-3">
-            <div className="text-sm text-gray-500">Bientôt disponible</div>
+            <div className="text-sm">
+              <Link
+                to="/current-game"
+                className="font-medium text-purple-600 hover:text-purple-500"
+              >
+                Gérer une partie
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -196,7 +205,20 @@ export default function Dashboard() {
         <h2 className="text-lg font-medium text-gray-900 mb-4">
           Actions rapides
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            to="/current-game"
+            className="flex items-center p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
+          >
+            <span className="text-2xl mr-3">🎮</span>
+            <div>
+              <div className="font-medium text-green-900">Nouvelle partie</div>
+              <div className="text-sm text-green-600">
+                Démarrer ou gérer une partie
+              </div>
+            </div>
+          </Link>
+
           <Link
             to="/players?action=create"
             className="flex items-center p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors"

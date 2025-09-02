@@ -58,7 +58,7 @@ CREATE TABLE game_sessions (
     sessions_id INTEGER PRIMARY KEY,
     sessions_game_id INTEGER NOT NULL,
     is_cooperative INTEGER DEFAULT 0,
-    sessions_game_mode TEXT DEFAULT 'competitive',
+    game_mode TEXT DEFAULT 'competitive',
     sessions_players TEXT NOT NULL,
     sessions_scores TEXT NOT NULL,
     sessions_characters TEXT,
@@ -85,7 +85,7 @@ CREATE TABLE game_sessions (
 | `sessions_id`                | INTEGER  | PRIMARY KEY | Identifiant unique de la session           |                     |
 | `sessions_game_id`           | INTEGER  | FOREIGN KEY | Id du jeu (mappé `games` frontend)         |                     |
 | `is_cooperative`             | INTEGER  |             | 1 si coopératif, 0 sinon (legacy)          |                     |
-| `sessions_game_mode`         | TEXT     |             | Mode de jeu : 'coop', 'compet', 'campaign' |                     |
+| `game_mode`                  | TEXT     |             | Mode de jeu : 'coop', 'compet', 'campaign' |                     |
 | `sessions_players`           | TEXT     |             | JSON array des IDs de joueurs              | [player_id,player_id] |
 | `sessions_scores`            | TEXT     |             | JSON object des scores par joueur          | {"player_id": <score>, "player_id": <score>} |
 | `sessions_characters`        | TEXT     |             | JSON object des personnages assignés       | {"player_id": <character_id>, "player_id": <character_id>} |

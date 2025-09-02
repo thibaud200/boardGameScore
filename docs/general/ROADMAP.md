@@ -34,15 +34,23 @@
 - ✅ **Résolution complète des problèmes d'isolation et de base de données**
 - ✅ **Principes SOLID** : Documentation et application des bonnes pratiques architecture
 
-#### Frontend (Architecture + Pages CRUD Complètes) ✅
-- ✅ **Page Players CRUD** : Liste, création, édition, suppression des joueurs avec validation
-- ✅ **Page Games CRUD** : Gestion complète des jeux avec modes de jeu et personnages
-- ✅ **Navigation fonctionnelle** : Menu responsive avec React Router 7
-- ✅ **Types TypeScript** : Interfaces complètes synchronisées avec backend
-- ✅ **API Integration** : Client HTTP robuste avec gestion d'erreurs
-- ✅ **UI/UX** : Interface moderne avec Tailwind CSS, états loading/error
-- ✅ **Architecture SOLID** : Composants respectant les principes de développement
-- ✅ **Gestion des types JavaScript ↔ SQLite** : Résolution des problématiques booléens/null/undefined
+#### Frontend React + TypeScript (Partiellement Fonctionnel)
+
+##### Pages Complètement Fonctionnelles ✅
+- ✅ **Players.tsx** : CRUD complet avec validation et gestion d'erreurs
+- ✅ **Games.tsx** : Gestion complète avec modes de jeu et personnages  
+- ✅ **CurrentGame.tsx** : Workflow complet de gestion des parties en cours
+  - Création nouvelles parties (sélection jeu + joueurs)
+  - Affichage partie en cours avec détails
+  - Terminer partie (création automatique session dans game_sessions)
+  - Annuler partie (suppression sans sauvegarde)
+- ✅ **Dashboard** : Navigation et vue d'ensemble
+
+##### Architecture & Services ✅
+- ✅ **Navigation React Router** : Toutes les routes intégrées et fonctionnelles
+- ✅ **Services API** : apiClient structuré avec gestion d'erreurs
+- ✅ **Types TypeScript** : Interfaces complètes synchronisées avec BDD
+- ✅ **UI/UX Tailwind** : Interface moderne avec états loading/error
 
 #### Résolutions Techniques Critiques ✅
 - ✅ **Problématique booléens SQLite** : Conversion automatique JavaScript boolean → SQLite integer (0/1)
@@ -80,7 +88,72 @@
 - ✅ Exemples d'utilisation dans les tests avec injection automatique des fixtures
 - ✅ Documentation des endpoints API avec exemples d'appels, paramètres et codes de retour
 
-## 🕒 À venir
+## � En Cours de Finalisation
+
+### Pages Créées mais Backend à Implémenter
+
+#### 🚧 PlayerStats.tsx (70% complété)
+- ✅ **UI complète** : Design et composants terminés
+- ✅ **Service frontend** : statsService.ts avec formatage données
+- ❌ **Backend logique** : Calculs statistiques réels (actuellement données mockées)
+- ❌ **APIs réelles** : `/api/stats/players/:id` avec agrégations SQL
+
+#### 🚧 GameStats.tsx (70% complété)  
+- ✅ **UI complète** : Affichage podiums et performance joueurs
+- ✅ **Service frontend** : Intégration statsService
+- ❌ **Backend logique** : Statistiques par jeu (popularité, performances)
+- ❌ **APIs réelles** : `/api/stats/games/:id` avec calculs réels
+
+#### 🚧 Sessions.tsx (60% complété)
+- ✅ **UI et navigation** : Filtrage par jeu/joueur, breadcrumbs
+- ✅ **Service frontend** : gameSessionsService.ts créé
+- ❌ **Enrichissement données** : Jointures avec players/games pour noms complets
+- ❌ **Backend filtrage** : Logique de filtrage avancé côté serveur
+
+### Travail Backend Manquant
+
+#### Services de Statistiques Réelles
+- ❌ **Calculs joueurs** : Parties jouées, victoires, scores moyens, performance par jeu
+- ❌ **Calculs jeux** : Popularité, durée moyenne, distribution scores, podiums
+- ❌ **PlayerGameStats** : Statistiques croisées avec historique détaillé
+- ❌ **Optimisation SQL** : Requêtes agrégées performantes
+
+#### Enrichissement des Sessions
+- ❌ **Données complètes** : Jointures avec players/games pour affichage noms
+- ❌ **Filtrage avancé** : Critères multiples (date, durée, score, etc.)
+- ❌ **Pagination** : Gestion listes importantes de sessions
+
+## 📅 Prochaines Étapes Prioritaires
+
+### Priorité 1: 🔧 Backend Statistiques (1-2 semaines)
+1. **Implémenter calculs réels** dans `backend/src/services/statsService.ts`
+2. **Remplacer données mockées** par requêtes SQL agrégées
+3. **Enrichir sessions** avec jointures players/games
+4. **Tester APIs** avec vraies données volumétriques
+
+### Priorité 2: ✅ Validation Frontend (3-5 jours)
+1. **Tester PlayerStats.tsx** avec vraies données backend
+2. **Valider GameStats.tsx** avec podiums réels
+3. **Valider Sessions.tsx** avec filtrage fonctionnel
+4. **Tests navigation** entre toutes les pages
+
+### Priorité 3: 🧪 Tests & Documentation (1 semaine)
+1. **Tests backend** pour nouvelles APIs statistiques
+2. **Tests frontend** pour nouvelles pages
+3. **Documentation API** mise à jour
+4. **Guide utilisateur** pour fonctionnalités complètes
+
+---
+
+## 📊 Récapitulatif État Actuel
+
+**🟢 Fonctionnel à 100%** : Backend API, Players, Games, CurrentGame, Dashboard  
+**🟡 Fonctionnel à 70%** : PlayerStats, GameStats, Sessions (UI complète, backend à finaliser)  
+**🔴 À implémenter** : Calculs statistiques réels, enrichissement sessions
+
+**Prochaine milestone** : Finalisation backend statistiques pour avoir toutes les pages 100% fonctionnelles
+
+## 📋 Fonctionnalités Futures (Non Prioritaires)
 
 ### 🧪 Tests Manquants Identifiés (Septembre 2025)
 
@@ -142,52 +215,21 @@
 - **Hooks personnalisés** : Logique métier externalisée
 - **Types TypeScript** : Amélioration de la sécurité des types UI
 - **Tests frontend** : React Testing Library pour composants critiques
-### 🛠️ Phase 4: Gestion Multi-Modes & Templates
-- **Gestion multi-modes** : Coopératif, Compétitif, Campagne avec logique intelligente
-- **Système de templates** : Configuration flexible des jeux avec validation robuste
-- **Gestion personnages** : Historique complet, statistiques par joueur
-- **Statistiques avancées** : Analytics complètes, historique des parties
 
-### 🛠️ Phase 4: Gestion Multi-Modes & Templates
-- **Gestion multi-modes** : Coopératif, Compétitif, Campagne avec logique intelligente
-- **Système de templates** : Configuration flexible des jeux avec validation robuste
-- **Gestion personnages** : Historique complet, statistiques par joueur
-- **Statistiques avancées** : Analytics complètes, historique des parties
+### Phase 4: 🛠️ Fonctionnalités Avancées
+- **Multi-modes de jeu** avec templates configurables
+- **Export/Import** données CSV/JSON
+- **Graphiques avancés** avec Chart.js
+- **Mode PWA** pour installation et offline
 
-### 🧪 Phase 5: Complétion Tests (Priorité Haute)
-**Statut** : 🚨 Critique - Foundation tests manquants
-**Priorité** : Haute - Doit être fait avant Phase 3 UI/UX
+### Phase 5: 🔌 Intégration BoardGameGeek Avancée
+- **Service BGG** avec recherche et import automatique
+- **Métadonnées enrichies** depuis base BGG
+- **Auto-détection** modes et personnages
 
-#### Tests Backend BGG
-- **BGGService tests** : Parsing XML, cache, rate limiting, gestion d'erreurs
-- **Integration tests** : Endpoints `/api/bgg/*`, CORS, timeout
+---
 
-#### Tests Frontend (Critique)  
-- **Infrastructure** : Setup React Testing Library + Vitest pour frontend
-- **Components tests** : BGGSearch, Players, Games, Layout
-- **Services tests** : API clients, gestion d'erreurs, types hybrides
-- **Integration tests** : Workflow complet frontend ↔ backend
-
-#### Phase 6: 🎨 Interface & UX Avancée  
-**Statut** : 🎯 Après refonte globale  
-**Priorité** : Moyenne
-
-- **Design cohérent** : Radix UI + Tailwind CSS optimisé
-- **Responsive design** : Adaptation mobile/desktop parfaite
-- **Validation robuste** : Champs obligatoires, feedback immédiat
-- **Icônes cohérentes** : Lucide Icons dans toute l'application
-- **Multi-langues** : Support descriptions dans différentes langues
-- **Tests frontend** : React Testing Library + Jest
-- **Architecture SOLID** : Respect des principes SOLID pour composants réutilisables
-
-### 🚀 Backend (Express.js + SQLite) - Améliorations Futures
-
-#### Optimisations Performance
-**Statut** : 📈 Amélioration continue  
-**Priorité** : Basse
-
-- **Requêtes SQL optimisées** : Index, jointures, pagination
-- **Cache intelligent** : Mise en cache des données critiques
+*Dernière mise à jour : Septembre 2025*
 - **Pagination** : Gestion des grandes collections
 - **Compression** : Optimisation des réponses API
 

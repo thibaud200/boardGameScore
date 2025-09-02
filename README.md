@@ -2,10 +2,6 @@
 
 ## 🚀 Status du Projet
 
-# 🎯 Board Game Score Tracker
-
-## 🚀 Status du Projet
-
 ### ✅ Foundation Technique Complète (Septembre 2025)
 - **Backend Express.js + SQLite** : 10 endpoints, 33/33 tests ✅
 - **Frontend React + TypeScript** : Pages CRUD Players & Games complètes ✅  

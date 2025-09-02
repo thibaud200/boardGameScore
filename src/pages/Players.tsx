@@ -252,17 +252,31 @@ export default function Players() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       {editingPlayer?.player_id === player.player_id ? null : (
                         <div className="flex gap-2 justify-end">
+                          <a
+                            href={`/stats/player/${player.player_id}`}
+                            className="text-purple-600 hover:text-purple-900 font-medium transition-colors"
+                            title="Voir les statistiques"
+                          >
+                            📊 Stats
+                          </a>
+                          <a
+                            href={`/sessions/player/${player.player_id}`}
+                            className="text-green-600 hover:text-green-900 font-medium transition-colors"
+                            title="Voir l'historique des parties"
+                          >
+                            📋 Parties
+                          </a>
                           <button
                             onClick={() => startEdit(player)}
                             className="text-blue-600 hover:text-blue-900 font-medium transition-colors"
                           >
-                            Modifier
+                            ✏️ Modifier
                           </button>
                           <button
                             onClick={() => handleDeletePlayer(player.player_id)}
                             className="text-red-600 hover:text-red-900 font-medium transition-colors"
                           >
-                            Supprimer
+                            🗑️ Supprimer
                           </button>
                         </div>
                       )}

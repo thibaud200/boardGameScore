@@ -19,6 +19,11 @@ export interface GameSessionInput {
   sessions_character_history?: string
 }
 
+export interface GameSessionRecord extends GameSessionInput {
+  sessions_id: number
+  game_id?: number // May be joined from games table
+}
+
 export function getAllGameSessions() {
   return db.prepare('SELECT * FROM game_sessions').all()
 }

@@ -56,7 +56,13 @@ export class ApiClient {
         return {} as T
       }
 
-      return await response.json()
+      // Gérer les réponses avec contenu vide
+      const text = await response.text()
+      if (!text.trim()) {
+        return null as T
+      }
+
+      return JSON.parse(text)
     } catch (error) {
       if (error instanceof ApiError) {
         throw error

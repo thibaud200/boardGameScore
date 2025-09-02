@@ -7,6 +7,14 @@ import {
   deleteGame
 } from './services/gameService'
 import { bggService } from './services/bggService'
+import {
+  getAllGameSessions,
+  getGameSessionById,
+  createGameSession,
+  deleteGameSession,
+  GameSessionInput,
+  GameSessionRecord
+} from './services/gameSessionService'
 
 const app = express()
 
@@ -26,13 +34,6 @@ app.use((req, res, next) => {
 
 app.use(express.json())
 import {
-  getAllGameSessions,
-  getGameSessionById,
-  createGameSession,
-  deleteGameSession,
-  GameSessionInput
-} from './services/gameSessionService'
-import {
   getAllGameCharacters,
   getGameCharacterById,
   createGameCharacter,
@@ -50,6 +51,8 @@ import {
   getCurrentGame,
   saveCurrentGame,
   updateCurrentGame,
+  deleteCurrentGame,
+  finishCurrentGameAsSession,
   CurrentGameInput
 } from './services/currentGameService'
 import {
@@ -65,6 +68,76 @@ import db from './initDatabase'
 
 // Initialisation de la base de données
 // db est utilisé pour l'initialisation
+
+// Current Game routes (prioritaires)
+app.get('/api/current-game', (req, res) => {
+  const currentGame = getCurrentGame()
+  if (currentGame) {
+    res.json(currentGame)
+  } else {
+    res.json(null)
+  }
+})
+
+app.post('/api/current-game', (req, res) => {
+  try {
+    const input: CurrentGameInput = req.body
+    const created = saveCurrentGame(input)
+    res.status(201).json(created)
+  } catch (e) {
+    res
+      .status(400)
+      .json({ error: 'Invalid current game data', details: String(e) })
+  }
+})
+
+app.put('/api/current-game/:id', (req, res) => {
+  try {
+    const updated = updateCurrentGame(Number(req.params.id), req.body.game_data)
+    res.json(updated)
+  } catch (e) {
+    res.status(400).json({ error: 'Update failed', details: String(e) })
+  }
+})
+
+app.delete('/api/current-game/:id', (req, res) => {
+  try {
+    console.log('DELETE /api/current-game/:id called with id:', req.params.id)
+    deleteCurrentGame(Number(req.params.id))
+    res.status(204).end()
+  } catch (e) {
+    console.error('Delete current game error:', e)
+    res.status(400).json({ error: 'Delete failed', details: String(e) })
+  }
+})
+
+app.post('/api/current-game/:id/finish', (req, res) => {
+  try {
+    console.log(
+      'POST /api/current-game/:id/finish called with id:',
+      req.params.id
+    )
+    const finalScores = req.body.scores || {}
+    const result = finishCurrentGameAsSession(
+      Number(req.params.id),
+      finalScores
+    )
+    res.json({
+      message: 'Partie terminée et session créée',
+      sessionId: result.sessionId,
+      gameData: result.gameData
+    })
+  } catch (e) {
+    console.error('Finish current game error:', e)
+    res.status(400).json({ error: 'Failed to finish game', details: String(e) })
+  }
+})
+
+// Route de test
+app.delete('/api/test-delete/:id', (req, res) => {
+  console.log('Test DELETE route called with id:', req.params.id)
+  res.json({ message: 'Test DELETE worked', id: req.params.id })
+})
 
 app.get('/api/players', (req, res) => {
   res.json(getAllPlayers())
@@ -325,28 +398,10 @@ app.delete('/api/game-extensions/:id', (req, res) => {
   res.status(204).end()
 })
 
-// Current Game
-app.get('/api/current-game', (req, res) => {
-  res.json(getCurrentGame())
-})
-app.post('/api/current-game', (req, res) => {
-  try {
-    const input: CurrentGameInput = req.body
-    const created = saveCurrentGame(input)
-    res.status(201).json(created)
-  } catch (e) {
-    res
-      .status(400)
-      .json({ error: 'Invalid current game data', details: String(e) })
-  }
-})
-app.put('/api/current-game/:id', (req, res) => {
-  try {
-    const updated = updateCurrentGame(Number(req.params.id), req.body.game_data)
-    res.json(updated)
-  } catch (e) {
-    res.status(400).json({ error: 'Update failed', details: String(e) })
-  }
+// Route de test
+app.delete('/api/test-delete/:id', (req, res) => {
+  console.log('Test DELETE route called with id:', req.params.id)
+  res.json({ message: 'Test DELETE worked', id: req.params.id })
 })
 
 // Player Stats
@@ -434,6 +489,125 @@ app.post('/api/bgg/import/:id', async (req, res) => {
     res.status(201).json(created)
   } catch (error) {
     res.status(500).json({ error: 'BGG import failed', details: String(error) })
+  }
+})
+
+// Routes pour les statistiques
+app.get('/api/stats/player/:id', (req, res) => {
+  try {
+    // Pour l'instant, retourner des stats par défaut
+    // TODO: Implémenter la logique de calcul des stats
+    const playerId = Number(req.params.id)
+    const mockStats = {
+      player_id: playerId,
+      total_games_played: 0,
+      total_wins: 0,
+      total_losses: 0,
+      total_score: 0,
+      average_score: 0,
+      last_game_date: null
+    }
+    res.json(mockStats)
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: 'Failed to get player stats', details: String(error) })
+  }
+})
+
+app.get('/api/stats/game/:id', (req, res) => {
+  try {
+    // Pour l'instant, retourner des stats par défaut
+    // TODO: Implémenter la logique de calcul des stats
+    const gameId = Number(req.params.id)
+    const mockStats = {
+      game_id: gameId,
+      total_games_played: 0,
+      total_players: 0,
+      total_score: 0,
+      duration: null
+    }
+    res.json(mockStats)
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: 'Failed to get game stats', details: String(error) })
+  }
+})
+
+app.get('/api/stats/game/:id/players', (req, res) => {
+  try {
+    // Pour l'instant, retourner un tableau vide
+    // TODO: Implémenter la logique de récupération des stats des joueurs pour un jeu
+    res.json([])
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to get players stats for game',
+      details: String(error)
+    })
+  }
+})
+
+app.get('/api/stats/player/:id/games', (req, res) => {
+  try {
+    // Pour l'instant, retourner un tableau vide
+    // TODO: Implémenter la logique de récupération des stats des jeux pour un joueur
+    res.json([])
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to get games stats for player',
+      details: String(error)
+    })
+  }
+})
+
+// Routes pour les sessions
+app.get('/api/sessions', (req, res) => {
+  try {
+    res.json(getAllGameSessions())
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: 'Failed to get sessions', details: String(error) })
+  }
+})
+
+app.get('/api/sessions/game/:gameId', (req, res) => {
+  try {
+    const gameId = Number(req.params.gameId)
+    // Filtrer les sessions par jeu
+    const allSessions = getAllGameSessions() as GameSessionRecord[]
+    const gameSessions = allSessions.filter(
+      (session: GameSessionRecord) => session.game_id === gameId
+    )
+    res.json(gameSessions)
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to get sessions for game',
+      details: String(error)
+    })
+  }
+})
+
+app.get('/api/sessions/player/:playerId', (req, res) => {
+  try {
+    const playerId = Number(req.params.playerId)
+    // Filtrer les sessions par joueur
+    const allSessions = getAllGameSessions() as GameSessionRecord[]
+    const playerSessions = allSessions.filter((session: GameSessionRecord) => {
+      try {
+        const players = JSON.parse(session.sessions_players || '[]')
+        return players.includes(playerId)
+      } catch {
+        return false
+      }
+    })
+    res.json(playerSessions)
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to get sessions for player',
+      details: String(error)
+    })
   }
 })
 
