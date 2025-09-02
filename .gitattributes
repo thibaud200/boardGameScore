@@ -6,3 +6,9 @@ tsconfig.json linguist-language=JSON-with-Comments
 
 # Also fix how Visual Studio Code configuration files are read.
 .vscode/*.json linguist-language=JSON-with-Comments
+
+# Force LF line endings for all text files
+* text=auto eol=lf
+
+# Exceptions for Windows-specific files (if any)
+*.bat text eol=crlf
