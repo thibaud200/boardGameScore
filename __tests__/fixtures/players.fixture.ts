@@ -18,4 +18,4 @@ export const playersFixture = [
     player_name: 'Charlie',
     created_at: '2025-09-01T10:10:00Z'
   }
-];
+]

@@ -27,4 +27,4 @@ export const playerGameStatsFixture = [
     last_game_date: '2025-09-01T13:00:00Z',
     created_at: '2025-09-01T13:00:00Z'
   }
-];
+]

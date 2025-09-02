@@ -59,13 +59,13 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 
 - **JAMAIS** utiliser le type `any`
 - **JAMAIS** mélanger logique backend/frontend
-- **JAMAIS** modifier la DB sans migration
+- **JAMAIS** modifier la DB sans migration + tests associés + documentation sans bonne raison
 - **JAMAIS** de code sans tests associés
 - **TOUJOURS** respecter les normes de performance et de sécurité
 - **TOUJOURS** documenter les décisions de conception
 - **TOUJOURS** fournir des exemples d'utilisation
 - **TOUJOURS** inclure des tests automatisés
-- **TOUJOURS** respecter les conventions de nommage
+- **TOUJOURS** respecter les conventions de nommage + codage
 - **TOUJOURS** valider les entrées utilisateur
 - **TOUJOURS** gérer les erreurs de manière appropriée
 - **TOUJOURS** protéger les données sensibles
@@ -113,20 +113,22 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 ### Frontend
 
 - **Modularité** : composants réutilisables et maintenables
-- **Bonnes pratiques** : conventions de codage, TypeScript strict
-- **Performance** : lazy loading, code splitting
-- **UI/UX** : React 19, Tailwind CSS, Radix UI
+- **Bonnes pratiques** : conventions de codage React 2025, TypeScript strict
+- **Performance** : lazy loading, code splitting, React 19 optimizations
+- **UI/UX** : React 19, Tailwind CSS, Radix UI (à venir)
 - **Accessibilité** : interface responsive, respect des standards ARIA/WCAG
+- **Structure** : `src/` à la racine (standard Vite/React 2025)
 
 ### Tests
 
 - **Backend et Frontend** : tests unitaires, intégration, end-to-end
-- **Outils** : Jest, React Testing Library
-- **Coverage minimum** : 80%
+- **Outils** : Vitest (backend ✅), React Testing Library (frontend à venir)
+- **Coverage minimum** : 80% (backend: 100% des critiques ✅)
 - **Tests obligatoires** :
-  - Tests de contrat API (avec Supertest)
+  - Tests de contrat API (avec Supertest) ✅
   - Tests de performance pour les endpoints critiques
-  - Tests de sécurité (injection SQL, validation des entrées)
+  - Tests de sécurité (injection SQL, validation des entrées) ✅
+  - Tests d'intégration frontend-backend (à venir)
 
 ---
 
@@ -153,23 +155,37 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 
 ---
 
-## 📁 Structure du Projet
+## 📁 Structure du Projet (Bonnes pratiques 2025)
 
 ```bash
-board-game-scorekeep/
-├── frontend/           # React 19 + TypeScript + Vite
-│   ├── src/
-│   │   ├── components/ # UI modulaire (Dashboard, BGG, Templates, etc.)
-│   │   ├── services/   # BGGService, API calls
-│   │   ├── lib/        # Database hooks, utils, context
-│   │   └── hooks/      # Custom React hooks
-├── backend/            # Express + SQLite (optionnel, proxy BGG)
-├── tests/              # Jest + RTL - 52/52 tests ✅
-│   ├── unit/          # Tests unitaires techniques et fonctionnels
-│   ├── integration/   # Tests end-to-end BGG workflow
-│   └── fixtures/      # Données de test, mocks BGG
-└── database/          # SQLite + migrations + documentation
+boardGameScore/
+├── src/                # Frontend React 19 + TypeScript + Vite (standard 2025)
+│   ├── components/     # Composants UI réutilisables
+│   ├── pages/          # Pages principales (Dashboard, Players, Games, Sessions)
+│   ├── services/       # Client API pour consommer le backend
+│   ├── hooks/          # Custom React hooks (useApi, useLocalStorage, etc.)
+│   ├── types/          # TypeScript interfaces partagées
+│   ├── utils/          # Utilitaires frontend (formatters, validators)
+│   └── styles/         # Styles globaux et thèmes
+├── backend/            # Express + SQLite (100% fonctionnel ✅)
+│   ├── src/            # Services, routes, middleware
+│   │   ├── services/   # Services métier (11 services ✅)
+│   │   └── server.ts   # Point d'entrée Express
+│   └── database/       # SQLite + migrations + documentation
+├── __tests__/          # Infrastructure tests complète (33/33 ✅)
+│   ├── backend/        # Tests unitaires services (11 tests ✅)
+│   ├── integration/    # Tests d'intégration API (22 tests ✅)
+│   ├── fixtures/       # Données de test cohérentes
+│   └── frontend/       # Tests frontend (à venir)
+├── public/             # Assets statiques (images, icons)
+└── docs/               # Documentation technique
 ```
+
+**Conformité aux standards 2025 :**
+- ✅ Structure recommandée par Vite/React team
+- ✅ Configuration TypeScript standard
+- ✅ Séparation claire des responsabilités
+- ✅ Maintenabilité et scalabilité
 
 ---
 
@@ -198,9 +214,10 @@ npm run quality      # Lint + Format + Type-check combinés
 ### Développement
 
 ```bash
-npm run dev          # Frontend + Backend en parallèle
-npm run dev:frontend # Frontend seul (Vite)
-npm run dev:backend  # Backend seul (Express)
+npm run dev          # Frontend (Vite) + Backend (Express) en parallèle
+npm run dev:frontend # Frontend seul (Vite dev server)
+npm run dev:backend  # Backend seul (Express + nodemon)
+npm run preview      # Preview build production
 ```
 
 ### Base de données

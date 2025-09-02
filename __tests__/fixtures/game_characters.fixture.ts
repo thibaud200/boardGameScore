@@ -27,4 +27,4 @@ export const gameCharactersFixture = [
     class_type: 'Mage',
     created_at: '2025-09-01T10:20:00Z'
   }
-];
+]

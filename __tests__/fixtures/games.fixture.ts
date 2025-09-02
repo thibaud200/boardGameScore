@@ -1,20 +1,5 @@
 /**
- * Fixture de je  {
-    game_id: 2,
-    game_id_bgg: '67890',
-    game_name: 'Gloomhaven',
-    game_description: 'Jeu d'aventure coopératif.',
-    game_image: '/images/gloomhaven.png',
-    has_characters: 1,
-    characters: '[{"id":"brute","name":"Brute"}]',
-    min_players: 1,
-    max_players: 4,
-    supports_cooperative: 1,
-    supports_competitive: 0,
-    supports_campaign: 1,
-    default_mode: 'cooperative',
-    created_at: '2025-09-01T10:10:00Z'
-  }itaires
+ * Fixture de jeux pour tests unitaires
  * @description Données de test pour la table games
  */
 export const gamesFixture = [
@@ -50,4 +35,4 @@ export const gamesFixture = [
     default_mode: 'cooperative',
     created_at: '2025-09-01T10:10:00Z'
   }
-];
+]

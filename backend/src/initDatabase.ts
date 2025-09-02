@@ -3,24 +3,25 @@ import Database from 'better-sqlite3'
 const isTestEnv =
   process.env.VITEST ||
   process.env.JEST_WORKER_ID ||
-  process.env.NODE_ENV === 'test';
+  process.env.NODE_ENV === 'test'
 
-const env =
-  isTestEnv ? 'test' : process.env.DB_ENV || process.env.NODE_ENV || 'production';
+const env = isTestEnv
+  ? 'test'
+  : process.env.DB_ENV || process.env.NODE_ENV || 'production'
 
 const dbFile =
-  env === 'test'
-    ? 'backend/database/test.db'
-    : 'backend/database/database.db';
+  env === 'test' ? 'backend/database/test.db' : 'backend/database/database.db'
 
 // Sécurise l'accès : en mode test, interdit toute base autre que test.db
 if (env === 'test' && dbFile !== 'backend/database/test.db') {
-  throw new Error('Environnement de test : accès à une base non test.db interdit !');
+  throw new Error(
+    'Environnement de test : accès à une base non test.db interdit !'
+  )
 }
 
-const db = new Database(dbFile);
+const db = new Database(dbFile)
 
-export default db;
+export default db
 
 // Schéma minimal, à compléter avec toutes les tables
 const schema = `

@@ -11,4 +11,4 @@ export const gameExtensionsFixture = [
     add_max_players: 0,
     created_at: '2025-09-01T10:30:00Z'
   }
-];
+]

@@ -21,4 +21,4 @@ export const gameStatsFixture = [
     total_score: 27,
     created_at: '2025-09-01T13:00:00Z'
   }
-];
+]

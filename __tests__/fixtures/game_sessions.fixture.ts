@@ -43,4 +43,4 @@ export const gameSessionsFixture = [
     sessions_character_history: '[{"event":"start"}]',
     created_at: '2025-09-01T13:00:00Z'
   }
-];
+]
