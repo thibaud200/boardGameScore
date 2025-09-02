@@ -1,8 +1,8 @@
-# 🛠️ Guide de Développement - Board Game Score Tracker
+# 🛠️ Guide Technique - Board Game Score Tracker
 
 ## 🎯 Objectif
 
-Ce guide fournit les bonnes pratiques et conventions spécifiques au projet pour maintenir la cohérence et éviter les erreurs communes.
+Ce guide fournit les bonnes pratiques techniques spécifiques au projet, particulièrement pour la gestion des types JavaScript ↔ SQLite et les conventions de développement pour maintenir la cohérence.
 
 ---
 
@@ -52,6 +52,7 @@ stmt.run(data.has_characters ? 1 : 0) // Correct
 ```
 
 **Application dans le projet** :
+
 ```typescript
 // backend/src/services/gameService.ts
 const info = stmt.run(
@@ -59,13 +60,13 @@ const info = stmt.run(
   data.game_name,
   data.game_description ?? null,
   data.game_image ?? null,
-  data.has_characters ? 1 : 0,              // ✅ Conversion booléen
+  data.has_characters ? 1 : 0, // ✅ Conversion booléen
   data.characters ?? null,
   data.min_players ?? null,
   data.max_players ?? null,
-  data.supports_cooperative ? 1 : 0,        // ✅ Conversion booléen
-  data.supports_competitive ? 1 : 0,        // ✅ Conversion booléen
-  data.supports_campaign ? 1 : 0,           // ✅ Conversion booléen
+  data.supports_cooperative ? 1 : 0, // ✅ Conversion booléen
+  data.supports_competitive ? 1 : 0, // ✅ Conversion booléen
+  data.supports_campaign ? 1 : 0, // ✅ Conversion booléen
   data.default_mode ?? null
 )
 ```
@@ -124,15 +125,15 @@ export interface CreateGameRequest {
 
 ```typescript
 // ❌ ERREUR - undefined/null non supporté
-<input 
-  type="checkbox" 
-  checked={formData.supports_cooperative} 
+<input
+  type="checkbox"
+  checked={formData.supports_cooperative}
 />
 
 // ✅ SOLUTION - Valeur par défaut booléenne
-<input 
-  type="checkbox" 
-  checked={formData.supports_cooperative || false} 
+<input
+  type="checkbox"
+  checked={formData.supports_cooperative || false}
 />
 ```
 
@@ -152,7 +153,7 @@ export interface CreateGameRequest {
 ```typescript
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault()
-  
+
   // ✅ Nettoyage systématique avant envoi
   const cleanedData: CreateGameRequest = {
     game_id_bgg: formData.game_id_bgg || null,
@@ -163,12 +164,21 @@ const handleSubmit = async (e: React.FormEvent) => {
     characters: formData.characters || null,
     min_players: formData.min_players || 1,
     max_players: formData.max_players || 4,
-    supports_cooperative: formData.supports_cooperative !== undefined ? formData.supports_cooperative : false,
-    supports_competitive: formData.supports_competitive !== undefined ? formData.supports_competitive : true,
-    supports_campaign: formData.supports_campaign !== undefined ? formData.supports_campaign : false,
+    supports_cooperative:
+      formData.supports_cooperative !== undefined
+        ? formData.supports_cooperative
+        : false,
+    supports_competitive:
+      formData.supports_competitive !== undefined
+        ? formData.supports_competitive
+        : true,
+    supports_campaign:
+      formData.supports_campaign !== undefined
+        ? formData.supports_campaign
+        : false,
     default_mode: formData.default_mode || 'competitive'
   }
-  
+
   await GamesService.createGame(cleanedData)
 }
 ```
@@ -188,22 +198,22 @@ export function createGame(data: CreateGameRequest) {
     has_characters, characters, min_players, max_players, 
     supports_cooperative, supports_competitive, supports_campaign, default_mode
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-  
+
   const info = stmt.run(
-    data.game_id_bgg ?? null,           // string? → string|null
-    data.game_name,                     // string → string
-    data.game_description ?? null,      // string? → string|null
-    data.game_image ?? null,            // string? → string|null
-    data.has_characters ? 1 : 0,        // boolean → integer (0|1)
-    data.characters ?? null,            // string? → string|null
-    data.min_players ?? null,           // number? → number|null
-    data.max_players ?? null,           // number? → number|null
-    data.supports_cooperative ? 1 : 0,  // boolean? → integer (0|1)
-    data.supports_competitive ? 1 : 0,  // boolean? → integer (0|1)
-    data.supports_campaign ? 1 : 0,     // boolean? → integer (0|1)
-    data.default_mode ?? null           // string? → string|null
+    data.game_id_bgg ?? null, // string? → string|null
+    data.game_name, // string → string
+    data.game_description ?? null, // string? → string|null
+    data.game_image ?? null, // string? → string|null
+    data.has_characters ? 1 : 0, // boolean → integer (0|1)
+    data.characters ?? null, // string? → string|null
+    data.min_players ?? null, // number? → number|null
+    data.max_players ?? null, // number? → number|null
+    data.supports_cooperative ? 1 : 0, // boolean? → integer (0|1)
+    data.supports_competitive ? 1 : 0, // boolean? → integer (0|1)
+    data.supports_campaign ? 1 : 0, // boolean? → integer (0|1)
+    data.default_mode ?? null // string? → string|null
   )
-  
+
   return getGameById(info.lastInsertRowid as number)
 }
 ```
@@ -214,14 +224,23 @@ export function createGame(data: CreateGameRequest) {
 app.put('/api/games/:id', (req, res) => {
   try {
     const gameId = Number(req.params.id)
-    
+
     // Extraction avec destructuring
     const {
-      game_id_bgg, game_name, game_description, game_image,
-      has_characters, characters, min_players, max_players,
-      supports_cooperative, supports_competitive, supports_campaign, default_mode
+      game_id_bgg,
+      game_name,
+      game_description,
+      game_image,
+      has_characters,
+      characters,
+      min_players,
+      max_players,
+      supports_cooperative,
+      supports_competitive,
+      supports_campaign,
+      default_mode
     } = req.body
-    
+
     // Conversion avant requête SQLite
     const stmt = db.prepare(`UPDATE games SET 
       game_id_bgg = COALESCE(?, game_id_bgg),
@@ -237,24 +256,26 @@ app.put('/api/games/:id', (req, res) => {
       supports_campaign = COALESCE(?, supports_campaign),
       default_mode = COALESCE(?, default_mode)
     WHERE game_id = ?`)
-    
+
     stmt.run(
       game_id_bgg,
       game_name,
       game_description,
       game_image,
-      has_characters ? 1 : 0,        // ✅ Conversion booléen
+      has_characters ? 1 : 0, // ✅ Conversion booléen
       characters,
       min_players,
       max_players,
-      supports_cooperative ? 1 : 0,  // ✅ Conversion booléen
-      supports_competitive ? 1 : 0,  // ✅ Conversion booléen
-      supports_campaign ? 1 : 0,     // ✅ Conversion booléen
+      supports_cooperative ? 1 : 0, // ✅ Conversion booléen
+      supports_competitive ? 1 : 0, // ✅ Conversion booléen
+      supports_campaign ? 1 : 0, // ✅ Conversion booléen
       default_mode,
       gameId
     )
-    
-    const updated = db.prepare('SELECT * FROM games WHERE game_id = ?').get(gameId)
+
+    const updated = db
+      .prepare('SELECT * FROM games WHERE game_id = ?')
+      .get(gameId)
     res.json(updated)
   } catch (e) {
     res.status(400).json({ error: 'Update failed', details: String(e) })
@@ -305,11 +326,11 @@ app.put('/api/games/:id', (req, res) => {
 // Ajout de logs pour debugging
 console.log('Data avant envoi SQLite:', {
   has_characters: typeof data.has_characters, // Doit être "boolean"
-  converted: data.has_characters ? 1 : 0,     // Doit être 0 ou 1
-  description: data.game_description ?? null   // Doit être string ou null
+  converted: data.has_characters ? 1 : 0, // Doit être 0 ou 1
+  description: data.game_description ?? null // Doit être string ou null
 })
 ```
 
 ---
 
-*Ce guide doit être consulté pour toute modification impliquant la base de données ou les formulaires React.*
+_Ce guide doit être consulté pour toute modification impliquant la base de données ou les formulaires React._

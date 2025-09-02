@@ -15,13 +15,19 @@ Cette section documente les problématiques de linting rencontrées lors du dév
 ### 1. **TypeScript "any" Type Violations**
 
 **Problème :** Utilisation du type `any` dans le code backend
+
 ```typescript
 // ❌ Problématique
-const currentGame = db.prepare('SELECT * FROM current_game WHERE id = ?').get(id) as any
-const gameSessions = allSessions.filter((session: any) => session.game_id === gameId)
+const currentGame = db
+  .prepare('SELECT * FROM current_game WHERE id = ?')
+  .get(id) as any
+const gameSessions = allSessions.filter(
+  (session: any) => session.game_id === gameId
+)
 ```
 
 **Solution :** Définir des interfaces TypeScript appropriées
+
 ```typescript
 // ✅ Solution
 export interface CurrentGameRecord {
@@ -31,11 +37,16 @@ export interface CurrentGameRecord {
   updated_at: string
 }
 
-const currentGame = db.prepare('SELECT * FROM current_game WHERE id = ?').get(id) as CurrentGameRecord
-const gameSessions = allSessions.filter((session: GameSessionRecord) => session.game_id === gameId)
+const currentGame = db
+  .prepare('SELECT * FROM current_game WHERE id = ?')
+  .get(id) as CurrentGameRecord
+const gameSessions = allSessions.filter(
+  (session: GameSessionRecord) => session.game_id === gameId
+)
 ```
 
 **Commandes utilisées :**
+
 ```bash
 # Identifier les erreurs "any"
 npx eslint backend/src/services/currentGameService.ts --ext .ts
@@ -48,6 +59,7 @@ npx eslint backend/src/services/currentGameService.ts backend/src/server.ts --ex
 ### 2. **Formatage Prettier Inconsistant**
 
 **Problème :** Indentation et espacement incorrects
+
 ```typescript
 // ❌ Problématique
 .prepare('SELECT * FROM current_game WHERE id = ?')
@@ -57,6 +69,7 @@ npx eslint backend/src/services/currentGameService.ts backend/src/server.ts --ex
 ```
 
 **Solution :** Application systématique de Prettier
+
 ```typescript
 // ✅ Solution (après Prettier)
 .prepare('SELECT * FROM current_game WHERE id = ?')
@@ -66,6 +79,7 @@ const sessionStmt = db.prepare(`
 ```
 
 **Commandes utilisées :**
+
 ```bash
 # Formater un fichier spécifique
 npx prettier --write backend/src/services/currentGameService.ts
@@ -78,6 +92,7 @@ npx prettier --write .
 ### 3. **Apostrophes Non-Échappées dans React**
 
 **Problème :** Apostrophes dans les chaînes JSX
+
 ```tsx
 // ❌ Problématique
 Ce jeu n'a pas encore été joué
@@ -86,6 +101,7 @@ l'historique des parties
 ```
 
 **Solution :** Échapper avec les entités HTML
+
 ```tsx
 // ✅ Solution
 Ce jeu n&apos;a pas encore été joué
@@ -96,18 +112,23 @@ l&apos;historique des parties
 ### 4. **Imports Dupliqués**
 
 **Problème :** Imports multiples du même module
+
 ```typescript
 // ❌ Problématique
-import { getAllGameSessions, GameSessionRecord } from './services/gameSessionService'
+import {
+  getAllGameSessions,
+  GameSessionRecord
+} from './services/gameSessionService'
 // ... plus loin dans le fichier
 import {
   getAllGameSessions,
-  getGameSessionById,
+  getGameSessionById
   // ...
 } from './services/gameSessionService'
 ```
 
 **Solution :** Consolidation des imports
+
 ```typescript
 // ✅ Solution
 import {
@@ -123,6 +144,7 @@ import {
 ### 5. **Dépendances useEffect Manquantes**
 
 **Problème :** Hook useEffect avec dépendances manquantes
+
 ```tsx
 // ❌ Problématique
 useEffect(() => {
@@ -132,6 +154,7 @@ useEffect(() => {
 ```
 
 **Solution :** Utilisation de useCallback et dépendances correctes
+
 ```tsx
 // ✅ Solution
 const loadSessions = useCallback(async () => {
@@ -139,7 +162,7 @@ const loadSessions = useCallback(async () => {
 }, [gameId, playerId])
 
 const loadFilterContext = useCallback(async () => {
-  // ... implementation  
+  // ... implementation
 }, [gameId, playerId])
 
 useEffect(() => {
@@ -151,7 +174,7 @@ useEffect(() => {
 ### 📊 **Processus de Résolution Systématique**
 
 | Phase | Erreurs | Action | Commande |
-|-------|---------|--------|----------|
+| --- | --- | --- | --- |
 | **Initial** | 1786 | Diagnostic complet | `npm run lint` |
 | **Prettier** | ~32 | Formatage automatique | `npx prettier --write .` |
 | **Types** | ~15 | Correction TypeScript | Interfaces + remplacement `any` |
@@ -190,21 +213,25 @@ module.exports = [
 ### Plugins et règles activés
 
 #### 🎯 TypeScript (`@typescript-eslint`)
+
 - **Vérification de types** : Détection des erreurs de type
 - **Règles strictes** : Variables non utilisées, types explicites
 - **Bonnes pratiques** : Éviter `any`, préférer les interfaces
 
 #### ⚛️ React (`eslint-plugin-react`)
+
 - **Hooks Rules** : Validation des règles des hooks React
 - **JSX** : Syntaxe et bonnes pratiques JSX
 - **Props** : Validation des props et PropTypes
 
 #### 📦 Import/Export (`eslint-plugin-import`)
+
 - **Résolution des modules** : Vérification des imports
 - **Ordre des imports** : Organisation cohérente
 - **Imports inutilisés** : Détection et suppression
 
 #### 🎨 Prettier Integration
+
 - **Formatage automatique** : Style de code cohérent
 - **Pas de conflits** : ESLint + Prettier harmonisés
 
@@ -227,18 +254,21 @@ module.exports = [
 ### Usage détaillé
 
 #### 🔍 Vérification complète
+
 ```bash
 npm run lint
 # Lint tout le projet (frontend + backend + tests)
 ```
 
 #### 🔧 Correction automatique
+
 ```bash
 npm run lint:fix
 # Corrige automatiquement les erreurs fixables
 ```
 
 #### 📂 Linting ciblé
+
 ```bash
 npm run lint:frontend  # Frontend uniquement
 npm run lint:backend   # Backend uniquement
@@ -248,21 +278,25 @@ npm run lint:tests     # Tests uniquement
 ## 🎯 Règles spécifiques du projet
 
 ### Variables et fonctions
+
 - **No unused vars** : Variables/imports inutilisés interdits
 - **Prefer const** : Utiliser `const` quand possible
 - **No var** : Interdiction de `var`, utiliser `let`/`const`
 
 ### TypeScript
+
 - **Explicit any** : Éviter `any`, utiliser des types précis
 - **Strict types** : Mode strict TypeScript activé
 - **Interface over type** : Préférer `interface` à `type`
 
 ### React
+
 - **Hook dependencies** : Dépendances complètes dans useEffect
 - **Functional components** : Préférer les composants fonctionnels
 - **Key props** : Clés obligatoires dans les listes
 
 ### Style et formatage
+
 - **Quotes** : Guillemets simples préférés
 - **Semicolons** : Points-virgules optionnels mais cohérents
 - **Indentation** : 2 espaces (géré par Prettier)
@@ -272,6 +306,7 @@ npm run lint:tests     # Tests uniquement
 ### Types d'erreurs communes
 
 #### ❌ Variables non utilisées
+
 ```typescript
 // ❌ Erreur
 import { useState, useEffect } from 'react' // useEffect non utilisé
@@ -281,6 +316,7 @@ import { useState } from 'react'
 ```
 
 #### ❌ Type `any` explicite
+
 ```typescript
 // ❌ Éviter
 const data: any = fetchData()
@@ -294,6 +330,7 @@ const data: ApiResponse = fetchData()
 ```
 
 #### ❌ Dépendances manquantes
+
 ```typescript
 // ❌ Erreur
 useEffect(() => {
@@ -309,12 +346,14 @@ useEffect(() => {
 ### Désactivation ponctuelle
 
 #### Pour une ligne
+
 ```typescript
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const data: any = legacyApiCall()
 ```
 
 #### Pour un fichier
+
 ```typescript
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Fichier avec besoins spécifiques (ex: services BGG)
@@ -325,6 +364,7 @@ const data: any = legacyApiCall()
 ### GitHub Actions
 
 Le linting est automatiquement exécuté sur :
+
 - **Pull Requests** : Vérification avant merge
 - **Push sur main** : Validation continue
 - **Tests automatiques** : Intégré au pipeline
@@ -338,25 +378,29 @@ npm run test
 ```
 
 Empêche les commits avec :
+
 - Erreurs de linting
 - Tests en échec
 
 ## 📊 Métriques et rapports
 
 ### État actuel du projet
+
 - **✅ 0 erreur** ESLint sur tout le projet (après résolution de 1786 erreurs ⚡)
 - **✅ 0 warning** sur 45+ fichiers TypeScript
 - **✅ 100% conformité** aux règles définies
 - **🚀 POWER LEVEL OVER 9000** - Type safety maximale atteinte !
 
 ### Couverture par type de fichier
+
 - **Frontend (src/)** : 15+ fichiers lintés
 - **Backend (backend/src/)** : 12+ fichiers lintés
-- **Tests (__tests__/)** : 8+ fichiers lintés
+- **Tests (**tests**/)** : 8+ fichiers lintés
 
 ## 🛡️ Bonnes pratiques
 
 ### 🔥 Prévention des Erreurs (leçons apprises)
+
 1. **Types stricts dès le début** - Éviter `any` comme la peste
 2. **Prettier configuré** - Formatage automatique pour éviter 1000+ erreurs
 3. **useCallback systématique** - Pour les dépendances useEffect
@@ -364,16 +408,19 @@ Empêche les commits avec :
 5. **Apostrophes échappées** - `&apos;` dans JSX
 
 ### Configuration d'équipe
+
 1. **IDE Setup** : Extension ESLint activée
 2. **Format on Save** : Prettier automatique
 3. **Pre-commit** : Hooks configurés
 
 ### Maintenance
+
 1. **Mise à jour régulière** des règles ESLint
 2. **Review des règles** lors des PR importantes
 3. **Documentation** des exceptions spécifiques
 
 ### Debugging
+
 ```bash
 # Vérifier la configuration
 npx eslint --print-config src/App.tsx
@@ -397,8 +444,9 @@ npx eslint --no-eslintrc --config '{"rules": {"no-console": "error"}}' src/
 ## 🐉 Battle Log - Historique des résolutions
 
 **2 septembre 2025** - FUSION DOCUMENTATION RÉUSSIE ⚡
+
 - Résolution complète : 1786 → 0 erreurs
-- Types TypeScript sécurisés 
+- Types TypeScript sécurisés
 - Formatage Prettier unifié
 - Apostrophes React échappées
 - useEffect dependencies fixées
@@ -406,4 +454,4 @@ npx eslint --no-eslintrc --config '{"rules": {"no-console": "error"}}' src/
 
 ---
 
-*Cette documentation FUSIONNÉE combine configuration système ET résolution pratique des problèmes. Elle reflète l'état OVER 9000 du système de linting du projet.* 🚀
+_Cette documentation FUSIONNÉE combine configuration système ET résolution pratique des problèmes. Elle reflète l'état OVER 9000 du système de linting du projet._ 🚀

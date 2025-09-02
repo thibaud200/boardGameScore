@@ -1,4 +1,5 @@
 # 🤖 Contexte IA — #### Frontend (Architecture complète) ✅
+
 - **Structure** : Layout, pages, services, types en place
 - **Dashboard** : Page d'accueil avec statistiques fonctionnelle
 - **Pages CRUD** : Players et Games avec opérations complètes ✅
@@ -20,6 +21,7 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 ## ✅ État du Projet (Septembre 2025)
 
 ### Backend (100% fonctionnel) ✅
+
 - **API REST** : 10 endpoints avec validation complète
 - **Base de données** : SQLite avec schéma complet et fixtures
 - **Tests** : 33/33 tests passent (22 intégration + 11 unitaires)
@@ -27,6 +29,7 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 - **Infrastructure** : Isolation DB, fixtures automatiques
 
 ### Frontend (Architecture complète) ✅
+
 - **Structure** : Layout, pages, services, types en place
 - **Dashboard** : Page d'accueil avec statistiques fonctionnelle
 - **Pages CRUD** : Players et Games avec opérations complètes
@@ -36,6 +39,7 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 - **Gestion des données** : Conversion TypeScript ↔ SQLite optimisée
 
 ### CI/CD & Quality (100% fonctionnel) ✅
+
 - **Pipeline GitHub Actions** : Lint, Build, Test automatisés
 - **Linting** : 0 erreur ESLint sur tout le projet
 - **Build** : Production builds optimisés sans erreur
@@ -43,6 +47,7 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 - **Hooks Git** : Pre-commit avec lint et tests obligatoires
 
 ### Développements Frontend Récents (Septembre 2025) ✅
+
 - **BGGSearch Component** : Intégration complète BoardGameGeek avec recherche et import
 - **Pages CRUD complètes** : Players et Games avec validation robuste
 - **Types TypeScript avancés** : Interfaces BGG, Game, Player avec gestion hybride
@@ -57,31 +62,37 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 Le projet suit les principes SOLID pour garantir un code maintenable, extensible et robuste :
 
 ### **S** - Single Responsibility Principle (SRP)
+
 - **Principe** : Une classe/module ne devrait avoir qu'une seule raison de changer
 - **Application** : Chaque service gère une seule entité (`playerService`, `gameService`, etc.)
 - **Exemple** : `gameSessionService` gère uniquement les sessions, pas les statistiques
 
 ### **O** - Open/Closed Principle (OCP)
+
 - **Principe** : Ouvert à l'extension, fermé à la modification
 - **Application** : Architecture modulaire permettant l'ajout de nouvelles fonctionnalités
 - **Exemple** : Nouveaux services ajoutables sans modifier l'infrastructure existante
 
 ### **L** - Liskov Substitution Principle (LSP)
+
 - **Principe** : Les sous-classes doivent pouvoir remplacer leurs classes parentes
 - **Application** : Interfaces cohérentes pour tous les services
 - **Exemple** : Tous les services respectent le même contrat d'API
 
 ### **I** - Interface Segregation Principle (ISP)
+
 - **Principe** : Ne pas forcer à dépendre d'interfaces non utilisées
 - **Application** : Interfaces TypeScript spécialisées par domaine
 - **Exemple** : `Player`, `Game`, `GameSession` plutôt qu'une interface monolithique
 
 ### **D** - Dependency Inversion Principle (DIP)
+
 - **Principe** : Dépendre d'abstractions, pas de concrétions
 - **Application** : Services utilisent des abstractions pour la DB
 - **Exemple** : Services dépendent de types TypeScript, pas d'implémentations SQLite directes
 
 ### 🎯 Bénéfices dans le projet
+
 - **Testabilité** : Chaque module peut être testé indépendamment (33/33 tests)
 - **Maintenabilité** : Modifications localisées, impacts limités
 - **Extensibilité** : Ajout facile de nouvelles fonctionnalités (BGG, templates)
@@ -96,28 +107,32 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 **Problématique identifiée** : Incompatibilité entre les types JavaScript/TypeScript et SQLite.
 
 #### Booléens
+
 - **SQLite** : Stocke les booléens comme `INTEGER` (0 ou 1)
 - **JavaScript** : Utilise les booléens natifs `true`/`false`
 - **Solution** : Conversion explicite dans le backend
+
   ```typescript
   // ❌ Erreur SQLite
   stmt.run(data.has_characters) // boolean
-  
+
   // ✅ Correct
   stmt.run(data.has_characters ? 1 : 0) // integer
   ```
 
 #### Valeurs Nulles
+
 - **SQLite** : Accepte uniquement `null`, pas `undefined`
 - **TypeScript** : Utilise `undefined` par défaut pour les propriétés optionnelles
 - **Solution** : Conversion et types hybrides
+
   ```typescript
   // Types supportant null ET undefined
   interface CreateGameRequest {
     game_description?: string | null
     supports_cooperative?: boolean | null
   }
-  
+
   // Nettoyage avant envoi SQLite
   const cleanedData = {
     ...formData,
@@ -126,6 +141,7 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
   ```
 
 #### Formulaires React
+
 - **React** : Les inputs n'acceptent pas `null` comme valeurs
 - **Backend** : Nécessite `null` pour SQLite
 - **Solution** : Valeurs par défaut dans le frontend
@@ -136,6 +152,7 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
   ```
 
 **Points d'attention pour les développeurs IA** :
+
 1. Toujours convertir les booléens en entiers (0/1) avant insertion SQLite
 2. Utiliser `|| null` pour les chaînes vides avant envoi au backend
 3. Utiliser `|| false` pour les booléens undefined dans les checkboxes React
@@ -161,25 +178,25 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 
 ### ✅ Infrastructure Tests Complète
 
-| Composant         | Status              | Détails                    |
-| ----------------- | ------------------- | -------------------------- |
+| Composant         | Status               | Détails                   |
+| ----------------- | -------------------- | ------------------------- |
 | Tests Backend     | 33/33 réussissent ✅ | 100% coverage critique    |
-| Tests Intégration | 22 tests ✅         | Tous les endpoints API     |
-| Tests Unitaires      | 11 tests ✅         | Tous les services backend  |
-| Isolation DB         | Complète ✅          | Tests en série             |
-| Fixtures             | Automatiques ✅      | FK cohérentes              |
-| CI/CD Pipeline       | Fonctionnelle ✅     | GitHub Actions             |
-| Build Production     | Optimisé ✅          | Vite + TypeScript          |
-| Linting              | 0 erreur ✅          | ESLint + Prettier          |
+| Tests Intégration | 22 tests ✅          | Tous les endpoints API    |
+| Tests Unitaires   | 11 tests ✅          | Tous les services backend |
+| Isolation DB      | Complète ✅          | Tests en série            |
+| Fixtures          | Automatiques ✅      | FK cohérentes             |
+| CI/CD Pipeline    | Fonctionnelle ✅     | GitHub Actions            |
+| Build Production  | Optimisé ✅          | Vite + TypeScript         |
+| Linting           | 0 erreur ✅          | ESLint + Prettier         |
 
 ### 🎯 Prochaines Étapes
 
-| Phase | Composant           | Statut        | Priorité |
-| ----- | ------------------- | ------------- | -------- |
-| 1     | Page Players CRUD   | 🔄 À faire     | Haute    |
-| 2     | Page Games          | ⏳ Planifié    | Haute    |
-| 3     | Page Sessions       | ⏳ Planifié    | Moyenne  |
-| 4     | API BGG Integration | ⏳ Planifié    | Basse    |
+| Phase | Composant           | Statut      | Priorité |
+| ----- | ------------------- | ----------- | -------- |
+| 1     | Page Players CRUD   | 🔄 À faire  | Haute    |
+| 2     | Page Games          | ⏳ Planifié | Haute    |
+| 3     | Page Sessions       | ⏳ Planifié | Moyenne  |
+| 4     | API BGG Integration | ⏳ Planifié | Basse    |
 
 ## ⚠️ Contraintes spécifiques IA
 
@@ -205,6 +222,33 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 - **TOUJOURS** synchroniser types DB ↔ backend ↔ frontend
 - **TOUJOURS** utiliser la documentation existante pour maintenir la cohérence
 - **TOUJOURS** proposer des solutions modulaires et maintenables
+- **TOUJOURS** les fichiers de documentation doivent toujours se trouver dans le répertoire `docs/` sauf le README.md de la racine
+
+- **POSSIBLE** de créer un fichier de travail temporaire supprimé après utilisation si nécessaire pour le développement
+
+### Documentation
+
+- **JAMAIS** créer de nouveaux fichiers de documentation
+- **TOUJOURS** Faire les modifications de documentation dans les fichiers suivants :
+- **POSSIBLE** de créer un fichier de travail temporaire supprimé après utilisation si nécessaire
+  - **API Docs** : `docs/API_DOC.md` - Documentation complète des endpoints
+  - **database** : `backend/database/docs/database-structure.md` - Détails techniques de la structure de la base de données
+  - **components** : `docs/components.md` - Documentation des composants UI
+  - **services** : `docs/services.md` - Documentation des services backend
+  - **types** : `docs/types.md` - Documentation des types TypeScript
+  - **Architecture Complete** : `docs/general/ARCHITECTURE_COMPLETE.md` - Architecture, principes SOLID et état technique
+  - **Contexte** : `docs/CONTEXT.md` - Contexte pour les IA
+  - **Guidelines** : `docs/general/TECHNICAL_GUIDELINES.md` - Bonnes pratiques techniques et conventions SQLite/JavaScript
+  - **Linting** : `docs/LINTING.md` - Règles de linting et formatage
+  - **Roadmap** : `docs/ROADMAP.md` - Planification et étapes de développement
+  - **Tests Complete** : `docs/tests/TESTS_COMPLETE.md` - Documentation complète des tests (progression, commandes, roadmap)
+  - **Session Journal** : `docs/SESSION_JOURNAL.md` - Journal de développement session 2 Sept (fichier Temporaire)
+  - **Technical References** : `docs/TECHNICAL_REFERENCES.md` - Détails techniques et choix d'architecture
+  - **Technical Issues** : `docs/TECHNICAL_ISSUES.md` - Problèmes techniques et solutions (fichier Temporaire)
+  - **Readme** : `README.md` - Vue d'ensemble du projet, instructions d'installation et de contribution
+  - **Readme** : `docs/README.md` - Documentation du projet, y compris les API et les composants
+  - **Readme** : `backend/README.md` - Documentation spécifique au backend, y compris les API et les services
+  - **Readme** : `__tests__/backend/README.md` - Documentation des tests, y compris les stratégies et les outils
 
 ### 🔧 Standards de Qualité
 
@@ -319,6 +363,7 @@ boardGameScore/
 ```
 
 **Conformité aux standards 2025 :**
+
 - ✅ Structure recommandée par Vite/React team
 - ✅ Configuration TypeScript standard
 - ✅ Séparation claire des responsabilités

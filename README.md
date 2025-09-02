@@ -3,8 +3,9 @@
 ## 🚀 Status du Projet
 
 ### ✅ Foundation Technique Complète (Septembre 2025)
+
 - **Backend Express.js + SQLite** : 10 endpoints, 33/33 tests ✅
-- **Frontend React + TypeScript** : Pages CRUD Players & Games complètes ✅  
+- **Frontend React + TypeScript** : Pages CRUD Players & Games complètes ✅
 - **Intégration BoardGameGeek** : Service BGG complet, composant BGGSearch ✅
 - **Types TypeScript** : Interfaces complètes pour Game, Player, BGG avec gestion hybride ✅
 - **Services Frontend** : BGGService, PlayersService, GamesService documentés ✅
@@ -12,6 +13,7 @@
 - **Qualité Code** : 0 erreurs ESLint, typage TypeScript strict ✅
 
 ### 🎨 Prochaine Phase : UI/UX Refonte
+
 Foundation technique solide permettant de se concentrer sur l'amélioration de l'interface utilisateur et de l'expérience globale.
 
 ---
@@ -30,6 +32,7 @@ Un hook Husky corrige automatiquement le message de commit si ## Database
 - **Coverage** :La structure complète, les tables, relations, migrations et requêtes sont ## Documentation
 
 ### 📚 Docum- Séparation stLa structure complète, les tables, relations, migrations et requêtes sont documentées dans : ➡️ [docs/backend/database-structure.md](docs/backend/database-structure.md)icte frontend/backend
+
 - Modularité et tests obligatoires
 - Migrations pour toute modif DB
 - Validation et sécurité systématiques
@@ -51,17 +54,21 @@ Un hook Husky corrige automatiquement le message de commit si ## Database
 - **[docs/general/TECHNICAL_STATE.md](docs/general/TECHNICAL_STATE.md)** : État technique & configuration complète
 
 ### 🔌 Documentation API & Backend
+
 - **[docs/backend/API_DOC.md](docs/backend/API_DOC.md)** : Documentation complète des endpoints REST
 - **[docs/backend/database-structure.md](docs/backend/database-structure.md)** : Structure complète de la base de données
 - **[backend/README.md](backend/README.md)** : Documentation spécifique du backend
 
 ### 🧪 Documentation Tests
-- **[__tests__/backend/README.md](__tests__/backend/README.md)** : Documentation des tests backend
+
+- **[**tests**/backend/README.md](**tests**/backend/README.md)** : Documentation des tests backend
 
 ### 🔍 Documentation Qualité & Linting
+
 - **[docs/general/LINTING.md](docs/general/LINTING.md)** : Configuration ESLint, règles et bonnes pratiques
 
 ### ⚙️ Configuration
+
 - **[commitlint.config.cjs](commitlint.config.cjs)** : Convention de commit
 - **[eslint.config.cjs](eslint.config.cjs)** : Configuration linting
 - **[.prettierrc.cjs](.prettierrc.cjs)** : Configuration formatage
@@ -71,6 +78,7 @@ Un hook Husky corrige automatiquement le message de commit si ## Database
 ## Standards & Best Practices
 
 ### 🎯 Règles de Développement
+
 - **Pas de type `any`** : TypeScript strict appliqué
 - **Séparation frontend/backend** : APIs REST uniquement
 - **Modularité obligatoire** : Services, composants, types séparés
@@ -80,6 +88,7 @@ Un hook Husky corrige automatiquement le message de commit si ## Database
 - **Documentation** : À jour à chaque feature
 
 ### 🔧 Outils de Qualité
+
 - **EditorConfig** : Formatage uniforme (LF, UTF-8, 2 spaces)
 - **Prettier** : Formatage automatique du code
 - **ESLint** : Linting strict (React, TypeScript, Hooks)
@@ -87,6 +96,7 @@ Un hook Husky corrige automatiquement le message de commit si ## Database
 - **Commitlint** : Messages conventionnels obligatoires
 
 ### 📝 Conventions de Commit
+
 ```
 feat: nouvelle fonctionnalité
 fix: correction de bug
@@ -100,6 +110,7 @@ chore: tâches de maintenance
 ## Historique des Corrections
 
 ### 🛠️ Corrections Récentes (Septembre 2025)
+
 - **Line endings** : Normalisé CRLF → LF pour compatibilité lint
 - **TypeScript config** : moduleResolution `bundler` pour React Router 7
 - **PostCSS** : Migration vers @tailwindcss/postcss pour Tailwind v4
@@ -108,6 +119,7 @@ chore: tâches de maintenance
 - **Build** : Production builds optimisés sans erreur
 
 ### ✅ État Actuel
+
 - **0 erreur** ESLint sur tout le projet → [Documentation Linting](docs/LINTING.md)
 - **33/33 tests** passent en série
 - **Build** production fonctionnel
@@ -117,6 +129,7 @@ chore: tâches de maintenance
 ## Documentation
 
 ### 📚 Références
+
 - **[docs/README.md](docs/README.md)** : Index navigation complète
 - **[docs/general/CONTEXT.md](docs/general/CONTEXT.md)** : Règles IA, standards, workflow
 - **[docs/general/DEVELOPMENT_GUIDELINES.md](docs/general/DEVELOPMENT_GUIDELINES.md)** : Guide des bonnes pratiques
@@ -127,22 +140,24 @@ chore: tâches de maintenance
 - **[docs/general/ROADMAP.md](docs/general/ROADMAP.md)** : Feuille de route fonctionnalités
 
 ### ⚠️ Points d'attention développement
+
 - **Types SQLite** : Conversion booléens → entiers (voir [DEVELOPMENT_GUIDELINES.md](docs/general/DEVELOPMENT_GUIDELINES.md))
 - **Valeurs null/undefined** : Gestion spécifique JavaScript ↔ SQLite
 - **Formulaires React** : Valeurs par défaut obligatoires pour inputs
 
 ### 🔄 Maintenance
+
 - **Tests** : Exécutés automatiquement sur chaque commit
 - **Linting** : Vérifié avant chaque commit via Husky
 - **Documentation** : Mise à jour avec chaque feature
 - **Migrations** : Versionnées et documentées
 - **Dependencies** : Audit de sécurité régulier33/33 tests réussissent (100% des fonctionnalités critiques)
 - **Types de tests** :
-  - Tests d'intégration API (22 tests) 
+  - Tests d'intégration API (22 tests)
   - Tests unitaires services (11 tests)
 - **Isolation** : Base de test séparée avec fixtures automatiques
 - **CI/CD** : Husky empêche les commits si tests ou lint échouent
-- **Configuration** : Tests en série (`singleFork: true`) pour éliminer les conflits de concurrencee principale** : `backend/database/database.db` - Base de production avec schéma complet
+- **Configuration** : Tests en série (`singleFork: true`) pour éliminer les conflits de concurrencee principale\*\* : `backend/database/database.db` - Base de production avec schéma complet
 - **Base de test** : `backend/database/test.db` - Base isolée pour les tests automatisés
 - **Sélection automatique** : Le système choisit la bonne base selon l'environnement
 - **Fixtures** : Système d'injection de données de test avec FK cohérentes
@@ -159,18 +174,22 @@ node backend/src/initTestDatabase.ts
 ```
 
 La structure complète, les tables, relations et migrations sont documentées dans :  
-➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)Conventional Commit n'est pas respecté.
-Si tu fais un commit avec un message libre, il sera préfixé par `chore:` pour garantir la conformité.
+➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)Conventional Commit n'est pas respecté. Si tu fais un commit avec un message libre, il sera préfixé par `chore:` pour garantir la conformité.
 
 Exemple :
+
 ```
 git commit -m "ajout doc et tests"
 ```
+
 devient automatiquement :
+
 ```
 chore: ajout doc et tests
 ```
+
 Ce mécanisme permet de ne jamais bloquer les commits à cause du format.
+
 # Board Game Score Tracker
 
 Application web pour gérer les parties de jeux de société, suivi multi-modes, gestion des personnages, statistiques avancées, et intégration BoardGameGeek.
@@ -196,6 +215,7 @@ Board Game Score Tracker propose une stack moderne, des outils de qualité et un
 ## Stack Technique
 
 ### Frontend
+
 - **React 19** avec TypeScript 5.x
 - **React Router 7** pour la navigation
 - **Tailwind CSS 4** avec @tailwindcss/forms
@@ -203,21 +223,23 @@ Board Game Score Tracker propose une stack moderne, des outils de qualité et un
 - **API client** avec gestion d'erreurs robuste
 
 ### Backend
+
 - **Node.js 24** avec Express.js 5
 - **TypeScript 5.x** strict
 - **better-sqlite3** pour SQLite
 - **Architecture en services** modulaires
 
 ### Outils de Développement
+
 - **Vitest** pour les tests
-- **ESLint 9** + Prettier 3** pour la qualité du code
+- **ESLint 9** + Prettier 3\*\* pour la qualité du code
 - **Husky 9** + Commitlint pour les conventions Git
 - **GitHub Actions** pour CI/CD
-
 
 ## Frontend Architecture
 
 ### 📁 Structure
+
 ```
 src/
 ├── components/          # Composants réutilisables
@@ -235,12 +257,14 @@ src/
 ```
 
 ### 🎯 Pages Implémentées ✅
+
 - **Dashboard** : Vue d'ensemble avec statistiques en temps réel
 - **Players** : CRUD complet (liste, création, édition, suppression)
 - **Games** : CRUD complet avec intégration BoardGameGeek
 - **Layout** : Navigation responsive avec menu principal
 
 ### 🔗 API Integration ✅
+
 - Client HTTP robuste avec gestion d'erreurs
 - Services typés pour chaque endpoint backend
 - Types TypeScript synchronisés avec la base de données
@@ -249,6 +273,7 @@ src/
 ## Backend Architecture
 
 ### 📁 Structure
+
 ```
 backend/
 ├── src/
@@ -263,6 +288,7 @@ backend/
 ```
 
 ### 🚀 API Endpoints (10) ✅
+
 - **Players** : CRUD complet + statistiques
 - **Games** : Gestion des jeux avec métadonnées BGG
 - **Game Sessions** : Sessions de jeu avec scores
@@ -283,6 +309,7 @@ Consultez la documentation complète des endpoints backend ici : [docs/API_DOC.m
 ✅ **Status : 33/33 tests réussissent** (Septembre 2025)
 
 ### 🧪 Types de Tests
+
 - **Tests d'intégration API** : 22 tests couvrant tous les endpoints
 - **Tests unitaires backend** : 11 tests pour tous les services
 - **Coverage** : 100% des fonctionnalités critiques
@@ -290,21 +317,24 @@ Consultez la documentation complète des endpoints backend ici : [docs/API_DOC.m
 - **Fixtures** : Système d'injection automatique avec FK cohérentes
 
 ### 🔧 Configuration
+
 - **Framework** : Vitest avec `singleFork: true`
 - **Bases séparées** : `database.db` (prod) / `test.db` (tests)
 - **Fixtures automatiques** : Injection de données cohérentes
 - **CI/CD** : Tests obligatoires avant merge
 
 ### 📊 Détails par Service
+
 - **Players** : 5 tests (CRUD + validation)
 - **Game Sessions** : 4 tests (création + relations)
 - **Tous les autres services** : 2 tests chacun (get + create)
 
-Consultez la documentation détaillée : [__tests__/backend/README.md](./__tests__/backend/README.md)
+Consultez la documentation détaillée : [**tests**/backend/README.md](./__tests__/backend/README.md)
 
 ## Configuration et Standards
 
 ### 🔧 Build & Development
+
 ```bash
 # Installation
 npm install
@@ -326,12 +356,14 @@ npm run format
 ```
 
 ### 📋 Configuration TypeScript
+
 - **moduleResolution** : `bundler` (compatibilité React Router 7)
 - **target** : `ESNext`
 - **strict** : `true`
 - **skipLibCheck** : `true`
 
 ### 🎨 Configuration ESLint/Prettier
+
 - **ESLint 9** avec configuration flat
 - **Prettier 3** avec formatage automatique
 - **Règles strictes** : React, TypeScript, Hooks
@@ -405,16 +437,18 @@ boardGameScore/
 ## CI/CD Pipeline
 
 ### 🚀 GitHub Actions
+
 ```yaml
 name: CI
 on: [push, pull_request]
 jobs:
-  lint:    # ESLint sur src, backend/src, __tests__
-  build:   # npm run build (Vite + TypeScript)
-  test:    # npm test (33 tests Vitest)
+  lint: # ESLint sur src, backend/src, __tests__
+  build: # npm run build (Vite + TypeScript)
+  test: # npm test (33 tests Vitest)
 ```
 
 ### 🔒 Quality Gates
+
 - **Husky hooks** : Lint + tests avant commit
 - **Commitlint** : Messages de commit conventionnels
 - **Pipeline obligatoire** : Tous les jobs doivent passer
@@ -423,15 +457,17 @@ jobs:
 ## Initialisation Database
 
 ### 🗄️ Scripts d'Initialisation
+
 ```bash
 # Base principale (production)
 node backend/src/initDatabase.ts
 
-# Base de test (développement)  
+# Base de test (développement)
 node backend/src/initTestDatabase.ts
 ```
 
 ### 📊 Fixtures Automatiques
+
 - **Données cohérentes** : FK automatiques, timestamps réalistes
 - **Joueurs** : Alice, Bob avec historiques
 - **Jeux** : Catan, 7 Wonders avec métadonnées
@@ -446,6 +482,7 @@ La structure complète est documentée dans :
 ## 🚀 Démarrage
 
 ### ⚡ Démarrage Rapide (Recommandé)
+
 ```bash
 # Clone et installation
 git clone https://github.com/thibaud200/boardGameScore.git
@@ -461,12 +498,14 @@ npm run dev:full
 ### 🔧 Démarrage Séparé
 
 #### Frontend uniquement
+
 ```bash
 npm run dev
 # ➡️ http://localhost:5173
 ```
 
-#### Backend uniquement  
+#### Backend uniquement
+
 ```bash
 npm run dev:backend
 # ➡️ http://localhost:3001
@@ -474,6 +513,7 @@ npm run dev:backend
 ```
 
 #### Démarrage manuel backend
+
 ```bash
 cd backend
 npm install
@@ -482,19 +522,22 @@ tsx src/server.ts
 ```
 
 ### ✅ Vérification du Démarrage Backend
+
 Le serveur backend affiche au démarrage :
+
 ```
 Base de données initialisée avec le schéma.
 Server running on port 3001
 ```
 
 **Tests de connectivité :**
+
 ```bash
 # Test API Players
 curl http://localhost:3001/api/players
 # Réponse: [] (liste vide)
 
-# Test intégration BGG  
+# Test intégration BGG
 curl "http://localhost:3001/api/bgg/search?q=Catan"
 # Réponse: JSON avec résultats BGG
 ```

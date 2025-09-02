@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
-      
+
   build:
     runs-on: ubuntu-22.04
     needs: lint
@@ -33,7 +33,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
-      
+
   test:
     runs-on: ubuntu-22.04
     needs: build

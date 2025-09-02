@@ -1,7 +1,6 @@
 # 🧪 Tests Backend — Board Game Score Tracker
 
-✅ **Status : 33/33 tests réussissent** (Septembre 2025)
-🚨 **Manques identifiés : BGGService non testé**
+✅ **Status : 33/33 tests réussissent** (Septembre 2025) 🚨 **Manques identifiés : BGGService non testé**
 
 Ce dossier contient les tests automatisés pour le backend (Express.js + SQLite).
 
@@ -14,16 +13,17 @@ Ce dossier contient les tests automatisés pour le backend (Express.js + SQLite)
 - **Framework** : Vitest avec configuration série pour éviter les conflits de DB
 
 ### ❌ Tests Manquants Critiques
+
 - **bggService.ts** : Parsing XML, cache, rate limiting, conversion BGG
 - **Endpoints BGG** : `/api/bgg/search`, `/api/bgg/game/:id`
 - **Integration BGG** : CORS, timeout, gestion erreurs API
 
 ## Base de données utilisée
 
-**Isolation complète** : Tous les tests utilisent automatiquement la base de test (`backend/database/test.db`).
-La sélection est faite dynamiquement dans le code d'initialisation (`initDatabase.ts`).
+**Isolation complète** : Tous les tests utilisent automatiquement la base de test (`backend/database/test.db`). La sélection est faite dynamiquement dans le code d'initialisation (`initDatabase.ts`).
 
 ### Système de fixtures automatique
+
 - **Injection automatique** : `wipeAllFixtures()` réinitialise et peuple la base de test
 - **Données cohérentes** : FK correctes, contraintes respectées
 - **Isolation parfaite** : Aucun conflit entre tests
@@ -47,8 +47,9 @@ Tests configurés en **mode série** (`singleFork: true`) pour éliminer les con
 ## Structure des tests
 
 ### Tests d'intégration (`__tests__/integration/`)
+
 - `players.integration.test.ts` - API joueurs (5 tests)
-- `games.integration.test.ts` - API jeux (1 test) 
+- `games.integration.test.ts` - API jeux (1 test)
 - `game_sessions.integration.test.ts` - API sessions (4 tests)
 - `game_characters.integration.test.ts` - API personnages (1 test)
 - `game_extensions.integration.test.ts` - API extensions (1 test)
@@ -58,6 +59,7 @@ Tests configurés en **mode série** (`singleFork: true`) pour éliminer les con
 - `player_game_stats.integration.test.ts` - API stats joueur-jeu (1 test)
 
 ### Tests unitaires (`__tests__/backend/`)
+
 - Tests pour tous les services backend (11 tests)
 - Mocks et fixtures cohérents
 
@@ -71,6 +73,7 @@ Tests configurés en **mode série** (`singleFork: true`) pour éliminer les con
 ## Bonnes pratiques
 
 ✅ **Accomplies**
+
 - ✅ Isolation complète des bases de données (prod/test)
 - ✅ Nettoyage automatique de la base de test entre chaque suite
 - ✅ Tests pour chaque fonctionnalité (100% coverage des critiques)

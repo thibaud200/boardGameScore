@@ -2,7 +2,6 @@
  * Service d'intégration BoardGameGeek
  * Gère les requêtes API, le parsing XML et le cache
  */
-import fetch from 'node-fetch'
 import { parseString } from 'xml2js'
 import { promisify } from 'util'
 
