@@ -1,30 +1,35 @@
 import React from 'react'
-import './App.css'
-import App from './App'
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
+import Layout from './components/Layout'
+import Dashboard from './pages/Dashboard'
+import './index.css'
+
+// TODO: Importer les autres pages quand elles seront créées
+// import Players from './pages/Players'
+// import Games from './pages/Games'
+// import Sessions from './pages/Sessions'
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route
-          path="/about"
-          element={
-            <>
-              <div className="text-center">
-                <h1 className="text-xl">About</h1>
-                <div>
-                  <Link to="/" className="text-purple-400 underline">
-                    Home
-                  </Link>
-                </div>
-              </div>
-            </>
-          }
-        />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          {/* TODO: Ajouter les autres routes */}
+          {/* <Route path="/players" element={<Players />} /> */}
+          {/* <Route path="/games" element={<Games />} /> */}
+          {/* <Route path="/sessions" element={<Sessions />} /> */}
+          
+          {/* Route de fallback temporaire */}
+          <Route path="*" element={
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Page en construction</h2>
+              <p className="text-gray-600">Cette page sera bientôt disponible</p>
+            </div>
+          } />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   </React.StrictMode>
 )

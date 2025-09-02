@@ -52,13 +52,32 @@
 - Ajout des migrations automatiques pour la base
     - Mettre en place un système pour faire évoluer le schéma de la base sans perte de données.
 
-### Frontend (React + Vite)
+### Frontend (React + Vite) - En cours de développement
+
+#### Phase 1 : Infrastructure Frontend ⏳
+- Structure des dossiers (`components/`, `pages/`, `services/`, `types/`)
+- Layout principal avec navigation responsive
+- Configuration du client API pour consommer le backend
+
+#### Phase 2 : Pages principales ⏳  
+- Dashboard/Accueil avec vue d'ensemble
+- Page Players avec CRUD complet (Create, Read, Update, Delete)
+- Page Games avec CRUD et préparation API BGG future
+- Navigation entre les pages
+
+#### Phase 3 : Fonctionnalités avancées (À venir)
+- Sessions de jeu avec gestion des scores
+- Statistiques et graphiques
+- Intégration BoardGameGeek API
+- Recherche et filtres avancés
+
+#### Prérequis techniques
 - Développement complet de l'interface utilisateur React
 - Amélioration de l'UI (Radix UI, Phosphor Icons)
 - Couverture de tests >80% sur le frontend
 - Internationalisation (i18n)
 - Ajout de tests d'intégration et end-to-end frontend
-- Connexion avec l'API backend fonctionnelle
+- Connexion avec l'API backend fonctionnelle ✅
 
 ## 📅 Historique
 

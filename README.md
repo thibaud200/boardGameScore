@@ -57,6 +57,7 @@ Application web pour gérer les parties de jeux de société, suivi multi-modes,
 - **Base de données** : SQLite avec schéma complet et fixtures ✅
 - **Tests d'intégration** : Coverage complète des endpoints ✅
 - **Tests unitaires** : Tous les services backend testés ✅
+- **Frontend** : En développement - Structure et pages principales ⏳
 
 ## About
 

@@ -10,12 +10,19 @@ Board Game Score Tracker est une application web pour gérer les parties de jeux
 
 ## ✅ État du Projet (Septembre 2025)
 
+### Backend (100% fonctionnel) ✅
 - **Backend** : 100% fonctionnel avec 33/33 tests qui passent ✅
 - **API REST** : 10 endpoints avec validation complète ✅
 - **Base de données** : SQLite avec schéma complet et fixtures ✅
 - **Tests d'intégration** : Coverage complète des endpoints ✅
 - **Tests unitaires** : Tous les services backend testés ✅
 - **Infrastructure** : Isolation DB, fixtures automatiques, tests en série ✅
+
+### Frontend (En développement) ⏳
+- **Phase 1** : Structure et Layout (⏳ en cours)
+- **Phase 2** : Pages principales (Dashboard, Players, Games)
+- **Phase 3** : CRUD complet avec API backend
+- **Phase 4** : Préparation intégration API BGG future
 
 ---
 
