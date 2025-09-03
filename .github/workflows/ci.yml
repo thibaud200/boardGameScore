@@ -28,10 +28,6 @@ jobs:
         with:
           node-version: '24.7'
           cache: 'npm'
-      - name: Supprimer node_modules et package-lock.json
-        run: |
-          rm -rf node_modules
-          rm -f package-lock.json
       - run: npm ci --legacy-peer-deps
       - run: npm run build
 
