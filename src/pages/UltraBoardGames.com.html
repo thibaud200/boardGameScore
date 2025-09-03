@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyseur de Données de Jeux</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 300;
+      }
+
+      .header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+      }
+
+      .controls {
+        padding: 30px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .game-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .game-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .game-card:hover {
+        border-color: #007bff;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .game-card.selected {
+        border-color: #28a745;
+        background: #f8fff9;
+      }
+
+      .game-card h3 {
+        margin: 0 0 8px 0;
+        color: #2c3e50;
+      }
+
+      .game-card .status {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      .analyze-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 20px auto 0;
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+      }
+
+      .analyze-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+      }
+
+      .analyze-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .results {
+        padding: 30px;
+        display: none;
+      }
+
+      .game-result {
+        margin-bottom: 40px;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .game-result-header {
+        background: linear-gradient(135deg, #495057, #6c757d);
+        color: white;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .game-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .status-success {
+        background: #28a745;
+      }
+
+      .status-warning {
+        background: #ffc107;
+        color: #212529;
+      }
+
+      .status-error {
+        background: #dc3545;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1px;
+        background: #dee2e6;
+      }
+
+      .comparison-section {
+        background: white;
+        padding: 25px;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 8px;
+      }
+
+      .data-list {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .data-item {
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        border-left: 4px solid transparent;
+      }
+
+      .found {
+        background: #e8f5e8;
+        border-left-color: #28a745;
+      }
+
+      .missing {
+        background: #fff3cd;
+        border-left-color: #ffc107;
+      }
+
+      .extra {
+        background: #f8d7da;
+        border-left-color: #dc3545;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .summary {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .summary-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎯 Analyseur de Données de Jeux</h1>
+        <p>Comparaison UltraBoardGames vs Structure Base de Données</p>
+      </div>
+
+      <div class="controls">
+        <div class="game-grid">
+          <div class="game-card" data-game="citadels">
+            <h3>🏰 Citadels</h3>
+            <div class="status">Non analysé</div>
+          </div>
+          <div class="game-card" data-game="dark-souls">
+            <h3>⚔️ Dark Souls</h3>
+            <div class="status">Non analysé</div>
+          </div>
+          <div class="game-card" data-game="this-war-of-mine">
+            <h3>🏚️ This War of Mine</h3>
+            <div class="status">Non analysé</div>
+          </div>
+          <div class="game-card" data-game="zombicide">
+            <h3>🧟 Zombicide</h3>
+            <div class="status">Non analysé</div>
+          </div>
+          <div class="game-card" data-game="arkham-horror">
+            <h3>🐙 Arkham Horror</h3>
+            <div class="status">Non analysé</div>
+          </div>
+        </div>
+        <button class="analyze-btn" onclick="analyzeSelectedGames()">
+          🔍 Analyser les Jeux Sélectionnés
+        </button>
+      </div>
+
+      <div class="results" id="results"></div>
+    </div>
+
+    <script>
+      // Structure de votre base de données
+      const DB_STRUCTURE = {
+        games: [
+          'game_id',
+          'game_id_bgg',
+          'game_name',
+          'game_description',
+          'game_image',
+          'thumbnail',
+          'year_published',
+          'min_players',
+          'max_players',
+          'playing_time',
+          'min_play_time',
+          'max_play_time',
+          'age',
+          'has_characters',
+          'characters',
+          'supports_cooperative',
+          'supports_competitive',
+          'supports_campaign',
+          'default_mode',
+          'publisher',
+          'designer',
+          'artist',
+          'category',
+          'mechanic',
+          'family',
+          'expansions',
+          'accessories',
+          'polls',
+          'stats'
+        ],
+        game_characters: [
+          'characters_id',
+          'game_id',
+          'characters_name',
+          'characters_description',
+          'characters_abilities',
+          'characters_image_url',
+          'characters_source',
+          'characters_external_id',
+          'class_type'
+        ],
+        game_extensions: [
+          'extensions_id',
+          'extensions_name',
+          'base_game_id',
+          'extensions_description',
+          'add_max_players',
+          'year_published',
+          'image_url',
+          'thumbnail',
+          'publisher',
+          'designer',
+          'artist',
+          'category',
+          'mechanic',
+          'family',
+          'stats',
+          'tags',
+          'is_active'
+        ]
+      }
+
+      const GAME_MAPPINGS = {
+        citadels: {
+          name: 'Citadels',
+          urls: [
+            'https://www.ultraboardgames.com/citadels/game-rules.php',
+            'https://www.ultraboardgames.com/citadels/characters.php'
+          ]
+        },
+        'dark-souls': {
+          name: 'Dark Souls: The Board Game',
+          urls: ['https://www.ultraboardgames.com/dark-souls/game-rules.php']
+        },
+        'this-war-of-mine': {
+          name: 'This War of Mine: The Board Game',
+          urls: [
+            'https://www.ultraboardgames.com/this-war-of-mine/game-rules.php'
+          ]
+        },
+        zombicide: {
+          name: 'Zombicide',
+          urls: ['https://www.ultraboardgames.com/zombicide/game-rules.php']
+        },
+        'arkham-horror': {
+          name: 'Arkham Horror',
+          urls: ['https://www.ultraboardgames.com/arkham-horror/game-rules.php']
+        }
+      }
+
+      let selectedGames = new Set()
+      let analysisResults = {}
+
+      // Gestion de la sélection des jeux
+      document.querySelectorAll('.game-card').forEach((card) => {
+        card.addEventListener('click', () => {
+          const game = card.dataset.game
+          if (selectedGames.has(game)) {
+            selectedGames.delete(game)
+            card.classList.remove('selected')
+          } else {
+            selectedGames.add(game)
+            card.classList.add('selected')
+          }
+          updateAnalyzeButton()
+        })
+      })
+
+      function updateAnalyzeButton() {
+        const btn = document.querySelector('.analyze-btn')
+        btn.disabled = selectedGames.size === 0
+        btn.textContent =
+          selectedGames.size === 0
+            ? '🔍 Sélectionnez des jeux à analyser'
+            : `🔍 Analyser ${selectedGames.size} jeu(s) sélectionné(s)`
+      }
+
+      async function analyzeSelectedGames() {
+        if (selectedGames.size === 0) return
+
+        const resultsDiv = document.getElementById('results')
+        resultsDiv.innerHTML =
+          '<div class="loading"><div class="loading-spinner"></div><h3>Analyse en cours...</h3><p>Récupération des données depuis UltraBoardGames...</p></div>'
+        resultsDiv.style.display = 'block'
+
+        for (const gameKey of selectedGames) {
+          await analyzeGame(gameKey)
+        }
+
+        displayResults()
+      }
+
+      async function analyzeGame(gameKey) {
+        const gameInfo = GAME_MAPPINGS[gameKey]
+        const card = document.querySelector(`[data-game="${gameKey}"]`)
+
+        card.querySelector('.status').textContent = 'Analyse en cours...'
+        card.querySelector('.status').style.color = '#007bff'
+
+        try {
+          // Simulation de l'analyse (en réalité, il faudrait faire du web scraping)
+          const mockData = await getMockGameData(gameKey)
+          analysisResults[gameKey] = mockData
+
+          card.querySelector('.status').textContent = 'Analysé ✓'
+          card.querySelector('.status').style.color = '#28a745'
+        } catch (error) {
+          card.querySelector('.status').textContent = 'Erreur ❌'
+          card.querySelector('.status').style.color = '#dc3545'
+          analysisResults[gameKey] = { error: error.message }
+        }
+      }
+
+      async function getMockGameData(gameKey) {
+        // Simulation de données récupérées depuis UltraBoardGames
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 + Math.random() * 2000)
+        )
+
+        const mockData = {
+          citadels: {
+            basic_info: {
+              name: 'Citadels',
+              description: 'A card game of medieval intrigue and city building',
+              min_players: 2,
+              max_players: 8,
+              age: 10,
+              playing_time: 60,
+              publisher: 'Z-Man Games'
+            },
+            characters: [
+              {
+                name: 'Assassin',
+                description: 'Can eliminate another character',
+                abilities: 'Murder another character'
+              },
+              {
+                name: 'Thief',
+                description: 'Can steal gold from another character',
+                abilities: 'Steal all gold from target'
+              },
+              {
+                name: 'Magician',
+                description: 'Can exchange cards with other players',
+                abilities: 'Exchange hands or discard/draw'
+              },
+              {
+                name: 'King',
+                description: 'Gets crown and gold for noble districts',
+                abilities: 'Receives crown, +1 gold per noble district'
+              },
+              {
+                name: 'Bishop',
+                description:
+                  'Protected from Warlord, gets gold for religious districts',
+                abilities:
+                  'Destruction protection, +1 gold per religious district'
+              },
+              {
+                name: 'Merchant',
+                description: 'Gets extra gold and bonus for trade districts',
+                abilities: '+1 gold after action, +1 per trade district'
+              },
+              {
+                name: 'Architect',
+                description:
+                  'Can build multiple districts and draws extra cards',
+                abilities: '+2 cards, can build up to 3 districts'
+              },
+              {
+                name: 'Warlord',
+                description: 'Can destroy districts and gets gold for military',
+                abilities: 'Destroy districts, +1 gold per military district'
+              }
+            ],
+            extensions: [],
+            extra_fields: ['game_mechanics', 'theme', 'complexity_rating']
+          },
+          'dark-souls': {
+            basic_info: {
+              name: 'Dark Souls: The Board Game',
+              description:
+                'Cooperative dungeon crawler based on the video game',
+              min_players: 1,
+              max_players: 4,
+              age: 14,
+              playing_time: 120,
+              publisher: 'Steamforged Games'
+            },
+            characters: [
+              {
+                name: 'Knight',
+                description: 'Balanced fighter with sword and board',
+                abilities: 'High defense, moderate attack'
+              },
+              {
+                name: 'Herald',
+                description: 'Magic user with healing abilities',
+                abilities: 'Healing spells, magic attacks'
+              },
+              {
+                name: 'Assassin',
+                description: 'Fast attacker with dual weapons',
+                abilities: 'High speed, critical strikes'
+              },
+              {
+                name: 'Warrior',
+                description: 'Heavy damage dealer',
+                abilities: 'High strength, two-handed weapons'
+              }
+            ],
+            extensions: [
+              {
+                name: 'Iron Keep Expansion',
+                description: 'New area and bosses'
+              },
+              {
+                name: 'Painted World of Ariamis',
+                description: 'Snow-themed expansion'
+              }
+            ],
+            extra_fields: ['difficulty_rating', 'boss_list', 'equipment_types']
+          },
+          'this-war-of-mine': {
+            basic_info: {
+              name: 'This War of Mine: The Board Game',
+              description: 'Survival game set during wartime',
+              min_players: 1,
+              max_players: 6,
+              age: 18,
+              playing_time: 180,
+              publisher: '11 bit studios'
+            },
+            characters: [
+              {
+                name: 'Pavle',
+                description: 'Fast scavenger',
+                abilities: 'High speed, quiet movement'
+              },
+              {
+                name: 'Katia',
+                description: 'Good with children',
+                abilities: 'Childcare, morale bonus'
+              },
+              {
+                name: 'Bruno',
+                description: 'Strong cook',
+                abilities: 'Cooking, high carrying capacity'
+              },
+              {
+                name: 'Cveta',
+                description: 'Skilled bargainer',
+                abilities: 'Trading, negotiation'
+              }
+            ],
+            extensions: [
+              {
+                name: 'Tales from the Ruined City',
+                description: 'Additional scenarios'
+              }
+            ],
+            extra_fields: ['morale_system', 'resource_types', 'scenario_count']
+          },
+          zombicide: {
+            basic_info: {
+              name: 'Zombicide',
+              description: 'Cooperative zombie survival game',
+              min_players: 1,
+              max_players: 6,
+              age: 13,
+              playing_time: 90,
+              publisher: 'CMON'
+            },
+            characters: [
+              {
+                name: 'Wanda',
+                description: 'The Cop',
+                abilities: 'Police training, weapon expertise'
+              },
+              {
+                name: 'Josh',
+                description: 'The Salesman',
+                abilities: 'Lucky, good with ranged weapons'
+              },
+              {
+                name: 'Amy',
+                description: 'The Goth',
+                abilities: 'Stealth, melee combat'
+              },
+              {
+                name: 'Doug',
+                description: 'The Slob',
+                abilities: 'Tough, damage resistance'
+              }
+            ],
+            extensions: [
+              {
+                name: 'Prison Outbreak',
+                description: 'Prison-themed expansion'
+              },
+              { name: 'Rue Morgue', description: 'New survivors and zombies' },
+              {
+                name: 'Angry Neighbors',
+                description: 'More survivors and equipment'
+              }
+            ],
+            extra_fields: [
+              'zombie_types',
+              'weapon_categories',
+              'experience_levels'
+            ]
+          },
+          'arkham-horror': {
+            basic_info: {
+              name: 'Arkham Horror',
+              description: 'Lovecraftian horror investigation game',
+              min_players: 1,
+              max_players: 8,
+              age: 14,
+              playing_time: 240,
+              publisher: 'Fantasy Flight Games'
+            },
+            characters: [
+              {
+                name: 'Harvey Walters',
+                description: 'The Professor',
+                abilities: 'Research, knowledge skills'
+              },
+              {
+                name: 'Amanda Sharpe',
+                description: 'The Student',
+                abilities: 'Quick learning, spell casting'
+              },
+              {
+                name: 'Tommy Muldoon',
+                description: 'The Cop',
+                abilities: 'Combat, investigation'
+              },
+              {
+                name: 'Wendy Adams',
+                description: 'The Urchin',
+                abilities: 'Stealth, luck'
+              }
+            ],
+            extensions: [
+              {
+                name: 'Curse of the Dark Pharaoh',
+                description: 'Egyptian-themed expansion'
+              },
+              { name: 'Dunwich Horror', description: 'Rural horror expansion' },
+              {
+                name: 'The King in Yellow',
+                description: 'Theater-themed expansion'
+              }
+            ],
+            extra_fields: ['ancient_ones', 'skill_types', 'mythos_cards']
+          }
+        }
+
+        return (
+          mockData[gameKey] || {
+            basic_info: { name: 'Game not found' },
+            characters: [],
+            extensions: [],
+            extra_fields: []
+          }
+        )
+      }
+
+      function displayResults() {
+        const resultsDiv = document.getElementById('results')
+        let html =
+          '<div class="summary"><h2>📊 Résumé de l\'Analyse</h2><div class="summary-stats">'
+
+        let totalGames = 0
+        let totalCharacters = 0
+        let totalExtensions = 0
+        let gamesWithCharacters = 0
+
+        for (const [gameKey, data] of Object.entries(analysisResults)) {
+          if (!data.error) {
+            totalGames++
+            totalCharacters += data.characters.length
+            totalExtensions += data.extensions.length
+            if (data.characters.length > 0) gamesWithCharacters++
+          }
+        }
+
+        html += `
+                <div class="stat-card">
+                    <div class="stat-number">${totalGames}</div>
+                    <div class="stat-label">Jeux Analysés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalCharacters}</div>
+                    <div class="stat-label">Personnages Trouvés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalExtensions}</div>
+                    <div class="stat-label">Extensions Trouvées</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${gamesWithCharacters}</div>
+                    <div class="stat-label">Jeux avec Personnages</div>
+                </div>
+            `
+
+        html += '</div></div>'
+
+        for (const [gameKey, data] of Object.entries(analysisResults)) {
+          html += generateGameResult(gameKey, data)
+        }
+
+        resultsDiv.innerHTML = html
+      }
+
+      function generateGameResult(gameKey, data) {
+        if (data.error) {
+          return `
+                    <div class="game-result">
+                        <div class="game-result-header">
+                            <div class="game-title">${GAME_MAPPINGS[gameKey].name}</div>
+                            <div class="status-badge status-error">Erreur</div>
+                        </div>
+                        <div style="padding: 20px; color: #dc3545;">
+                            ❌ ${data.error}
+                        </div>
+                    </div>
+                `
+        }
+
+        const comparison = compareWithDB(data)
+        const statusClass =
+          comparison.score > 80
+            ? 'status-success'
+            : comparison.score > 60
+              ? 'status-warning'
+              : 'status-error'
+
+        return `
+                <div class="game-result">
+                    <div class="game-result-header">
+                        <div class="game-title">${data.basic_info.name}</div>
+                        <div class="status-badge ${statusClass}">
+                            Compatibilité ${comparison.score}%
+                        </div>
+                    </div>
+                    <div class="comparison-grid">
+                        ${generateComparisonSection('Informations de Base', comparison.basic_info)}
+                        ${generateComparisonSection('Personnages', comparison.characters)}
+                        ${generateComparisonSection('Extensions', comparison.extensions)}
+                    </div>
+                </div>
+            `
+      }
+
+      function generateComparisonSection(title, sectionData) {
+        return `
+                <div class="comparison-section">
+                    <div class="section-title">${title}</div>
+                    <div class="data-list">
+                        ${sectionData.found
+                          .map(
+                            (item) =>
+                              `<div class="data-item found">✅ ${item}</div>`
+                          )
+                          .join('')}
+                        ${sectionData.missing
+                          .map(
+                            (item) =>
+                              `<div class="data-item missing">⚠️ ${item} (manquant sur site)</div>`
+                          )
+                          .join('')}
+                        ${sectionData.extra
+                          .map(
+                            (item) =>
+                              `<div class="data-item extra">➕ ${item} (en plus sur site)</div>`
+                          )
+                          .join('')}
+                    </div>
+                </div>
+            `
+      }
+
+      function compareWithDB(gameData) {
+        // Comparaison des informations de base
+        const basicInfoMapping = {
+          game_name: 'name',
+          game_description: 'description',
+          min_players: 'min_players',
+          max_players: 'max_players',
+          age: 'age',
+          playing_time: 'playing_time',
+          publisher: 'publisher'
+        }
+
+        const basicInfoComparison = {
+          found: [],
+          missing: [],
+          extra: []
+        }
+
+        // Vérifier les champs DB vs site
+        for (const [dbField, siteField] of Object.entries(basicInfoMapping)) {
+          if (gameData.basic_info[siteField] !== undefined) {
+            basicInfoComparison.found.push(`${dbField} → ${siteField}`)
+          } else {
+            basicInfoComparison.missing.push(dbField)
+          }
+        }
+
+        // Champs supplémentaires sur le site
+        basicInfoComparison.extra = gameData.extra_fields || []
+
+        // Comparaison des personnages
+        const charactersComparison = {
+          found: [],
+          missing: [],
+          extra: []
+        }
+
+        if (gameData.characters.length > 0) {
+          charactersComparison.found.push(
+            `${gameData.characters.length} personnages trouvés`
+          )
+          gameData.characters.forEach((char) => {
+            charactersComparison.found.push(`${char.name} (${char.abilities})`)
+          })
+        } else {
+          charactersComparison.missing.push('Aucun personnage trouvé')
+        }
+
+        // Comparaison des extensions
+        const extensionsComparison = {
+          found: [],
+          missing: [],
+          extra: []
+        }
+
+        if (gameData.extensions.length > 0) {
+          extensionsComparison.found.push(
+            `${gameData.extensions.length} extensions trouvées`
+          )
+          gameData.extensions.forEach((ext) => {
+            extensionsComparison.found.push(`${ext.name}`)
+          })
+        } else {
+          extensionsComparison.missing.push('Aucune extension trouvée')
+        }
+
+        // Calcul du score de compatibilité
+        const totalFields = Object.keys(basicInfoMapping).length
+        const foundFields = basicInfoComparison.found.length
+        const score = Math.round((foundFields / totalFields) * 100)
+
+        return {
+          basic_info: basicInfoComparison,
+          characters: charactersComparison,
+          extensions: extensionsComparison,
+          score: score
+        }
+      }
+
+      // Initialisation
+      updateAnalyzeButton()
+    </script>
+  </body>
+</html>

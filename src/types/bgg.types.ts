@@ -32,7 +32,7 @@ export interface BGGSearchResult {
 
 // Réponse détaillée BGG
 export interface BGGGameDetails extends BGGGame {
-  expansions?: BGGExpansion[]
+  extensions?: BGGExpansion[]
   designers?: string[]
   artists?: string[]
   publishers?: string[]

@@ -130,7 +130,6 @@ CREATE TABLE IF NOT EXISTS games (
     max_play_time INTEGER,
     age INTEGER,
     has_characters BOOLEAN NOT NULL,
-    characters TEXT,
     supports_cooperative BOOLEAN,
     supports_competitive BOOLEAN,
     supports_campaign BOOLEAN,
@@ -141,7 +140,6 @@ CREATE TABLE IF NOT EXISTS games (
     category TEXT,
     mechanic TEXT,
     family TEXT,
-    expansions TEXT,
     accessories TEXT,
     polls TEXT,
     stats TEXT,
@@ -166,7 +164,6 @@ CREATE TABLE IF NOT EXISTS games (
 | `max_play_time` | INTEGER |  | Temps maximum |
 | `age` | INTEGER |  | Âge minimum |
 | `has_characters` | BOOLEAN | NOT NULL | 1 si le jeu a des personnages |
-| `characters` | TEXT |  | Liste des personnages (JSON) |
 | `supports_cooperative` | BOOLEAN |  | 1 si supporte le mode coopératif |
 | `supports_competitive` | BOOLEAN |  | 1 si supporte le mode compétitif |
 | `supports_campaign` | BOOLEAN |  | 1 si supporte le mode campagne |
@@ -177,7 +174,6 @@ CREATE TABLE IF NOT EXISTS games (
 | `category` | TEXT |  | Catégorie |
 | `mechanic` | TEXT |  | Mécanique |
 | `family` | TEXT |  | Famille |
-| `expansions` | TEXT |  | Extensions (JSON) |
 | `accessories` | TEXT |  | Accessoires (JSON) |
 | `polls` | TEXT |  | Sondages (JSON) |
 | `stats` | TEXT |  | Statistiques (JSON) |

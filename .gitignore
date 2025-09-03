@@ -101,7 +101,8 @@ modules.xml
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -263,3 +264,44 @@ dist
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/node,jetbrains+all,visualstudiocode,macos
+
+# Project specific ignores
+# Prevent duplicate documentation files at root
+/API_DOC.md
+/ARCHITECTURE.md
+/CONTEXT.md
+/ROADMAP.md
+/ROADMAP_NEW.md
+/TECHNICAL_STATE.md
+
+# Prevent duplicate documentation in docs/ (when docs/general/ is the source)
+/docs/CONTEXT.md
+/docs/DEVELOPMENT_GUIDELINES.md
+/docs/DEV_JOURNAL.md
+/docs/EXECUTIVE_SUMMARY.md
+/docs/LINTING.md
+/docs/ROADMAP.md
+/docs/TECHNICAL_STATE.md
+
+# Prevent empty/duplicate files in docs/general/
+/docs/general/TECHNICAL_STATE.md
+/docs/general/TESTS_ROADMAP.md
+
+# Prevent empty/duplicate files in docs/tests/
+/docs/tests/PROGRESS_REPORT.md
+/docs/tests/TEST_COMMANDS.md
+
+# Prevent test file duplicates
+/__tests__/backend/bggService-clean.test.ts
+/backend/src/services/testableBggService.ts
+/src/__tests__/pages/Games.fixed.test.tsx
+
+# Temporary files that VS Code might create
+*.tmp
+*.temp
+*~
+.#*
+
+# Application logs
+logs/
+*.log

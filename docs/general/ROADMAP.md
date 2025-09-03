@@ -1,53 +1,150 @@
-# 🎯 Board Game Score - UI-First Development Roadmap
+# 🚀 Roadmap - Board Game Score Tracker
 
-## 📚 Documentation Translation Roadmap (English)
+## ✅ Complété (Septembre 2025)
 
-**Status (September 2025):**
+### 🏗️ Architecture & Infrastructure
+- [x] **Configuration projet complète** : TypeScript, ESLint, Prettier, Husky
+- [x] **Pipeline CI/CD** : GitHub Actions avec tests automatisés
+- [x] **Architecture relationnelle** : Migration du stockage JSON vers tables dédiées
+- [x] **Normalisation DB** : Tables `game_extensions` et `game_characters` avec foreign keys
+- [x] **Tests complets** : 33/33 tests avec isolation DB
 
-- ✅ `README.md` (root): Fully translated to English
-- ✅ `docs/general/ROADMAP.md`: Fully translated to English
-- ❌ `docs/general/CONTEXT.md`: French, needs translation
-- ❌ `docs/backend/database-structure.md`: French, needs translation
-- ❌ `docs/general/ARCHITECTURE.md`: French, needs translation
-- ❌ `docs/general/TECHNICAL_STATE.md`: French, needs translation
-- ❌ `docs/general/LINTING.md`: French, needs translation
-- ❌ `docs/general/DEVELOPMENT_GUIDELINES.md`: French, needs translation
-- ❌ `docs/README.md`: French, needs translation
-- ❌ `backend/README.md`: French, needs translation
-- ❌ `__tests__/backend/README.md`: French, needs translation
+### 🎮 Fonctionnalités Core
+- [x] **Intégration BGG complète** : Recherche, détails, import automatique
+- [x] **Service externe personnages** : Scraping UltraBoardGames.com
+- [x] **Workflow optimisé** : BGG → Formulaire → Création intelligente
+- [x] **Support multi-jeux** : 6 jeux avec détection automatique des personnages
+- [x] **Extensions automatiques** : Récupération et stockage depuis BGG
 
-**Next Steps:**
+### 🔧 Corrections Techniques
+- [x] **Foreign key constraints** : Résolution problèmes intégrité référentielle
+- [x] **Service de traduction** : Vérification existence jeux avant traduction
+- [x] **Workflow création** : Mode intelligent BGG vs création manuelle
+- [x] **Frontend normalisé** : Suppression références colonnes JSON supprimées
 
-1. Translate all remaining documentation files to English, one by one, following project standards.
-2. Use temporary files for translation if needed, as per CONTEXT.md rules.
-3. Ensure all technical details, links, and structure are strictly preserved.
-4. Update the roadmap and CONTEXT.md after each major translation milestone.
+## 🎯 En Cours (Décembre 2025)
 
-**Priority:**
+### 🎮 Interface Utilisateur
+- [ ] **Page d'accueil** : Dashboard avec statistiques générales
+- [ ] **Navigation améliorée** : Menu principal avec breadcrumbs
+- [ ] **Responsive design** : Adaptation mobile/tablette
+- [ ] **Thème sombre/clair** : Toggle utilisateur
 
-- High: CONTEXT.md, database-structure.md, ARCHITECTURE.md, TECHNICAL_STATE.md
-- Medium: LINTING.md, DEVELOPMENT_GUIDELINES.md, docs/README.md, backend/README.md, **tests**/backend/README.md
+### 📊 Gestion Avancée
+- [ ] **Interface admin extensions** : CRUD complet pour les extensions
+- [ ] **Interface admin personnages** : CRUD complet pour les personnages
+- [ ] **Recherche avancée** : Filtres par extensions, personnages, mécaniques
+- [ ] **Tri et pagination** : Tables optimisées pour grandes listes
 
-**Goal:**  
-Make all documentation accessible for international contributors and ensure project transparency.
+## 🎯 Q1 2026 - Fonctionnalités Parties
+
+### 🎲 Sessions de Jeu
+- [ ] **Création partie** : Interface pour démarrer une session
+- [ ] **Sélection personnages** : Choix des rôles/personnages par joueur
+- [ ] **Suivi temps réel** : Scores en cours de partie
+- [ ] **Finalisation partie** : Sauvegarde résultats et calcul statistiques
+
+### 👥 Gestion Joueurs
+- [ ] **Profils joueurs** : Informations détaillées et préférences
+- [ ] **Historique personnel** : Parties jouées, performances
+- [ ] **Comparaisons** : Statistiques entre joueurs
+- [ ] **Achievements** : Système de badges/accomplissements
+
+## 🎯 Q2 2026 - Analytics & Statistiques
+
+### 📈 Statistiques Avancées
+- [ ] **Dashboard analytics** : Métriques détaillées des parties
+- [ ] **Graphiques temporels** : Évolution des performances
+- [ ] **Analyse jeux** : Statistiques par jeu (durée moyenne, scores, etc.)
+- [ ] **Tendances** : Jeux populaires, personnages préférés
+
+### 🔍 Recherche & Découverte
+- [ ] **Recommandations** : Suggestions basées sur l'historique
+- [ ] **Filtres intelligents** : Recherche par complexité, durée, nombre de joueurs
+- [ ] **Comparaison jeux** : Tableaux comparatifs des mécaniques
+- [ ] **Wishlist** : Liste des jeux à acquérir
+
+## 🎯 Q3 2026 - Extensions & Intégrations
+
+### 🌐 Intégrations Externes
+- [ ] **API BoardGameGeek étendue** : Import collections utilisateurs
+- [ ] **Intégration BoardGameArena** : Synchronisation parties en ligne
+- [ ] **Import/Export** : Données vers/depuis autres plateformes
+- [ ] **API publique** : Documentation OpenAPI pour développeurs tiers
+
+### 🎮 Extensions Service Externe
+- [ ] **Support 20+ jeux** : Extension liste jeux avec personnages
+- [ ] **Multiple sources** : Scraping sites additionnels (BGG, forums)
+- [ ] **Données enrichies** : Images personnages, guides stratégiques
+- [ ] **Communauté** : Système de contributions utilisateurs
+
+## 🎯 Q4 2026 - Fonctionnalités Avancées
+
+### 👥 Fonctionnalités Sociales
+- [ ] **Partage parties** : Réseaux sociaux avec screenshots
+- [ ] **Groupes de jeu** : Organisation communautés locales
+- [ ] **Tournois** : Système de compétitions organisées
+- [ ] **Chat intégré** : Communication pendant les parties
+
+### 🔧 Outils Avancés
+- [ ] **Générateur parties** : Suggestions setup optimales
+- [ ] **Timer intégré** : Gestion temps par joueur/phase
+- [ ] **Notes partie** : Annotations et photos souvenirs
+- [ ] **Backup cloud** : Synchronisation données multi-appareils
+
+## 🎯 2027+ - Vision Long Terme
+
+### 🚀 Fonctionnalités Futuristes
+- [ ] **IA recommandations** : ML pour suggestions personnalisées
+- [ ] **Réalité augmentée** : Scan jeux pour import automatique
+- [ ] **Assistant vocal** : Contrôle par commandes vocales
+- [ ] **Blockchain scores** : Certification immuable des performances
+
+### 🌍 Expansion
+- [ ] **Multilingue complet** : Support 10+ langues
+- [ ] **Base données globale** : Synchronisation communauté mondiale
+- [ ] **Écosystème partenaires** : Intégrations éditeurs de jeux
+- [ ] **Marketplace** : Plateforme échange/vente jeux
+
+## 📋 Critères de Priorité
+
+### 🔥 Urgent (Impact élevé, Effort faible)
+- Interface admin extensions/personnages
+- Page d'accueil avec dashboard
+- Responsive design mobile
+
+### ⭐ Important (Impact élevé, Effort moyen)
+- Sessions de jeu complètes
+- Statistiques avancées
+- Recherche avec filtres
+
+### 💎 Stratégique (Impact moyen, Effort élevé)
+- Intégrations externes multiples
+- Fonctionnalités sociales
+- API publique
+
+### 🎯 Innovation (Impact variable, Effort élevé)
+- IA et machine learning
+- Réalité augmentée
+- Blockchain
+
+## 🔄 Processus de Mise à Jour
+
+### 📅 Révision Trimestrielle
+- **Évaluation priorités** : Selon feedback utilisateurs
+- **Ajustement planning** : Basé sur ressources disponibles
+- **Nouvelles fonctionnalités** : Intégration suggestions communauté
+
+### 📊 Métriques de Succès
+- **Adoption utilisateurs** : Nombre d'utilisateurs actifs
+- **Engagement** : Fréquence d'utilisation
+- **Performance technique** : Temps de réponse, disponibilité
+- **Satisfaction** : Feedback et évaluations
 
 ---
 
-## ✅ CURRENT STATE - Solid Technical Infrastructure
-
-**Date**: September 3, 2025 | **Status**: Architecture ready, UI to be redesigned
-
-### Backend Infrastructure 100% ✅
-
-- ✅ **Type Safety**: Strict TypeScript everywhere
-- ✅ **Test Framework**: Vitest + RTL configured
-- ✅ **Players**: Full CRUD, minimalist UI
-- ✅ **Games**: CRUD + BGG import, functional UI
-- 🔶 **Stats**: Backend OK, very basic UI
-
----
-
-## 🎯 PHASE 1: BGG AUDIT → DATABASE
+**Roadmap mise à jour : Septembre 2025**  
+**Prochaine révision : Décembre 2025**
 
 **Goal**: Determine if BGG provides usable data for extensions and characters
 

@@ -4,9 +4,12 @@ import {
   getAllGames,
   getGameById,
   createGame,
+  updateGame,
   deleteGame
 } from './services/gameService'
 import { bggService } from './services/bggService'
+import { externalGameDataService } from './services/externalGameDataService'
+import GameTranslationService from './services/gameTranslationService'
 import {
   getAllGameSessions,
   getGameSessionById,
@@ -15,8 +18,21 @@ import {
   GameSessionInput,
   GameSessionRecord
 } from './services/gameSessionService'
+import LoggerService from './services/loggerService.js'
+import {
+  requestLoggingMiddleware,
+  errorLoggingMiddleware,
+  bggLoggingMiddleware
+} from './middleware/loggingMiddleware.js'
 
 const app = express()
+
+// Middleware JSON parser
+app.use(express.json())
+
+// Middleware de logging (avant les autres middlewares)
+app.use(requestLoggingMiddleware)
+app.use(bggLoggingMiddleware)
 
 // Configuration CORS pour permettre les requêtes depuis le frontend
 app.use((req, res, next) => {
@@ -32,7 +48,11 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(express.json())
+// Initialiser le service de traduction
+import database from './database.js'
+const translationService = new GameTranslationService(database)
+translationService.initializeDefaultTranslations()
+
 import {
   getAllGameCharacters,
   getGameCharacterById,
@@ -249,71 +269,7 @@ app.post('/api/games', (req, res) => {
 
 app.put('/api/games/:id', (req, res) => {
   try {
-    const gameId = Number(req.params.id)
-
-    // Vérifier que le jeu existe
-    const existingGame = db
-      .prepare('SELECT * FROM games WHERE game_id = ?')
-      .get(gameId)
-
-    if (!existingGame) {
-      return res.status(404).json({ error: 'Game not found' })
-    }
-
-    // Mettre à jour le jeu
-    const {
-      game_id_bgg,
-      game_name,
-      game_description,
-      game_image,
-      has_characters,
-      characters,
-      min_players,
-      max_players,
-      supports_cooperative,
-      supports_competitive,
-      supports_campaign,
-      default_mode
-    } = req.body
-
-    const stmt = db.prepare(`
-      UPDATE games SET 
-        game_id_bgg = COALESCE(?, game_id_bgg),
-        game_name = COALESCE(?, game_name),
-        game_description = COALESCE(?, game_description),
-        game_image = COALESCE(?, game_image),
-        has_characters = COALESCE(?, has_characters),
-        characters = COALESCE(?, characters),
-        min_players = COALESCE(?, min_players),
-        max_players = COALESCE(?, max_players),
-        supports_cooperative = COALESCE(?, supports_cooperative),
-        supports_competitive = COALESCE(?, supports_competitive),
-        supports_campaign = COALESCE(?, supports_campaign),
-        default_mode = COALESCE(?, default_mode)
-      WHERE game_id = ?
-    `)
-
-    stmt.run(
-      game_id_bgg,
-      game_name,
-      game_description,
-      game_image,
-      has_characters ? 1 : 0,
-      characters,
-      min_players,
-      max_players,
-      supports_cooperative ? 1 : 0,
-      supports_competitive ? 1 : 0,
-      supports_campaign ? 1 : 0,
-      default_mode,
-      gameId
-    )
-
-    // Récupérer le jeu mis à jour
-    const updated = db
-      .prepare('SELECT * FROM games WHERE game_id = ?')
-      .get(gameId)
-
+    const updated = updateGame(Number(req.params.id), req.body)
     res.json(updated)
   } catch (e) {
     res.status(400).json({ error: 'Update failed', details: String(e) })
@@ -321,8 +277,20 @@ app.put('/api/games/:id', (req, res) => {
 })
 
 app.delete('/api/games/:id', (req, res) => {
-  deleteGame(Number(req.params.id))
-  res.status(204).end()
+  try {
+    const gameId = Number(req.params.id)
+
+    // Vérifier que le jeu existe
+    const existingGame = getGameById(gameId)
+    if (!existingGame) {
+      return res.status(404).json({ error: 'Game not found' })
+    }
+
+    deleteGame(gameId)
+    res.status(204).end()
+  } catch (e) {
+    res.status(500).json({ error: 'Delete failed', details: String(e) })
+  }
 })
 
 // Game Sessions
@@ -462,20 +430,230 @@ app.get('/api/bgg/game/:id', async (req, res) => {
   }
 })
 
+app.get('/api/bgg/game/:id/extensions', async (req, res) => {
+  try {
+    const gameId = req.params.id
+    const extensions = await bggService.getGameExtensions(gameId)
+    res.json({
+      gameId,
+      extensionCount: extensions.length,
+      extensions
+    })
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: 'BGG extensions request failed', details: String(error) })
+  }
+})
+
+app.post('/api/bgg/analyze/extensions', async (req, res) => {
+  try {
+    const { gameIds } = req.body
+
+    if (!gameIds || !Array.isArray(gameIds) || gameIds.length === 0) {
+      return res.status(400).json({
+        error: 'gameIds array is required and must not be empty'
+      })
+    }
+
+    // Limiter le nombre de jeux pour éviter les timeouts
+    if (gameIds.length > 20) {
+      return res.status(400).json({
+        error: 'Maximum 20 games allowed for analysis'
+      })
+    }
+
+    const analysis = await bggService.analyzeExtensionPatterns(gameIds)
+    res.json(analysis)
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: 'BGG extension analysis failed', details: String(error) })
+  }
+})
+
+app.post('/api/bgg/compare/extensions', async (req, res) => {
+  try {
+    const { gameIds } = req.body
+
+    if (!gameIds || !Array.isArray(gameIds) || gameIds.length < 2) {
+      return res.status(400).json({
+        error: 'gameIds array is required and must contain at least 2 games'
+      })
+    }
+
+    // Limiter le nombre de jeux pour éviter les timeouts
+    if (gameIds.length > 10) {
+      return res.status(400).json({
+        error: 'Maximum 10 games allowed for comparison'
+      })
+    }
+
+    const comparison = await bggService.compareGameExtensions(gameIds)
+    res.json(comparison)
+  } catch (error) {
+    res.status(500).json({
+      error: 'BGG extension comparison failed',
+      details: String(error)
+    })
+  }
+})
+
+// Routes pour la recherche multilingue et données externes
+app.get('/api/games/search', async (req, res) => {
+  try {
+    const query = req.query.q as string
+    const language = (req.query.lang as string) || 'fr'
+    const limit = parseInt(req.query.limit as string) || 10
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter required' })
+    }
+
+    const results = translationService.searchGames(query, language, limit)
+    res.json({
+      query,
+      language,
+      results
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: 'Search failed',
+      details: String(error)
+    })
+  }
+})
+
+app.get('/api/games/:id/external-data', async (req, res) => {
+  try {
+    const gameId = parseInt(req.params.id)
+
+    // First, get the game from database to get its BGG ID
+    const game = await getGameById(gameId)
+    if (!game) {
+      return res.status(404).json({ error: 'Game not found' })
+    }
+
+    if (!game.game_id_bgg) {
+      return res.status(400).json({ error: 'Game has no BGG ID' })
+    }
+
+    const bggId = parseInt(game.game_id_bgg)
+    if (!externalGameDataService.isGameSupported(bggId)) {
+      return res.status(404).json({
+        error: 'Game not supported for external data scraping',
+        supportedGames: externalGameDataService.getSupportedGames()
+      })
+    }
+
+    const externalData = await externalGameDataService.scrapeGameData(bggId)
+
+    if (!externalData) {
+      return res.status(404).json({
+        error: 'No external data found for this game'
+      })
+    }
+
+    res.json(externalData)
+  } catch (error) {
+    res.status(500).json({
+      error: 'External data scraping failed',
+      details: String(error)
+    })
+  }
+})
+
+app.get('/api/external/supported-games', async (req, res) => {
+  try {
+    const supportedGames = externalGameDataService.getSupportedGames()
+    res.json({
+      count: supportedGames.length,
+      games: supportedGames,
+      note: 'These games have external character/role data available for scraping'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to get supported games',
+      details: String(error)
+    })
+  }
+})
+
+// Endpoint pour vérifier si un jeu BGG est supporté par le service externe
+app.get('/api/external-game-data/support/:bggId', async (req, res) => {
+  try {
+    const bggId = parseInt(req.params.bggId)
+
+    if (isNaN(bggId)) {
+      return res.status(400).json({
+        error: 'Invalid BGG ID'
+      })
+    }
+
+    const isSupported = externalGameDataService.isGameSupported(bggId)
+
+    res.json({
+      isSupported,
+      hasCharacters: isSupported, // Si supporté, c'est qu'il a des personnages
+      bggId
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to check game support',
+      details: String(error)
+    })
+  }
+})
+
+app.post('/api/translations/init', async (req, res) => {
+  try {
+    translationService.initializeDefaultTranslations()
+    res.json({
+      message: 'Default translations initialized successfully',
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to initialize translations',
+      details: String(error)
+    })
+  }
+})
+
 app.post('/api/bgg/import/:id', async (req, res) => {
   try {
     const gameId = req.params.id
     const bggGame = await bggService.getGameDetails(gameId)
-    const gameData = bggService.convertToGameFormat(bggGame)
+    const gameData = await bggService.convertToGameFormat(bggGame)
 
-    // Convertir null vers undefined pour compatibilité avec createGame
+    // Vérifier le support du service externe pour les personnages
+    const externalSupport = externalGameDataService.isGameSupported(
+      parseInt(gameId)
+    )
+    let externalCharacters = null
+
+    if (externalSupport) {
+      try {
+        const externalData = await externalGameDataService.scrapeGameData(
+          parseInt(gameId)
+        )
+        externalCharacters = externalData?.characters || null
+      } catch (error) {
+        LoggerService.warn('External character data fetch failed', {
+          context: 'BGG_IMPORT',
+          gameId: parseInt(gameId),
+          error: error instanceof Error ? error.message : String(error)
+        })
+      }
+    }
+
+    // Créer le jeu de base (sans extensions ni personnages en JSON)
     const convertedData = {
       game_id_bgg: gameData.game_id_bgg || undefined,
       game_name: gameData.game_name,
       game_description: gameData.game_description || undefined,
       game_image: gameData.game_image || undefined,
-      has_characters: gameData.has_characters,
-      characters: gameData.characters || undefined,
+      has_characters: externalSupport, // Utiliser le service externe, pas BGG
       min_players: gameData.min_players || undefined,
       max_players: gameData.max_players || undefined,
       supports_cooperative: gameData.supports_cooperative,
@@ -486,7 +664,74 @@ app.post('/api/bgg/import/:id', async (req, res) => {
 
     // Créer le jeu dans notre base
     const created = createGame(convertedData)
-    res.status(201).json(created)
+    if (!created) {
+      return res.status(500).json({ error: 'Failed to create game' })
+    }
+    const createdGameId = created.game_id
+
+    // Ajouter les extensions dans la table dédiée
+    let extensionsCreated = 0
+    if (bggGame.extensions && bggGame.extensions.length > 0) {
+      for (const extension of bggGame.extensions) {
+        try {
+          createGameExtension({
+            extensions_name: extension.name,
+            base_game_id: createdGameId,
+            extensions_description: `Extension BGG ID: ${extension.id}`,
+            is_active: true
+          })
+          extensionsCreated++
+        } catch (error) {
+          LoggerService.warn('Failed to create extension', {
+            context: 'BGG_IMPORT',
+            gameId: createdGameId,
+            extensionName: extension.name,
+            error: error instanceof Error ? error.message : String(error)
+          })
+        }
+      }
+    }
+
+    // Ajouter les personnages dans la table dédiée
+    let charactersCreated = 0
+    if (externalCharacters && externalCharacters.length > 0) {
+      for (const character of externalCharacters) {
+        try {
+          createGameCharacter({
+            game_id: createdGameId,
+            characters_name: character.name,
+            characters_description: character.description || undefined,
+            characters_abilities: character.abilities
+              ? JSON.stringify(character.abilities)
+              : undefined,
+            characters_source: character.source || 'external_service',
+            characters_external_id: undefined,
+            class_type: undefined,
+            is_active: true
+          })
+          charactersCreated++
+        } catch (error) {
+          LoggerService.warn('Failed to create character', {
+            context: 'BGG_IMPORT',
+            gameId: createdGameId,
+            characterName: character.name,
+            error: error instanceof Error ? error.message : String(error)
+          })
+        }
+      }
+    }
+
+    res.status(201).json({
+      game: created,
+      import_details: {
+        has_characters: externalSupport,
+        character_source: externalSupport ? 'external_service' : 'none',
+        characters_created: charactersCreated,
+        extensions_count: bggGame.extensions?.length || 0,
+        extensions_created: extensionsCreated,
+        extensions_source: 'boardgamegeek'
+      }
+    })
   } catch (error) {
     res.status(500).json({ error: 'BGG import failed', details: String(error) })
   }
@@ -611,7 +856,14 @@ app.get('/api/sessions/player/:playerId', (req, res) => {
   }
 })
 
+// Middleware de gestion d'erreurs (doit être le dernier)
+app.use(errorLoggingMiddleware)
+
 app.listen(3001, () => {
-  console.log('Server running on port 3001')
+  LoggerService.info('Server started successfully', {
+    context: 'API_INTERNAL',
+    port: 3001,
+    environment: process.env.NODE_ENV || 'development'
+  })
 })
 export default app

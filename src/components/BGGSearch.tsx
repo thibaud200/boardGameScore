@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { BGGService } from '../services/BGGService'
+import { ExternalGameDataService } from '../services/ExternalGameDataService'
 import type { BGGSearchResult, BGGGameDetails } from '../types/bgg.types'
 import type { CreateGameRequest } from '../types'
 
 interface BGGSearchProps {
   onImport: (gameData: CreateGameRequest) => void // Callback pour pré-remplir le formulaire
+  onReset?: () => void // Callback pour réinitialiser le formulaire
 }
 
-export default function BGGSearch({ onImport }: BGGSearchProps) {
+export default function BGGSearch({ onImport, onReset }: BGGSearchProps) {
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState<BGGSearchResult[]>([])
   const [selectedGame, setSelectedGame] = useState<BGGGameDetails | null>(null)
@@ -19,8 +21,14 @@ export default function BGGSearch({ onImport }: BGGSearchProps) {
     e.preventDefault()
     if (!query.trim()) return
 
+    // Réinitialiser le formulaire parent si une nouvelle recherche est lancée
+    if (onReset) {
+      onReset()
+    }
+
     setLoading(true)
     setError(null)
+    setSelectedGame(null) // Réinitialiser le jeu sélectionné
 
     try {
       const results = await BGGService.searchGames(query)
@@ -56,18 +64,17 @@ export default function BGGSearch({ onImport }: BGGSearchProps) {
       // Récupérer les détails du jeu depuis BGG
       const gameDetails = await BGGService.getGameDetails(gameId)
 
+      // Vérifier si le jeu est supporté par le service externe pour la détection des personnages
+      const externalSupport =
+        await ExternalGameDataService.isGameSupported(gameId)
+
       // Convertir vers le format de notre formulaire
       const gameData: CreateGameRequest = {
         game_id_bgg: gameId,
         game_name: gameDetails.name,
         game_description: gameDetails.description || '',
-        game_image: gameDetails.image || '',
-        has_characters:
-          gameDetails.categories?.some(
-            (cat) =>
-              cat.toLowerCase().includes('character') ||
-              cat.toLowerCase().includes('role playing')
-          ) || false,
+        game_image: gameDetails.thumbnail || gameDetails.image || '',
+        has_characters: externalSupport.supported, // Utiliser le service externe au lieu de BGG
         min_players: gameDetails.minPlayers || 1,
         max_players: gameDetails.maxPlayers || 4,
         supports_cooperative:

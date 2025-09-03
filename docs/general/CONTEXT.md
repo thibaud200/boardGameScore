@@ -12,6 +12,22 @@
 
 Ce fichier est destiné aux agents IA pour garantir que toutes les actions, suggestions et modifications respectent les standards, la structure et les objectifs du projet. Il doit être lu et pris en compte avant toute intervention automatique.
 
+## 🎯 Vision du Projet
+
+### 🎮 Objectif Principal
+Créer un système complet de suivi des scores de jeux de société qui combine :
+- **Import automatique** depuis BoardGameGeek (BGG) avec métadonnées complètes
+- **Détection intelligente** des personnages/rôles via services externes (UltraBoardGames)
+- **Architecture relationnelle** pour un stockage normalisé et performant
+- **Workflow flexible** permettant modification des données avant création
+
+### 🏆 Valeur Ajoutée Unique
+- **Simplicité d'usage** : Import BGG en un clic avec données enrichies automatiquement
+- **Données complètes** : Extensions et personnages détectés sans intervention manuelle
+- **Flexibilité maximale** : Possibilité de modifier toutes les données importées
+- **Performance optimisée** : Architecture relationnelle avec tests complets (33/33)
+- **Intégrité garantie** : Foreign keys et validation sur toute la chaîne de données
+
 ---
 
 ## 🎯 Objectif du projet
@@ -99,6 +115,37 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 - **Robustesse** : Architecture résistante aux changements
 
 ---
+
+## 🎮 Services Intégrés et Workflow
+
+### 🌐 BoardGameGeek (BGG) API
+- **Recherche** : `GET /api/bgg/search?q=citadels`
+- **Détails** : `GET /api/bgg/game/:id`
+- **Import complet** : `POST /api/bgg/import/:id`
+- **Données récupérées** : Informations jeu + extensions automatiques
+
+### 🕵️ Service Externe (UltraBoardGames)
+- **Vérification support** : `GET /api/external-game-data/support/:bggId`
+- **Jeux supportés** : `GET /api/external/supported-games`
+- **Données scrappées** : Personnages avec descriptions et capacités
+
+### 🎯 Jeux Actuellement Supportés avec Personnages
+| Jeu | BGG ID | Personnages Détectés |
+|-----|--------|---------------------|
+| Citadels | 478 | Assassin, Thief, Magician, King, etc. |
+| Mansions of Madness | 83330 | Investigateurs complets |
+| Arkham Horror | 15987 | Investigateurs et rôles |
+| Zombicide | 113924 | Survivants avec capacités |
+| This War of Mine | 188920 | Civils et spécialistes |
+| Dark Souls | 197831 | Classes et builds |
+
+### 🔄 Workflow Principal Détaillé
+1. **Recherche BGG** → Interface de recherche BoardGameGeek
+2. **Import formulaire** → Données BGG chargées et modifiables
+3. **Création intelligente** :
+   - **Avec BGG ID** → `/api/bgg/import/:id` (jeu + extensions + personnages)
+   - **Sans BGG ID** → `/api/games` (création manuelle classique)
+4. **Modification** → API standard (préserve toutes les relations)
 
 ## � Problématiques Techniques Spécifiques
 
@@ -229,6 +276,7 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 - **TOUJOURS** les fichiers de documentation doivent toujours se trouver dans le répertoire `docs/` sauf le README.md de la racine
 - **TOUJOURS** documenter les problématiques rencontrées et les solutions apportées
 - **TOUJOURS** garder la coherence UI/UX à chaque modification entre les pages(charte graphique, css, etc...)
+- **TOUJOURS** s'appuyer sur les fichiers de la documentation ROADMAP, CONTEXTE et SESSION_JOURNAL pour toutes reprises de développement
 
 - **POSSIBLE** de créer un fichier de travail temporaire supprimé après utilisation si nécessaire pour le développement
 
@@ -249,7 +297,7 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
   - **Linting** : `docs/LINTING.md` - Règles de linting et formatage
   - **Roadmap** : `docs/ROADMAP.md` - Planification et étapes de développement
   - **Tests Complete** : `docs/tests/TESTS_COMPLETE.md` - Documentation complète des tests (progression, commandes, roadmap)
-  - **Session Journal** : `docs/SESSION_JOURNAL.md` - Journal de développement session 2 Sept (fichier Temporaire)
+  - **Session Journal** : `docs/SESSION_JOURNAL.md` - Journal des dev en cours (fichier Temporaire)
   - **Technical References** : `docs/TECHNICAL_REFERENCES.md` - Détails techniques et choix d'architecture
   - **Technical Issues** : `docs/TECHNICAL_ISSUES.md` - Problèmes techniques et solutions (fichier Temporaire)
   - **Readme** : `README.md` - Vue d'ensemble du projet, instructions d'installation et de contribution
@@ -279,6 +327,51 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 - **Conventions** : Commits conventionnels via Commitlint
 
 ### 🔧 Corrections Récentes Appliquées
+
+#### ✅ Architecture Relationnelle (Migration JSON → Tables)
+**Problème identifié** : Stockage des extensions et personnages en JSON dans la table `games`
+**Solution appliquée** : Migration vers tables dédiées avec foreign keys
+**Impact technique** : Architecture normalisée, intégrité référentielle garantie
+**Tables créées** : `game_extensions`, `game_characters` avec relations
+
+#### ✅ Foreign Key Constraints (Intégrité Référentielle)
+**Problème identifié** : Service de traduction tentait d'ajouter des traductions pour des jeux inexistants
+**Solution appliquée** : Vérification d'existence du jeu avant ajout de traduction
+**Code de correction** :
+```typescript
+// Vérifier que le jeu existe dans la table games
+const gameExists = this.db.prepare(`
+  SELECT 1 FROM games WHERE game_id_bgg = ?
+`).get(translation.game_id_bgg)
+
+if (!gameExists) {
+  LoggerService.warn('Game not found for translation')
+  return -1
+}
+```
+
+#### ✅ Workflow BGG Optimisé (Import Intelligent)
+**Problème identifié** : Import BGG ne créait que le jeu sans extensions/personnages
+**Solution appliquée** : Logique intelligente dans `handleSubmit` du frontend
+**Code de correction** :
+```typescript
+if (formData.game_id_bgg) {
+  // Import BGG complet avec extensions/personnages automatiques
+  await fetch(`/api/bgg/import/${formData.game_id_bgg}`, { method: 'POST' })
+} else {
+  // Création manuelle simple sans intégrations
+  await GamesService.createGame(cleanedData)
+}
+```
+
+#### ✅ Frontend Normalisé (Suppression Colonnes JSON)
+**Problème identifié** : Références aux colonnes `characters` et `expansions` supprimées de la DB
+**Solution appliquée** : Refactoring complet de Games.tsx et BGGSearch.tsx
+**Changements techniques** :
+- Suppression formData pour colonnes inexistantes (`characters`, `expansions`)
+- Mise à jour handleSubmit, handleEdit, handleBGGImport
+- Nettoyage UI pour affichage des extensions via tables relationnelles
+- Synchronisation types frontend ↔ backend ↔ database
 
 - **Line endings** : CRLF → LF normalisé pour compatibilité cross-platform
 - **TypeScript** : moduleResolution `bundler` pour React Router 7

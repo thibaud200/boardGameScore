@@ -19,7 +19,6 @@ export interface Game {
   game_description?: string | null
   game_image?: string | null
   has_characters: boolean
-  characters?: string | null
   min_players?: number | null
   max_players?: number | null
   supports_cooperative?: boolean | null
@@ -83,7 +82,6 @@ export interface CreateGameRequest {
   game_description?: string | null
   game_image?: string | null
   has_characters: boolean
-  characters?: string | null
   min_players?: number | null
   max_players?: number | null
   supports_cooperative?: boolean | null

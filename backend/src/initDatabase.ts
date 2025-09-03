@@ -21,7 +21,8 @@ if (env === 'test' && dbFile !== 'backend/database/test.db') {
 
 const db = new Database(dbFile)
 
-export default db
+// Activer les contraintes de clés étrangères
+db.pragma('foreign_keys = ON')
 
 // Schéma minimal, à compléter avec toutes les tables
 const schema = `
@@ -39,7 +40,7 @@ CREATE TABLE IF NOT EXISTS players (
 
 CREATE TABLE IF NOT EXISTS games (
   game_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  game_id_bgg TEXT,
+  game_id_bgg TEXT UNIQUE,
   game_name TEXT UNIQUE NOT NULL,
   game_description TEXT,
   game_image TEXT,
@@ -52,7 +53,6 @@ CREATE TABLE IF NOT EXISTS games (
   max_play_time INTEGER,
   age INTEGER,
   has_characters BOOLEAN NOT NULL,
-  characters TEXT,
   supports_cooperative BOOLEAN,
   supports_competitive BOOLEAN,
   supports_campaign BOOLEAN,
@@ -63,7 +63,6 @@ CREATE TABLE IF NOT EXISTS games (
   category TEXT,
   mechanic TEXT,
   family TEXT,
-  expansions TEXT,
   accessories TEXT,
   polls TEXT,
   stats TEXT,
@@ -207,3 +206,5 @@ CREATE TABLE IF NOT EXISTS player_game_stats (
 db.exec(schema)
 
 console.log('Base de données initialisée avec le schéma.')
+
+export default db

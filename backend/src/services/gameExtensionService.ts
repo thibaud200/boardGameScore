@@ -32,7 +32,7 @@ export function getGameExtensionById(id: number) {
 export function createGameExtension(data: GameExtensionInput) {
   const stmt = db.prepare(`INSERT INTO game_extensions (
     extensions_name, base_game_id, extensions_description, add_max_players, year_published, image_url, thumbnail, publisher, designer, artist, category, mechanic, family, stats, tags, is_active
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
   const info = stmt.run(
     data.extensions_name,
     data.base_game_id,

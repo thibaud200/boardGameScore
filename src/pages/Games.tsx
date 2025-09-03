@@ -45,37 +45,74 @@ export default function Games() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      // Nettoyer les données avant envoi - SQLite accepte null mais pas undefined
-      const cleanedData: CreateGameRequest = {
-        game_id_bgg: formData.game_id_bgg || null,
-        game_name: formData.game_name,
-        game_description: formData.game_description || null,
-        game_image: formData.game_image || null,
-        has_characters: formData.has_characters,
-        characters: formData.characters || null,
-        min_players: formData.min_players || 1,
-        max_players: formData.max_players || 4,
-        supports_cooperative:
-          formData.supports_cooperative !== undefined
-            ? formData.supports_cooperative
-            : false,
-        supports_competitive:
-          formData.supports_competitive !== undefined
-            ? formData.supports_competitive
-            : true,
-        supports_campaign:
-          formData.supports_campaign !== undefined
-            ? formData.supports_campaign
-            : false,
-        default_mode: formData.default_mode || 'competitive'
-      }
-
       if (editingGame) {
-        // Mise à jour
+        // Mise à jour - utiliser l'API classique
+        const cleanedData: CreateGameRequest = {
+          game_id_bgg: formData.game_id_bgg || null,
+          game_name: formData.game_name,
+          game_description: formData.game_description || null,
+          game_image: formData.game_image || null,
+          has_characters: formData.has_characters,
+          min_players: formData.min_players || 1,
+          max_players: formData.max_players || 4,
+          supports_cooperative:
+            formData.supports_cooperative !== undefined
+              ? formData.supports_cooperative
+              : false,
+          supports_competitive:
+            formData.supports_competitive !== undefined
+              ? formData.supports_competitive
+              : true,
+          supports_campaign:
+            formData.supports_campaign !== undefined
+              ? formData.supports_campaign
+              : false,
+          default_mode: formData.default_mode || 'competitive'
+        }
         await GamesService.updateGame(editingGame.game_id, cleanedData)
       } else {
-        // Création
-        await GamesService.createGame(cleanedData)
+        // Création - vérifier s'il y a un BGG ID pour utiliser l'import complet
+        if (formData.game_id_bgg) {
+          // Utiliser l'API d'import BGG qui gère automatiquement extensions et personnages
+          const response = await fetch(
+            `http://localhost:3001/api/bgg/import/${formData.game_id_bgg}`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          )
+
+          if (!response.ok) {
+            throw new Error("Erreur lors de l'import BGG")
+          }
+        } else {
+          // Création manuelle sans BGG ID - utiliser l'API classique
+          const cleanedData: CreateGameRequest = {
+            game_id_bgg: null,
+            game_name: formData.game_name,
+            game_description: formData.game_description || null,
+            game_image: formData.game_image || null,
+            has_characters: formData.has_characters,
+            min_players: formData.min_players || 1,
+            max_players: formData.max_players || 4,
+            supports_cooperative:
+              formData.supports_cooperative !== undefined
+                ? formData.supports_cooperative
+                : false,
+            supports_competitive:
+              formData.supports_competitive !== undefined
+                ? formData.supports_competitive
+                : true,
+            supports_campaign:
+              formData.supports_campaign !== undefined
+                ? formData.supports_campaign
+                : false,
+            default_mode: formData.default_mode || 'competitive'
+          }
+          await GamesService.createGame(cleanedData)
+        }
       }
       resetForm()
       loadGames()
@@ -126,7 +163,6 @@ export default function Games() {
       game_description: gameData.game_description,
       game_image: gameData.game_image,
       has_characters: gameData.has_characters,
-      characters: null,
       min_players: gameData.min_players,
       max_players: gameData.max_players,
       supports_cooperative: gameData.supports_cooperative,
@@ -135,6 +171,25 @@ export default function Games() {
       default_mode: gameData.default_mode
     })
     setBggImported(true)
+  }
+
+  const handleBGGReset = () => {
+    // Réinitialiser le formulaire quand une nouvelle recherche BGG est lancée
+    if (bggImported) {
+      setFormData({
+        game_name: '',
+        game_description: '',
+        game_image: '',
+        has_characters: false,
+        min_players: 1,
+        max_players: 4,
+        supports_cooperative: false,
+        supports_competitive: true,
+        supports_campaign: false,
+        default_mode: 'competitive'
+      })
+      setBggImported(false)
+    }
   }
 
   const resetForm = () => {
@@ -189,7 +244,7 @@ export default function Games() {
           </h2>
 
           {/* Intégration BoardGameGeek - uniquement lors de l'ajout/modification */}
-          <BGGSearch onImport={handleBGGImport} />
+          <BGGSearch onImport={handleBGGImport} onReset={handleBGGReset} />
 
           {/* Feedback BGG import */}
           {bggImported && (
@@ -203,6 +258,16 @@ export default function Games() {
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
+            {formData.game_image && (
+              <div className="md:col-span-2">
+                <img
+                  src={formData.game_image}
+                  alt={`Image de ${formData.game_name}`}
+                  className="w-20 h-20 object-cover rounded-lg shadow-md"
+                />
+              </div>
+            )}
+
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Nom du jeu *
@@ -380,62 +445,96 @@ export default function Games() {
         {games.map((game) => (
           <div
             key={game.game_id}
-            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col"
           >
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-xl font-semibold text-gray-900">
-                {game.game_name}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                <a
-                  href={`/stats/game/${game.game_id}`}
-                  className="text-purple-600 hover:text-purple-800 text-sm font-medium"
-                  title="Voir les statistiques"
-                >
-                  📊 Stats
-                </a>
-                <a
-                  href={`/sessions/game/${game.game_id}`}
-                  className="text-green-600 hover:text-green-800 text-sm font-medium"
-                  title="Voir l'historique des parties"
-                >
-                  📋 Parties
-                </a>
-                <button
-                  onClick={() => handleEdit(game)}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                >
-                  ✏️ Modifier
-                </button>
-                <button
-                  onClick={() => handleDelete(game.game_id)}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium"
-                >
-                  🗑️ Supprimer
-                </button>
+            {game.game_image && (
+              <img
+                src={game.game_image}
+                alt={`Image de ${game.game_name}`}
+                className="w-full h-40 object-cover rounded-md mb-4"
+              />
+            )}
+            <div className="flex-grow">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {game.game_name}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={`/stats/game/${game.game_id}`}
+                    className="text-purple-600 hover:text-purple-800 text-sm font-medium"
+                    title="Voir les statistiques"
+                  >
+                    📊 Stats
+                  </a>
+                  <a
+                    href={`/sessions/game/${game.game_id}`}
+                    className="text-green-600 hover:text-green-800 text-sm font-medium"
+                    title="Voir l'historique des parties"
+                  >
+                    📋 Parties
+                  </a>
+                  <button
+                    onClick={() => handleEdit(game)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    ✏️ Modifier
+                  </button>
+                  <button
+                    onClick={() => handleDelete(game.game_id)}
+                    className="text-red-600 hover:text-red-800 text-sm font-medium"
+                  >
+                    🗑️ Supprimer
+                  </button>
+                </div>
               </div>
+
+              {game.game_description && (
+                <p className="text-gray-600 text-sm mb-3">
+                  {game.game_description.substring(0, 100)}
+                  {game.game_description.length > 100 && '...'}
+                </p>
+              )}
             </div>
 
-            {game.game_description && (
-              <p className="text-gray-600 text-sm mb-3">
-                {game.game_description}
-              </p>
-            )}
-
-            <div className="space-y-2 text-sm text-gray-700">
-              <div>
-                <span className="font-medium">Joueurs:</span> {game.min_players}{' '}
-                - {game.max_players}
-              </div>
-              <div>
-                <span className="font-medium">Mode par défaut:</span>{' '}
-                {game.default_mode}
-              </div>
-              {game.supports_campaign && (
-                <div className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                  Campagne
+            <div className="mt-auto pt-4 border-t border-gray-200">
+              <div className="space-y-2 text-sm text-gray-700">
+                <div>
+                  <span className="font-medium">Joueurs:</span>{' '}
+                  {game.min_players} - {game.max_players}
                 </div>
-              )}
+                <div>
+                  <span className="font-medium">Mode par défaut:</span>{' '}
+                  {game.default_mode}
+                </div>
+                <div className="flex items-center space-x-4">
+                  {game.supports_campaign && (
+                    <div className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                      Campagne
+                    </div>
+                  )}
+                  {game.has_characters && (
+                    <div
+                      className="inline-flex items-center bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs"
+                      title="Ce jeu a des personnages"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Personnages
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         ))}
