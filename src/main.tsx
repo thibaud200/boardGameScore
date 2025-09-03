@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import Players from './pages/Players'
+import { PlayersMock } from './pages/Player_test'
 import Games from './pages/Games'
 import CurrentGame from './pages/CurrentGame'
 import Sessions from './pages/Sessions'
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/players" element={<Players />} />
+          <Route path="/players_test" element={<PlayersMock />} />
           <Route path="/games" element={<Games />} />
 
           {/* Gestion de partie en cours */}

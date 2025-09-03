@@ -32,5 +32,4 @@ global.fetch =
       text: () => Promise.resolve(''),
       ok: true,
       status: 200
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    })) as any)
+    })) as unknown as typeof global.fetch)

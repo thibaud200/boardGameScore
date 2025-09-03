@@ -20,9 +20,9 @@ Cette section documente les problématiques de linting rencontrées lors du dév
 // ❌ Problématique
 const currentGame = db
   .prepare('SELECT * FROM current_game WHERE id = ?')
-  .get(id) as any
+  .get(id) as CurrentGameRecord
 const gameSessions = allSessions.filter(
-  (session: any) => session.game_id === gameId
+  (session: GameSessionRecord) => session.game_id === gameId
 )
 ```
 
@@ -319,7 +319,7 @@ import { useState } from 'react'
 
 ```typescript
 // ❌ Éviter
-const data: any = fetchData()
+const data: ApiResponse = fetchData()
 
 // ✅ Préférer
 interface ApiResponse {
@@ -349,7 +349,7 @@ useEffect(() => {
 
 ```typescript
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const data: any = legacyApiCall()
+const data: unknown = legacyApiCall()
 ```
 
 #### Pour un fichier

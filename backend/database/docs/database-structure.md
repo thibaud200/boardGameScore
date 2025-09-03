@@ -39,20 +39,28 @@ Cette documentation décrit la structure actuelle de la base de données SQLite 
 ### 1. 👥 `players` - Gestion des Joueurs
 
 ```sql
-CREATE TABLE players (
+CREATE TABLE IF NOT EXISTS players (
     player_id INTEGER PRIMARY KEY,
     player_name TEXT NOT NULL UNIQUE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    nickname TEXT,
+    color TEXT,
+    avatar_url TEXT,
+    stats_enabled BOOLEAN DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-**Description** : Stockage des joueurs enregistrés dans l'application.
-
-| Colonne | Type | Contraintes | Description | JSON Format attendu |
-| --- | --- | --- | --- | --- |
-| `player_id` | INTEGER | PRIMARY KEY | Identifiant unique du joueur |  |
-| `player_name` | TEXT | NOT NULL, UNIQUE | Nom du joueur (unique) |  |
-| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Date de création |  |
+| Colonne | Type | Contraintes | Description |
+| --- | --- | --- | --- |
+| `player_id` | INTEGER | PRIMARY KEY | Identifiant unique du joueur |
+| `player_name` | TEXT | NOT NULL, UNIQUE | Nom du joueur (unique) |
+| `nickname` | TEXT |  | Surnom du joueur |
+| `color` | TEXT |  | Couleur associée |
+| `avatar_url` | TEXT |  | URL de l'avatar |
+| `stats_enabled` | BOOLEAN | DEFAULT 1 | Suivi des stats activé |
+| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Date de création |
+| `updated_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Dernière mise à jour |
 
 ### 2. 🎮 `game_sessions` - Sessions de Jeu Complétées
 
@@ -107,44 +115,74 @@ CREATE TABLE game_sessions (
 ### 3. 🎲 `games` - Templates de Jeux
 
 ```sql
-CREATE TABLE games (
+CREATE TABLE IF NOT EXISTS games (
     game_id INTEGER PRIMARY KEY AUTOINCREMENT,
     game_id_bgg TEXT,
     game_name TEXT UNIQUE NOT NULL,
     game_description TEXT,
     game_image TEXT,
-    has_characters BOOLEAN NOT NULL,
-    characters TEXT,
+    thumbnail TEXT,
+    year_published INTEGER,
     min_players INTEGER,
     max_players INTEGER,
+    playing_time INTEGER,
+    min_play_time INTEGER,
+    max_play_time INTEGER,
+    age INTEGER,
+    has_characters BOOLEAN NOT NULL,
+    characters TEXT,
     supports_cooperative BOOLEAN,
     supports_competitive BOOLEAN,
     supports_campaign BOOLEAN,
     default_mode TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    publisher TEXT,
+    designer TEXT,
+    artist TEXT,
+    category TEXT,
+    mechanic TEXT,
+    family TEXT,
+    expansions TEXT,
+    accessories TEXT,
+    polls TEXT,
+    stats TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-**Description** : jeux avec leurs caractéristiques.
-
-⚠️ **Attention Types** : Les colonnes `BOOLEAN` sont stockées comme `INTEGER` (0/1) en SQLite.
-
-| Colonne | Type | Contraintes | Description | Valeurs SQLite | JSON Format attendu |
-| --- | --- | --- | --- | --- | --- |
-| `game_id` | INTEGER | PRIMARY KEY | Clé primaire auto-incrémentée | 1, 2, 3... |  |
-| `game_id_bgg` | TEXT |  | Identifiant BoardGameGeek (optionnel) | NULL ou "123" |  |
-| `game_name` | TEXT |  | Nom du jeu (unique, non null) | "Splendor" |  |
-| `game_description` | TEXT |  | Description du jeu | NULL ou "..." |  |
-| `game_image` | TEXT |  | URL ou chemin de l'image | NULL ou URL |  |
-| `has_characters` | BOOLEAN |  | **INTEGER**: 1 si le jeu a des personnages | 0 ou 1 |  |
-| `characters` | TEXT |  | Liste des personnages (JSON) | NULL ou JSON |  |
-| `min_players` | INTEGER |  | Nombre minimum de joueurs | NULL ou 1-10 |  |
-| `max_players` | INTEGER |  | Nombre maximum de joueurs | NULL ou 1-10 |  |
-| `supports_cooperative` | BOOLEAN |  | **INTEGER**: 1 si supporte le mode coopératif | 0 ou 1 |  |
-| `supports_competitive` | BOOLEAN |  | **INTEGER**: 1 si supporte le mode compétitif | 0 ou 1 |  |
-| `supports_campaign` | BOOLEAN |  | **INTEGER**: 1 si supporte le mode campagne | 0 ou 1 |  |
-| `default_mode` | TEXT |  | Mode par défaut du jeu | NULL ou "competitive" |  |
-| `created_at` | DATETIME |  | Date de création du template | ISO timestamp |  |
+| Colonne | Type | Contraintes | Description |
+| --- | --- | --- | --- |
+| `game_id` | INTEGER | PRIMARY KEY | Clé primaire auto-incrémentée |
+| `game_id_bgg` | TEXT |  | Identifiant BoardGameGeek (optionnel) |
+| `game_name` | TEXT | UNIQUE NOT NULL | Nom du jeu |
+| `game_description` | TEXT |  | Description du jeu |
+| `game_image` | TEXT |  | URL ou chemin de l'image |
+| `thumbnail` | TEXT |  | URL thumbnail |
+| `year_published` | INTEGER |  | Année de publication |
+| `min_players` | INTEGER |  | Nombre minimum de joueurs |
+| `max_players` | INTEGER |  | Nombre maximum de joueurs |
+| `playing_time` | INTEGER |  | Temps de jeu moyen (minutes) |
+| `min_play_time` | INTEGER |  | Temps minimum |
+| `max_play_time` | INTEGER |  | Temps maximum |
+| `age` | INTEGER |  | Âge minimum |
+| `has_characters` | BOOLEAN | NOT NULL | 1 si le jeu a des personnages |
+| `characters` | TEXT |  | Liste des personnages (JSON) |
+| `supports_cooperative` | BOOLEAN |  | 1 si supporte le mode coopératif |
+| `supports_competitive` | BOOLEAN |  | 1 si supporte le mode compétitif |
+| `supports_campaign` | BOOLEAN |  | 1 si supporte le mode campagne |
+| `default_mode` | TEXT |  | Mode par défaut du jeu |
+| `publisher` | TEXT |  | Éditeur |
+| `designer` | TEXT |  | Créateur |
+| `artist` | TEXT |  | Artiste |
+| `category` | TEXT |  | Catégorie |
+| `mechanic` | TEXT |  | Mécanique |
+| `family` | TEXT |  | Famille |
+| `expansions` | TEXT |  | Extensions (JSON) |
+| `accessories` | TEXT |  | Accessoires (JSON) |
+| `polls` | TEXT |  | Sondages (JSON) |
+| `stats` | TEXT |  | Statistiques (JSON) |
+| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Date de création |
+| `updated_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Dernière mise à jour |
 
 ### 4. 🎲 `game_characters`
 
@@ -182,47 +220,101 @@ CREATE TABLE game_characters (
 ### 5. 🎲 `game_extensions`
 
 ```sql
-CREATE TABLE game_extensions (
+CREATE TABLE IF NOT EXISTS game_extensions (
     extensions_id INTEGER PRIMARY KEY AUTOINCREMENT,
     extensions_name TEXT NOT NULL,
     base_game_id INTEGER NOT NULL,
     extensions_description TEXT,
     add_max_players INTEGER,
+    year_published INTEGER,
+    image_url TEXT,
+    thumbnail TEXT,
+    publisher TEXT,
+    designer TEXT,
+    artist TEXT,
+    category TEXT,
+    mechanic TEXT,
+    family TEXT,
+    stats TEXT,
+    tags TEXT,
+    is_active BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (base_game_id) REFERENCES games(game_id)
 );
 ```
 
-**Description** : Extension desjeux avec leurs caractéristiques.
-
-| Colonne | Type | Contraintes | Description | JSON Format attendu |
-| --- | --- | --- | --- | --- |
-| `extensions_id` | INTEGER | PRIMARY KEY | Clé primaire auto-incrémentée |  |
-| `extensions_name` | TEXT | NOT NULL | Nom du jeu |  |
-| `base_game_id` | INTEGER | FOREIGN KEY | Nom du jeu de base |  |
-| `extensions_description` | TEXT |  | Description de l'extension |  |
-| `max_players` | INTEGER |  | Nombre maximum de joueurs |  |
-| `created_at` | DATETIME |  | Date de création de l'extension |  |
+| Colonne | Type | Contraintes | Description |
+| --- | --- | --- | --- |
+| `extensions_id` | INTEGER | PRIMARY KEY | Clé primaire auto-incrémentée |
+| `extensions_name` | TEXT | NOT NULL | Nom de l'extension |
+| `base_game_id` | INTEGER | FOREIGN KEY | Jeu de base |
+| `extensions_description` | TEXT |  | Description de l'extension |
+| `add_max_players` | INTEGER |  | Ajout max joueurs |
+| `year_published` | INTEGER |  | Année de publication |
+| `image_url` | TEXT |  | URL image |
+| `thumbnail` | TEXT |  | URL thumbnail |
+| `publisher` | TEXT |  | Éditeur |
+| `designer` | TEXT |  | Créateur |
+| `artist` | TEXT |  | Artiste |
+| `category` | TEXT |  | Catégorie |
+| `mechanic` | TEXT |  | Mécanique |
+| `family` | TEXT |  | Famille |
+| `stats` | TEXT |  | Statistiques |
+| `tags` | TEXT |  | Tags |
+| `is_active` | BOOLEAN | DEFAULT 1 | Extension active |
+| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Date de création |
+| `updated_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Dernière mise à jour |
 
 ### 4. ⚡ `current_game` - Partie en Cours
 
 ```sql
-CREATE TABLE current_game (
+CREATE TABLE IF NOT EXISTS current_game (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    game_data TEXT NOT NULL,
+    game_id INTEGER NOT NULL,
+    is_cooperative INTEGER DEFAULT 0,
+    game_mode TEXT DEFAULT 'competitive',
+    players TEXT NOT NULL,
+    scores TEXT NOT NULL,
+    characters TEXT,
+    extensions TEXT,
+    winner INTEGER,
+    win_condition TEXT,
+    date TEXT,
+    duration TEXT,
+    completed INTEGER DEFAULT 0,
+    coop_result TEXT,
+    dead_characters TEXT,
+    new_character_names TEXT,
+    character_history TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (game_id) REFERENCES games(game_id),
+    FOREIGN KEY (winner) REFERENCES players(player_id)
 );
 ```
 
-**Description** : Sauvegarde de l'état de la partie actuellement en cours.
-
-| Colonne | Type | Contraintes | Description | JSON Format attendu |
-| --- | --- | --- | --- | --- |
-| `id` | INTEGER | PRIMARY KEY | Toujours 1 (une seule partie en cours) |  |
-| `game_data` | TEXT | NOT NULL | JSON complet de l'état de la partie |  |
-| `created_at` | DATETIME |  | Date de création de la partie |  |
-| `updated_at` | DATETIME |  | Dernière mise à jour |  |
+| Colonne | Type | Contraintes | Description |
+| --- | --- | --- | --- |
+| `id` | INTEGER | PRIMARY KEY | Identifiant unique de la partie en cours |
+| `game_id` | INTEGER | NOT NULL | Référence au jeu |
+| `is_cooperative` | INTEGER | DEFAULT 0 | 1 si coopératif |
+| `game_mode` | TEXT | DEFAULT 'competitive' | Mode de jeu |
+| `players` | TEXT | NOT NULL | JSON array des IDs joueurs |
+| `scores` | TEXT | NOT NULL | JSON object des scores |
+| `characters` | TEXT |  | JSON des personnages |
+| `extensions` | TEXT |  | CSV ou JSON des extensions |
+| `winner` | INTEGER |  | ID du joueur gagnant |
+| `win_condition` | TEXT |  | Condition de victoire |
+| `date` | TEXT |  | Date de la partie |
+| `duration` | TEXT |  | Durée de la partie |
+| `completed` | INTEGER | DEFAULT 0 | 1 si terminée |
+| `coop_result` | TEXT |  | Résultat coopératif |
+| `dead_characters` | TEXT |  | JSON des personnages morts |
+| `new_character_names` | TEXT |  | JSON des nouveaux noms |
+| `character_history` | TEXT |  | JSON historique des événements |
+| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Date de création |
+| `updated_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Dernière mise à jour |
 
 ### 6. 📈 player_stats — Statistiques des joueurs
 

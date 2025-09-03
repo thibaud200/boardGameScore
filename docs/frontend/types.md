@@ -81,25 +81,39 @@ export interface UpdateGameRequest {
 export interface Player {
   player_id: number // Clé primaire auto-incrémentée
   player_name: string // Nom unique du joueur
+  nickname?: string // Surnom ou alias
+  stats_enabled?: boolean // Suivi des stats activé
   created_at: string // Timestamp création (ISO format)
+  updated_at?: string // Dernière mise à jour
 }
 ```
+
+avatar_url?: string | null // URL de l'avatar color?: string | null // Couleur associée au joueur (hex)
 
 ### Interface CreatePlayerRequest
 
 ```typescript
 export interface CreatePlayerRequest {
   player_name: string // Seul champ obligatoire
+  nickname?: string
+  stats_enabled?: boolean
 }
 ```
+
+avatar_url?: string | null // Optionnel color?: string | null // Optionnel
 
 ### Interface UpdatePlayerRequest
 
 ```typescript
 export interface UpdatePlayerRequest {
   player_name?: string // Optionnel pour mise à jour partielle
+  nickname?: string
+  stats_enabled?: boolean
+  updated_at?: string
 }
 ```
+
+avatar_url?: string | null // Optionnel color?: string | null // Optionnel
 
 ---
 
@@ -296,20 +310,22 @@ const adaptForFrontend = (game: Game): DisplayGame => ({
 
 ```typescript
 // Vérification types runtime
-export const isPlayer = (obj: any): obj is Player => {
+export const isPlayer = (obj: unknown): obj is Player => {
   return (
     typeof obj === 'object' &&
-    typeof obj.player_id === 'number' &&
-    typeof obj.player_name === 'string'
+    obj !== null &&
+    typeof (obj as Player).player_id === 'number' &&
+    typeof (obj as Player).player_name === 'string'
   )
 }
 
-export const isGame = (obj: any): obj is Game => {
+export const isGame = (obj: unknown): obj is Game => {
   return (
     typeof obj === 'object' &&
-    typeof obj.game_id === 'number' &&
-    typeof obj.game_name === 'string' &&
-    typeof obj.has_characters === 'boolean'
+    obj !== null &&
+    typeof (obj as Game).game_id === 'number' &&
+    typeof (obj as Game).game_name === 'string' &&
+    typeof (obj as Game).has_characters === 'boolean'
   )
 }
 ```
@@ -435,6 +451,16 @@ const GameSchema = z.object({
 
 export type Game = z.infer<typeof GameSchema>
 ```
+
+---
+
+## 👥 Types Player - Avancement et Bonnes Pratiques (Septembre 2025)
+
+- Typage strict : aucun `any`, types précis ou `unknown` partout
+- Champs enrichis : `avatar_url`, `color` (hex), validation frontend et backend
+- Documentation à jour pour `Player`, `CreatePlayerRequest`, `UpdatePlayerRequest`
+- Utilisation systématique dans les formulaires, services et tests
+- Respect des standards CONTEXT.md
 
 ---
 

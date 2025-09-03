@@ -205,6 +205,17 @@ interface UpdatePlayerRequest {
 
 ---
 
+## 🎮 PlayersService - Documentation et Bonnes Pratiques (Septembre 2025)
+
+- Service strictement typé, aucun `any` utilisé
+- Méthodes CRUD : getAllPlayers, createPlayer, updatePlayer, deletePlayer
+- Validation et gestion d'erreurs intégrées
+- Utilisé dans la page Players et les tests
+- Mock complet pour les tests unitaires
+- Respect des standards CONTEXT.md
+
+---
+
 ## 🎲 GamesService - Gestion des Jeux
 
 ### Localisation

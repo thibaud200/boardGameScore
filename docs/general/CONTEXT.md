@@ -212,6 +212,10 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 
 ### 📋 Obligations systématiques
 
+- **TOUJOURS** faire un audit complet de la fonctionnalité avant toute modification / ajout / suppression de code / tests
+- **TOUJOURS** lors d'un audit toujours partir du dernier commit
+- **TOUJOURS** suivre les principes SOLID et CRUD
+- **TOUJOURS** s'appuyer sur toute la documentation disponible
 - **TOUJOURS** respecter les conventions TypeScript strict
 - **TOUJOURS** documenter les APIs et interfaces publiques
 - **TOUJOURS** fournir des exemples d'utilisation
@@ -223,12 +227,15 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 - **TOUJOURS** utiliser la documentation existante pour maintenir la cohérence
 - **TOUJOURS** proposer des solutions modulaires et maintenables
 - **TOUJOURS** les fichiers de documentation doivent toujours se trouver dans le répertoire `docs/` sauf le README.md de la racine
+- **TOUJOURS** documenter les problématiques rencontrées et les solutions apportées
+- **TOUJOURS** garder la coherence UI/UX à chaque modification entre les pages(charte graphique, css, etc...)
 
 - **POSSIBLE** de créer un fichier de travail temporaire supprimé après utilisation si nécessaire pour le développement
 
 ### Documentation
 
 - **JAMAIS** créer de nouveaux fichiers de documentation
+- **TOUJOURS** lors d'une MAJ de la documentation, toujours partir du dernier commit
 - **TOUJOURS** Faire les modifications de documentation dans les fichiers suivants :
 - **POSSIBLE** de créer un fichier de travail temporaire supprimé après utilisation si nécessaire
   - **API Docs** : `docs/API_DOC.md` - Documentation complète des endpoints

@@ -240,4 +240,14 @@ const handleBGGImport = (gameData: CreateGameRequest) => {
 
 ---
 
+## 🧩 Players Page Component - Documentation (Septembre 2025)
+
+- Page CRUD complète : création, édition, suppression, validation stricte
+- UX enrichie : feedback instantané, preview avatar/couleur, gestion erreurs API
+- Props et états documentés, typage strict
+- Accessibilité : labels reliés aux inputs
+- Tests unitaires et d'interaction exhaustifs
+
+---
+
 _Documentation maintenue à jour avec le développement des composants._

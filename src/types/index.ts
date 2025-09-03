@@ -7,6 +7,8 @@
 export interface Player {
   player_id: number
   player_name: string
+  avatar_url?: string | null
+  color?: string | null
   created_at: string
 }
 
@@ -69,6 +71,8 @@ export interface GameExtension {
 // Types de requêtes pour les opérations CRUD
 export interface CreatePlayerRequest {
   player_name: string
+  avatar_url?: string | null
+  color?: string | null
 }
 
 export type UpdatePlayerRequest = Partial<CreatePlayerRequest>

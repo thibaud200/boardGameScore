@@ -25,16 +25,28 @@ Ce document consolide les principes architecturaux, l'état technique actuel et 
 ```typescript
 // ❌ Mauvais : Service avec multiples responsabilités
 class GamePlayerSessionService {
-  createPlayer() { /* ... */ }
-  updateGame() { /* ... */ }
-  calculateStats() { /* ... */ }
-  sendEmail() { /* ... */ }
+  createPlayer() {
+    /* ... */
+  }
+  updateGame() {
+    /* ... */
+  }
+  calculateStats() {
+    /* ... */
+  }
+  sendEmail() {
+    /* ... */
+  }
 }
 
 // ✅ Bon : Services spécialisés
 class PlayerService {
-  createPlayer() { /* ... */ }
-  updatePlayer() { /* ... */ }
+  createPlayer() {
+    /* ... */
+  }
+  updatePlayer() {
+    /* ... */
+  }
 }
 ```
 
@@ -88,8 +100,12 @@ interface Service<T> {
 }
 
 // Tous les services respectent ce contrat
-class PlayerService implements Service<Player> { /* ... */ }
-class GameService implements Service<Game> { /* ... */ }
+class PlayerService implements Service<Player> {
+  /* ... */
+}
+class GameService implements Service<Game> {
+  /* ... */
+}
 ```
 
 ### **I** - Interface Segregation Principle (ISP)
@@ -118,8 +134,12 @@ interface PlayerFullProfile extends PlayerBasicInfo {
 }
 
 // Composants utilisent ce dont ils ont besoin
-const PlayerCard = ({ player }: { player: PlayerBasicInfo }) => { /* ... */ }
-const PlayerProfile = ({ player }: { player: PlayerFullProfile }) => { /* ... */ }
+const PlayerCard = ({ player }: { player: PlayerBasicInfo }) => {
+  /* ... */
+}
+const PlayerProfile = ({ player }: { player: PlayerFullProfile }) => {
+  /* ... */
+}
 ```
 
 ### **D** - Dependency Inversion Principle (DIP)
@@ -137,7 +157,7 @@ const PlayerProfile = ({ player }: { player: PlayerFullProfile }) => { /* ... */
 ```typescript
 // ✅ Dépendance sur abstraction
 interface DatabaseAdapter {
-  query(sql: string, params: any[]): Promise<any[]>
+  query(sql: string, params: unknown[]): Promise<unknown[]>
 }
 
 class PlayerService {
@@ -177,28 +197,36 @@ src/
 ### 📋 Configuration Frontend
 
 #### `package.json`
+
 **Rôle** : Manifeste principal du projet avec dépendances et scripts  
 **Scripts clés** : `dev`, `build`, `test`, `lint`, `dev:backend`, `dev:full`  
 **Dépendances** : React 19, React Router 7, Tailwind CSS 4, TypeScript 5, Vite 7
 
 #### `vite.config.ts`
+
 **Rôle** : Configuration du bundler Vite  
 **Fonctionnalités** : Plugin React avec Fast Refresh, ESLint intégré, HMR, optimisation production
 
 #### `tsconfig.json`
+
 **Paramètres clés** :
+
 - `target: "ES2020"` - Support JavaScript moderne
 - `moduleResolution: "bundler"` - Optimisé pour Vite
 - `strict: true` - TypeScript strict activé
 
 #### `eslint.config.cjs`
+
 **Configuration ESLint 9** avec règles strictes :
+
 - `@typescript-eslint` - Vérifications avancées
 - `react-hooks` - Validation hooks React
 - `import` - Gestion imports/exports
 
 #### `tailwind.config.js`
+
 **Configuration Tailwind CSS 4** :
+
 - Import CSS moderne avec `@import`
 - Classes utilitaires étendues
 - Configuration responsive
@@ -227,25 +255,33 @@ backend/src/
 ### 📋 Configuration Backend
 
 #### `backend/tsconfig.json`
+
 **Configuration TypeScript backend** :
+
 - `target: "ES2022"` - Support Node.js moderne
 - `moduleResolution: "node"` - Standard Node.js
 - Types Node.js inclus
 
 #### `backend/src/database.ts`
+
 **Configuration SQLite** :
+
 - Connexion better-sqlite3
 - WAL mode pour performances
 - Gestion erreurs connexion
 
 #### `backend/src/initDatabase.ts`
+
 **Initialisation schéma** :
+
 - Création tables si inexistantes
 - Contraintes FK appliquées
 - Données par défaut injectées
 
 #### `backend/src/initTestDatabase.ts`
+
 **Base tests isolée** :
+
 - Base séparée (`test.db`)
 - Isolation complète
 - Nettoyage automatique
@@ -281,6 +317,7 @@ describe('PlayerService', () => {
 ### 📊 État Actuel des Tests
 
 #### ✅ Tests Backend Complets
+
 - **Tests unitaires** : 11 tests pour tous les services
 - **Tests intégration** : 22 tests couvrant tous les endpoints API
 - **Coverage** : 100% fonctionnalités critiques
@@ -289,13 +326,17 @@ describe('PlayerService', () => {
 #### 📋 Configuration Tests
 
 #### `vitest.config.ts`
+
 **Configuration Vitest** :
+
 - Tests en série (éviter conflits DB)
 - Coverage configuré
 - Environnement Node.js pour backend
 
 #### `__tests__/fixtures/`
+
 **Données de test** :
+
 - Injection automatisée
 - Nettoyage automatique
 - Contraintes FK respectées
@@ -307,11 +348,13 @@ describe('PlayerService', () => {
 ### Variables d'Environnement
 
 #### Frontend (optionnel)
+
 ```bash
 VITE_API_URL=http://localhost:3001  # URL API backend
 ```
 
 #### Backend (optionnel)
+
 ```bash
 NODE_ENV=development|test|production
 DATABASE_PATH=./database/database.db  # Base principale
@@ -321,6 +364,7 @@ TEST_DATABASE_PATH=./database/test.db # Base tests
 ### Scripts NPM Disponibles
 
 #### Scripts Frontend
+
 ```bash
 npm run dev          # Serveur Vite (port 5173)
 npm run build        # Build production
@@ -330,12 +374,14 @@ npm run lint:fix     # Auto-correction
 ```
 
 #### Scripts Backend
+
 ```bash
 npm run dev:backend  # Express (port 3001)
 npm run dev:full     # Frontend + Backend (recommandé)
 ```
 
 #### Scripts Tests
+
 ```bash
 npm run test         # Tests complets (33 tests)
 npm run test:watch   # Mode watch
@@ -349,6 +395,7 @@ npm run dev:full       # Frontend + Backend ensemble
 ```
 
 **Vérification** :
+
 ```bash
 curl http://localhost:3001/api/players    # API REST
 curl "http://localhost:3001/api/bgg/search?q=Catan"  # BGG
@@ -359,18 +406,21 @@ curl "http://localhost:3001/api/bgg/search?q=Catan"  # BGG
 ## 📊 MÉTRIQUES TECHNIQUES
 
 ### Performance
+
 - **Build time** : ~3-5 secondes (Vite)
 - **HMR** : <100ms (Hot Module Replacement)
 - **Tests** : 33/33 passent en ~2-3 secondes
 - **Lint** : 0 erreur sur 45+ fichiers
 
 ### Qualité Code
+
 - **TypeScript strict** : 100% activé
 - **ESLint** : 0 erreur, 0 warning
 - **Test coverage** : >80% fonctionnalités critiques
 - **Type safety** : 100% interfaces typées
 
 ### Base de Données
+
 - **Tables** : 8 tables principales
 - **Relations** : FK cohérentes et testées
 - **Fixtures** : Données automatisées
@@ -433,22 +483,31 @@ curl "http://localhost:3001/api/bgg/search?q=Catan"  # BGG
 ## 📋 QUALITÉ & CI/CD
 
 ### Hooks Git
+
 #### `.husky/`
+
 **Hooks automatisés** :
+
 - `pre-commit` : ESLint + tests automatiques
 - `commit-msg` : Validation Commitlint
 
 ### Pipeline CI/CD
+
 #### `.github/workflows/`
+
 **GitHub Actions** :
+
 - Lint automatique sur PR/push
 - Tests complets (33 tests)
 - Build production
 - Validation multi-environnements
 
 ### Standards Qualité
+
 #### `commitlint.config.cjs`
+
 **Convention Commits** :
+
 - Types : `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 - Format : `type: description`
 

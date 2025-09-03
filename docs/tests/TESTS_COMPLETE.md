@@ -12,17 +12,19 @@ Ce document centralise toute la documentation liée aux tests : progression actu
 ## 📊 STATUT ACTUEL
 
 ### Métriques Globales
+
 - **Frontend Components** : 44/44 passing (100%) ✅
-- **Backend Services** : 32/33 passing (97%) ✅  
+- **Backend Services** : 32/33 passing (97%) ✅
 - **Integration** : 5/9 passing (55%) 🔄
 - **Infrastructure** : Stable et opérationnelle ✅
 
 ### Tests Critiques Fonctionnels ✅
+
 ```bash
 # BGGSearch Component - 24/24 tests ✅ CRITIQUE
 npm run test:frontend src/__tests__/components/BGGSearch.test.tsx
 
-# Games Page CRUD - 7/7 tests ✅ CRITIQUE  
+# Games Page CRUD - 7/7 tests ✅ CRITIQUE
 npm run test:frontend src/__tests__/pages/Games.test.tsx
 
 # BGGService Backend - 6/6 tests ✅
@@ -44,6 +46,7 @@ npm run test:backend
 **Estimation** : 30 minutes
 
 #### Code Fix Requis
+
 ```typescript
 // backend/src/server.ts
 if (!gameId || !/^\d+$/.test(gameId)) {
@@ -69,11 +72,13 @@ if (!game) {
 ### Phase 4 : Session Immédiate (Priorité 1)
 
 #### 1. BGG Backend Error Codes (30 min) - **CRITIQUE**
+
 - Fix codes HTTP dans `/api/bgg/*` routes
 - Impact : 4 tests integration passeront
 - Business impact : UX production améliorée
 
-#### 2. Players Page Tests (60 min) - **IMPORTANTE** 
+#### 2. Players Page Tests (60 min) - **IMPORTANTE**
+
 - CRUD operations similaires Games Page
 - Pattern établi réutilisable
 - Foundation pour Players management
@@ -82,6 +87,7 @@ if (!game) {
 **Fichier** : `src/__tests__/pages/Players.test.tsx` _(à créer)_
 
 **Tests à implémenter** :
+
 - **Rendu initial et chargement** : Liste des joueurs, états de chargement
 - **Formulaires CRUD** : Création, modification, suppression joueurs
 - **Validation** : Nom requis, doublons, caractères spéciaux
@@ -89,11 +95,13 @@ if (!game) {
 - **Navigation** : Liens vers statistiques, historique parties
 
 #### 3. Services Frontend (90 min) - **EXPANSION**
+
 - GamesService, PlayersService error handling
 - Type validation runtime
 - Retry logic et fallbacks
 
 **Services à tester** :
+
 - **GamesService** : `src/__tests__/services/GamesService.test.ts` _(à créer)_
 - **PlayersService** : `src/__tests__/services/PlayersService.test.ts` _(à créer)_
 - **BGGService Frontend** : `src/__tests__/services/BGGService.test.ts` _(à créer)_
@@ -101,7 +109,7 @@ if (!game) {
 ### Phase 5 : Backlog Avancé
 
 - **Dashboard Data Integration** : Real-time stats et métriques
-- **E2E Testing Setup** : User workflows complets  
+- **E2E Testing Setup** : User workflows complets
 - **Performance Testing** : Load et stress tests
 - **CI/CD Integration** : Pipeline automatisé
 
@@ -112,6 +120,7 @@ if (!game) {
 ### ✅ Tests Opérationnels (Status : Passing)
 
 #### 🔄 Tests Backend Complets
+
 ```bash
 # Tous les tests backend (33/33 passing)
 npm run test:backend
@@ -124,6 +133,7 @@ npm run test:backend --watch
 ```
 
 #### 🎨 Tests Frontend Complets
+
 ```bash
 # Tous les tests frontend
 npm run test:frontend
@@ -136,6 +146,7 @@ npm run test:frontend --watch
 ```
 
 #### 🌐 Tests BGGService (Backend)
+
 ```bash
 # Tests unitaires BGGService (6/6 passing)
 npm run test:backend __tests__/backend/bggService.simple.test.ts
@@ -148,11 +159,12 @@ npm run test:backend __tests__/integration/bgg.integration.test.ts
 ```
 
 #### 🎯 Tests Components Frontend
+
 ```bash
 # BGGSearch Component (24/24 passing) - CRITIQUE
 npm run test:frontend src/__tests__/components/BGGSearch.test.tsx
 
-# Games Page CRUD (7/7 passing) - CRITIQUE  
+# Games Page CRUD (7/7 passing) - CRITIQUE
 npm run test:frontend src/__tests__/pages/Games.test.tsx
 
 # Dashboard Infrastructure (3/3 passing)
@@ -162,6 +174,7 @@ npm run test:frontend src/__tests__/components/Dashboard.test.tsx
 ### 🔄 Tests de Développement
 
 #### 🚀 Tests Rapides pour Dev
+
 ```bash
 # Test un seul fichier avec output détaillé
 npm run test:frontend src/__tests__/components/BGGSearch.test.tsx --run --reporter=verbose
@@ -174,6 +187,7 @@ npm run test:backend __tests__/integration/bgg.integration.test.ts --testTimeout
 ```
 
 #### 🔍 Debug et Troubleshooting
+
 ```bash
 # Tests avec debug output
 npm run test:frontend --run --reporter=verbose
@@ -188,6 +202,7 @@ npm run test:frontend --run --reporter=verbose --stack-trace
 ### 📊 Tests par Catégorie Fonctionnelle
 
 #### 🎲 BGG Integration (BoardGameGeek)
+
 ```bash
 # Workflow complet BGG (Critical Path)
 npm run test:frontend src/__tests__/components/BGGSearch.test.tsx --run
@@ -200,6 +215,7 @@ npm run test:backend __tests__/integration/bgg.integration.test.ts --run
 ```
 
 #### 🎮 Games Management
+
 ```bash
 # CRUD Games complet
 npm run test:frontend src/__tests__/pages/Games.test.tsx --run
@@ -209,6 +225,7 @@ npm run test:backend "**/gameService.test.ts" --run
 ```
 
 #### 👥 Players Management
+
 ```bash
 # Players backend services
 npm run test:backend "**/playerService.test.ts" --run
@@ -218,6 +235,7 @@ npm run test:backend "**/playerService.test.ts" --run
 ```
 
 #### 📊 Statistics et Sessions
+
 ```bash
 # Game sessions
 npm run test:backend "**/gameSessionService.test.ts" --run
@@ -230,6 +248,7 @@ npm run test:backend "**/playerStatsService.test.ts" --run
 ### 🚨 Tests avec Issues Connues
 
 #### ⚠️ BGG Integration Issues
+
 ```bash
 # Tests avec timeouts possibles (API externe)
 npm run test:backend __tests__/integration/bgg.integration.test.ts --testTimeout=25000
@@ -241,6 +260,7 @@ npm run test:backend __tests__/integration/bgg.integration.test.ts --run
 ### 🎯 Scripts Utiles par Scenario
 
 #### 🔥 Développement Intensif
+
 ```bash
 # Mode watch avec coverage pour développement
 npm run test:frontend --watch --coverage
@@ -250,6 +270,7 @@ npm run test:backend --watch
 ```
 
 #### 🚀 Validation Rapide Pre-Commit
+
 ```bash
 # Tests critiques only (BGG workflow)
 npm run test:frontend src/__tests__/components/BGGSearch.test.tsx --run && \
@@ -260,6 +281,7 @@ npm run test:backend __tests__/backend/bggService.simple.test.ts --run
 ```
 
 #### 📊 Validation Complète Pre-Deploy
+
 ```bash
 # Suite complète avec coverage
 npm run test:backend --coverage --run && \
@@ -270,6 +292,7 @@ npm run test -- --coverage --run
 ```
 
 #### 🔍 Debug Specific Issues
+
 ```bash
 # BGG timeout debugging
 npm run test:backend __tests__/integration/bgg.integration.test.ts --testTimeout=30000 --reporter=verbose
@@ -279,6 +302,7 @@ npm run test:frontend src/__tests__/components/BGGSearch.test.tsx --run --report
 ```
 
 ### 🔄 Tests Conditionnels
+
 ```bash
 # Tests BGG seulement si API disponible
 BGG_TESTS=true npm run test:backend __tests__/integration/bgg.integration.test.ts
@@ -288,6 +312,7 @@ SKIP_SLOW_TESTS=true npm run test:backend --run
 ```
 
 ### 📊 Reporting Avancé
+
 ```bash
 # Tests avec output JSON pour CI
 npm run test:backend --reporter=json --outputFile=test-results.json --run
@@ -301,18 +326,21 @@ npm run test:frontend --coverage --coverage.reporter=html --run
 ## 📈 MÉTRIQUES DE PROGRESSION
 
 ### Vélocité Actuelle
+
 - **Tests ajoutés cette session** : ~79,000 lignes code test
 - **Coverage critique** : BGG workflow 100% validé
 - **Foundation** : Architecture scalable établie
 - **Documentation** : 13,500+ lignes refs techniques
 
 ### Estimation Completion Phase 4
-- **BGG Fixes** : 0h30 
+
+- **BGG Fixes** : 0h30
 - **Players Tests** : 1h00
 - **Services Tests** : 1h30
 - **Total restant** : ~3h00 pour 95% coverage critique
 
 ### Success Metrics
+
 - **Frontend** : Maintenir 100% (44/44)
 - **Backend** : Viser 100% (33/33) après BGG fix
 - **Integration** : Améliorer à 80%+ (7/9) après error handling
@@ -324,30 +352,35 @@ npm run test:frontend --coverage --coverage.reporter=html --run
 ### Problèmes Fréquents et Solutions
 
 **Test timeouts** :
+
 ```bash
 # Augmenter timeout global
 npm run test:backend --testTimeout=15000 --run
 ```
 
 **Cache issues** :
+
 ```bash
 # Clear cache et re-run
 npm run test:frontend --no-cache --run
 ```
 
 **Mock conflicts** :
+
 ```bash
 # Tests en isolation
 npm run test:frontend src/__tests__/components/BGGSearch.test.tsx --run --isolate
 ```
 
 **Memory issues** :
+
 ```bash
 # Tests avec plus de mémoire
 NODE_OPTIONS="--max-old-space-size=4096" npm run test:backend --run
 ```
 
 ### Tests à Surveiller
+
 - **BGG Integration** : Dépendant API externe, timeouts possibles
 - **Database Concurrency** : Amélioration isolation needed
 - **Memory Usage** : Tests long-running à optimiser
@@ -378,16 +411,18 @@ alias tbw="npm run test:backend --watch"        # Test backend watch
 ## 📋 RÉFÉRENCES RAPIDES
 
 ### Liens Documentation
+
 - `docs/general/ROADMAP.md` - **Historique complet et planning**
 - `docs/TECHNICAL_ISSUES.md` - **Problèmes détaillés et solutions**
 
 ### Quick Commands Validation
+
 ```bash
 # Validation rapide
 npm run test:frontend src/__tests__/pages/Games.test.tsx --run  # 7/7 ✅
 npm run test:frontend src/__tests__/components/BGGSearch.test.tsx --run  # 24/24 ✅
 
-# Debug BGG issues  
+# Debug BGG issues
 npm run test:backend __tests__/integration/bgg.integration.test.ts --run  # 5/9 ⚠️
 ```
 
@@ -396,17 +431,44 @@ npm run test:backend __tests__/integration/bgg.integration.test.ts --run  # 5/9 
 ## 🏆 RÉSUMÉ EXÉCUTIF
 
 ### État Actuel
+
 **Status** : 🟢 **Sur la bonne voie** - Architecture solide, issues identifiées, solutions claires
 
 ### Travail Restant
+
 - **BGG Backend Error Codes** : 30 minutes (critique)
 - **Players Page Tests** : 60 minutes (importante)
 - **Services Frontend** : 90 minutes (expansion)
 
 ### Objectif Global
+
 - **Phase 4 complète** : ~3h00 pour 95% coverage critique
 - **Infrastructure robuste** : ✅ Établie
 - **Patterns scalables** : ✅ Validés
 
 **Compatibilité** : Vitest 3.x, React Testing Library 14.x  
 **Focus immédiat** : Issues en cours et prochaines actions Phase 4
+
+---
+
+## 🟢 Players Page - Tests CRUD & Validation (Septembre 2025)
+
+Tous les tests unitaires et d'interaction pour la page Players sont désormais au vert :
+
+- Rendu initial et chargement
+- Ouverture formulaire création
+- Validation nom (min 3, unique)
+- Création joueur avec avatar/couleur (preview testée)
+- Édition joueur (nom, avatar, couleur)
+- Suppression joueur (attente asynchrone, mock confirm)
+
+**Techniques utilisées :**
+
+- Mocks complets du service PlayersService
+- Utilisation systématique de `await`, `findByText`, `waitFor` pour fiabilité asynchrone
+- Correction accessibilité (label/couleur relié à l'input)
+- ESLint 0 erreur, typage strict, aucune variable ou paramètre inutile
+
+**Pattern réutilisable pour toutes les pages CRUD.**
+
+---

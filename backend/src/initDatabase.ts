@@ -29,7 +29,12 @@ const schema = `
 CREATE TABLE IF NOT EXISTS players (
   player_id INTEGER PRIMARY KEY,
   player_name TEXT NOT NULL UNIQUE,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  nickname TEXT,
+  color TEXT,
+  avatar_url TEXT,
+  stats_enabled BOOLEAN DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS games (
@@ -38,15 +43,32 @@ CREATE TABLE IF NOT EXISTS games (
   game_name TEXT UNIQUE NOT NULL,
   game_description TEXT,
   game_image TEXT,
-  has_characters BOOLEAN NOT NULL,
-  characters TEXT,
+  thumbnail TEXT,
+  year_published INTEGER,
   min_players INTEGER,
   max_players INTEGER,
+  playing_time INTEGER,
+  min_play_time INTEGER,
+  max_play_time INTEGER,
+  age INTEGER,
+  has_characters BOOLEAN NOT NULL,
+  characters TEXT,
   supports_cooperative BOOLEAN,
   supports_competitive BOOLEAN,
   supports_campaign BOOLEAN,
   default_mode TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  publisher TEXT,
+  designer TEXT,
+  artist TEXT,
+  category TEXT,
+  mechanic TEXT,
+  family TEXT,
+  expansions TEXT,
+  accessories TEXT,
+  polls TEXT,
+  stats TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS game_sessions (
@@ -78,11 +100,20 @@ CREATE TABLE IF NOT EXISTS game_characters (
   characters_name TEXT NOT NULL,
   characters_description TEXT,
   characters_abilities TEXT,
+  class_type TEXT,
+  color TEXT,
+  avatar_url TEXT,
   characters_image_url TEXT,
   characters_source TEXT,
   characters_external_id TEXT,
-  class_type TEXT,
+  role TEXT,
+  version TEXT,
+  stats TEXT,
+  tags TEXT,
+  equipment TEXT,
+  is_active BOOLEAN DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (game_id) REFERENCES games(game_id)
 );
 
@@ -92,15 +123,45 @@ CREATE TABLE IF NOT EXISTS game_extensions (
   base_game_id INTEGER NOT NULL,
   extensions_description TEXT,
   add_max_players INTEGER,
+  year_published INTEGER,
+  image_url TEXT,
+  thumbnail TEXT,
+  publisher TEXT,
+  designer TEXT,
+  artist TEXT,
+  category TEXT,
+  mechanic TEXT,
+  family TEXT,
+  stats TEXT,
+  tags TEXT,
+  is_active BOOLEAN DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (base_game_id) REFERENCES games(game_id)
 );
 
 CREATE TABLE IF NOT EXISTS current_game (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  game_data TEXT NOT NULL,
+  game_id INTEGER NOT NULL,
+  is_cooperative INTEGER DEFAULT 0,
+  game_mode TEXT DEFAULT 'competitive',
+  players TEXT NOT NULL,
+  scores TEXT NOT NULL,
+  characters TEXT,
+  extensions TEXT,
+  winner INTEGER,
+  win_condition TEXT,
+  date TEXT,
+  duration TEXT,
+  completed INTEGER DEFAULT 0,
+  coop_result TEXT,
+  dead_characters TEXT,
+  new_character_names TEXT,
+  character_history TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (game_id) REFERENCES games(game_id),
+  FOREIGN KEY (winner) REFERENCES players(player_id)
 );
 
 CREATE TABLE IF NOT EXISTS player_stats (

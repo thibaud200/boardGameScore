@@ -8,7 +8,8 @@ import type {
   CurrentGameData,
   Player,
   Game,
-  CreateCurrentGameRequest
+  CreateCurrentGameRequest,
+  GameExtension
 } from '../types'
 
 export default function CurrentGamePage() {
@@ -25,10 +26,18 @@ export default function CurrentGamePage() {
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([])
   const [selectedMode, setSelectedMode] = useState('competitive')
+  // Ajout du state pour extensions
+  const [selectedExtensionIds, setSelectedExtensionIds] = useState<string[]>([])
+  const [extensions, setExtensions] = useState<GameExtension[]>([])
 
   useEffect(() => {
     loadCurrentGame()
     loadPlayersAndGames()
+    // Charger les extensions depuis l'API
+    fetch('/api/game-extensions')
+      .then((res) => res.json())
+      .then((data) => setExtensions(data))
+      .catch(() => setExtensions([]))
   }, [])
 
   const loadCurrentGame = async () => {
@@ -86,12 +95,15 @@ export default function CurrentGamePage() {
 
     try {
       setError(null)
-      const gameRequest: CreateCurrentGameRequest = {
-        game_id: selectedGameId,
+      // Conversion des extensions sélectionnées en CSV
+      const extensionsCsv = selectedExtensionIds.join(',')
+      // Ajout au payload de création
+      const gameRequest: CreateCurrentGameRequest & { extensions?: string } = {
+        game_id: selectedGameId!,
         players: selectedPlayerIds,
-        game_mode: selectedMode
+        game_mode: selectedMode,
+        extensions: extensionsCsv
       }
-
       const newGame = await CurrentGameService.startGame(gameRequest)
       setCurrentGame(newGame)
 
@@ -247,11 +259,38 @@ export default function CurrentGamePage() {
           </h2>
 
           <form onSubmit={handleCreateGame} className="space-y-4">
+            {/* Sélection des extensions (multi-select) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Extensions (optionnel)
+              </label>
+              <select
+                multiple
+                value={selectedExtensionIds}
+                onChange={(e) => {
+                  const options = Array.from(e.target.selectedOptions)
+                  setSelectedExtensionIds(options.map((opt) => opt.value))
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                {extensions
+                  .filter((ext) => ext.base_game_id === selectedGameId)
+                  .map((ext) => (
+                    <option key={ext.extension_id} value={ext.extension_id}>
+                      {ext.extensions_name}
+                    </option>
+                  ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Maintenez Ctrl (Windows) ou Cmd (Mac) pour sélection multiple
+              </p>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Choisir un jeu *
               </label>
               <select
+                id="select-game"
                 value={selectedGameId || ''}
                 onChange={(e) =>
                   setSelectedGameId(
@@ -390,9 +429,41 @@ export default function CurrentGamePage() {
               {(gameData.players || []).map((player) => (
                 <div
                   key={player.player_id}
-                  className="bg-gray-50 rounded-lg p-3 text-center"
+                  className="bg-gray-50 rounded-lg p-3 text-center flex flex-col items-center"
+                  aria-label={`Joueur ${player.player_name}`}
                 >
-                  <div className="font-medium">{player.player_name}</div>
+                  {player.avatar_url ? (
+                    <img
+                      src={player.avatar_url}
+                      alt={`Avatar de ${player.player_name}`}
+                      className="w-12 h-12 rounded-full border mb-2"
+                    />
+                  ) : (
+                    <span className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center border mb-2 text-gray-500">
+                      <svg
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 20c0-4 8-4 8-4s8 0 8 4" />
+                      </svg>
+                    </span>
+                  )}
+                  <div className="font-medium flex items-center justify-center gap-2">
+                    {player.player_name}
+                    {player.color && (
+                      <span
+                        className="inline-block w-4 h-4 rounded-full border ml-1"
+                        style={{ background: player.color }}
+                        title={player.color}
+                        aria-label={`Couleur ${player.color}`}
+                      />
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

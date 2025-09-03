@@ -2,19 +2,20 @@ import React, { useState, useEffect } from 'react'
 import { PlayersService } from '../services/playersService'
 import type { Player, CreatePlayerRequest, UpdatePlayerRequest } from '../types'
 
-interface EditingPlayer {
-  player_id: number
-  player_name: string
-}
-
 export default function Players() {
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isCreating, setIsCreating] = useState(false)
-  const [editingPlayer, setEditingPlayer] = useState<EditingPlayer | null>(null)
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [newPlayerName, setNewPlayerName] = useState('')
+  const [newAvatarUrl, setNewAvatarUrl] = useState('')
+  const [newColor, setNewColor] = useState('#2196f3')
   const [editPlayerName, setEditPlayerName] = useState('')
+  const [editAvatarUrl, setEditAvatarUrl] = useState('')
+  const [editColor, setEditColor] = useState('#2196f3')
+  // Suppression des variables inutilisées pour édition avatar/couleur
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   // Charger tous les joueurs au montage du composant
   useEffect(() => {
@@ -37,16 +38,43 @@ export default function Players() {
 
   const handleCreatePlayer = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newPlayerName.trim()) return
-
+    setValidationError(null)
+    if (newPlayerName.trim().length < 3) {
+      setValidationError('Le nom doit comporter au moins 3 caractères.')
+      return
+    }
+    if (
+      players.some(
+        (p) =>
+          p.player_name.toLowerCase() === newPlayerName.trim().toLowerCase()
+      )
+    ) {
+      setValidationError('Ce nom de joueur existe déjà.')
+      return
+    }
+    if (
+      newAvatarUrl &&
+      !/^https?:\/\/.+\.(jpg|jpeg|png|gif|svg)$/.test(newAvatarUrl)
+    ) {
+      setValidationError("URL d'avatar invalide (doit être une image).")
+      return
+    }
+    if (newColor && !/^#[0-9A-Fa-f]{6}$/.test(newColor)) {
+      setValidationError('Couleur invalide (code hex attendu).')
+      return
+    }
     try {
       setError(null)
       const playerData: CreatePlayerRequest = {
-        player_name: newPlayerName.trim()
+        player_name: newPlayerName.trim(),
+        avatar_url: newAvatarUrl || null,
+        color: newColor || null
       }
       const newPlayer = await PlayersService.createPlayer(playerData)
       setPlayers((prev) => [...prev, newPlayer])
       setNewPlayerName('')
+      setNewAvatarUrl('')
+      setNewColor('#2196f3')
       setIsCreating(false)
     } catch (err) {
       setError('Erreur lors de la création du joueur')
@@ -94,16 +122,17 @@ export default function Players() {
   }
 
   const startEdit = (player: Player) => {
-    setEditingPlayer({
-      player_id: player.player_id,
-      player_name: player.player_name
-    })
+    setEditingPlayer(player)
     setEditPlayerName(player.player_name)
+    setEditAvatarUrl(player.avatar_url || '')
+    setEditColor(player.color || '#2196f3')
   }
 
   const cancelEdit = () => {
     setEditingPlayer(null)
     setEditPlayerName('')
+    setEditAvatarUrl('')
+    setEditColor('#2196f3')
   }
 
   const cancelCreate = () => {
@@ -147,29 +176,83 @@ export default function Players() {
           <h2 className="text-lg font-semibold text-green-800 mb-3">
             Créer un nouveau joueur
           </h2>
-          <form onSubmit={handleCreatePlayer} className="flex gap-3">
-            <input
-              type="text"
-              value={newPlayerName}
-              onChange={(e) => setNewPlayerName(e.target.value)}
-              placeholder="Nom du joueur"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              autoFocus
-              required
-            />
-            <button
-              type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              Créer
-            </button>
-            <button
-              type="button"
-              onClick={cancelCreate}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              Annuler
-            </button>
+          <form onSubmit={handleCreatePlayer} className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Nom du joueur
+              </label>
+              <input
+                type="text"
+                value={newPlayerName}
+                onChange={(e) => setNewPlayerName(e.target.value)}
+                placeholder="Nom du joueur"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                minLength={3}
+                required
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Avatar (URL)
+              </label>
+              <input
+                type="url"
+                value={newAvatarUrl}
+                onChange={(e) => setNewAvatarUrl(e.target.value)}
+                placeholder="https://...jpg/png"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {newAvatarUrl &&
+                /^https?:\/\/.+\.(jpg|jpeg|png|gif|svg)$/.test(
+                  newAvatarUrl
+                ) && (
+                  <img
+                    src={newAvatarUrl}
+                    alt="Avatar preview"
+                    className="mt-2 w-16 h-16 rounded-full border"
+                  />
+                )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Couleur</label>
+              <label
+                htmlFor="new-player-color"
+                className="block text-sm font-medium mb-1"
+              >
+                Couleur
+              </label>
+              <input
+                id="new-player-color"
+                type="color"
+                value={newColor}
+                onChange={(e) => setNewColor(e.target.value)}
+                className="w-12 h-8 p-0 border-none bg-transparent"
+              />
+              <span
+                className="inline-block ml-2 w-6 h-6 rounded-full border"
+                style={{ background: newColor }}
+                title={newColor}
+              />
+            </div>
+            {validationError && (
+              <div className="text-red-600 text-sm mb-2">{validationError}</div>
+            )}
+            <div className="flex gap-3 mt-2">
+              <button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                Créer
+              </button>
+              <button
+                type="button"
+                onClick={cancelCreate}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
           </form>
         </div>
       )}
@@ -210,33 +293,101 @@ export default function Players() {
                       {editingPlayer?.player_id === player.player_id ? (
                         <form
                           onSubmit={handleUpdatePlayer}
-                          className="flex gap-2"
+                          className="flex flex-col gap-2"
                         >
                           <input
                             type="text"
                             value={editPlayerName}
                             onChange={(e) => setEditPlayerName(e.target.value)}
-                            className="flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            autoFocus
+                            className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            minLength={3}
                             required
+                            autoFocus
                           />
-                          <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                          <input
+                            type="url"
+                            value={editAvatarUrl}
+                            onChange={(e) => setEditAvatarUrl(e.target.value)}
+                            placeholder="URL de l'avatar"
+                            className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          {editAvatarUrl &&
+                            /^https?:\/\/.+\.(jpg|jpeg|png|gif|svg)$/.test(
+                              editAvatarUrl
+                            ) && (
+                              <img
+                                src={editAvatarUrl}
+                                alt="Avatar preview"
+                                className="mt-1 w-12 h-12 rounded-full border"
+                              />
+                            )}
+                          <label
+                            htmlFor="edit-player-color"
+                            className="block text-sm font-medium mb-1"
                           >
-                            Sauver
-                          </button>
-                          <button
-                            type="button"
-                            onClick={cancelEdit}
-                            className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
-                          >
-                            Annuler
-                          </button>
+                            Couleur
+                          </label>
+                          <input
+                            id="edit-player-color"
+                            type="color"
+                            value={editColor}
+                            onChange={(e) => setEditColor(e.target.value)}
+                            className="w-10 h-6 p-0 border-none bg-transparent"
+                          />
+                          <span
+                            className="inline-block ml-2 w-5 h-5 rounded-full border"
+                            style={{ background: editColor }}
+                            title={editColor}
+                          />
+                          <div className="flex gap-2 mt-2">
+                            <button
+                              type="submit"
+                              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                            >
+                              Sauver
+                            </button>
+                            <button
+                              type="button"
+                              onClick={cancelEdit}
+                              className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                            >
+                              Annuler
+                            </button>
+                          </div>
                         </form>
                       ) : (
-                        <div className="text-sm text-gray-900 font-medium">
-                          {player.player_name}
+                        <div className="flex items-center gap-3">
+                          {player.avatar_url ? (
+                            <img
+                              src={player.avatar_url}
+                              alt={player.player_name}
+                              className="w-10 h-10 rounded-full border"
+                            />
+                          ) : (
+                            <span className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border text-gray-500">
+                              <svg
+                                width="24"
+                                height="24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c0-4 8-4 8-4s8 0 8 4" />
+                              </svg>
+                            </span>
+                          )}
+                          <span className="text-sm text-gray-900 font-medium">
+                            {player.player_name}
+                          </span>
+                          {player.color && (
+                            <span
+                              className="inline-block ml-2 w-5 h-5 rounded-full border"
+                              style={{ background: player.color }}
+                              title={player.color}
+                            />
+                          )}
                         </div>
                       )}
                     </td>

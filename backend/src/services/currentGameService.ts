@@ -1,12 +1,42 @@
 import db from '../initDatabase'
 
 export interface CurrentGameInput {
-  game_data: string
+  game_id: number
+  is_cooperative?: boolean
+  game_mode?: string
+  players: string
+  scores: string
+  characters?: string
+  extensions?: string
+  winner?: number
+  win_condition?: string
+  date?: string
+  duration?: string
+  completed?: boolean
+  coop_result?: string
+  dead_characters?: string
+  new_character_names?: string
+  character_history?: string
 }
 
 export interface CurrentGameRecord {
   id: number
-  game_data: string
+  game_id: number
+  is_cooperative: boolean
+  game_mode: string
+  players: string
+  scores: string
+  characters?: string
+  extensions?: string
+  winner?: number
+  win_condition?: string
+  date?: string
+  duration?: string
+  completed?: boolean
+  coop_result?: string
+  dead_characters?: string
+  new_character_names?: string
+  character_history?: string
   created_at: string
   updated_at: string
 }
@@ -19,21 +49,76 @@ export function getCurrentGame() {
   const result = db
     .prepare('SELECT * FROM current_game ORDER BY updated_at DESC LIMIT 1')
     .get()
-  // Si aucune partie en cours, retourner null plutôt qu'undefined
   return result || null
 }
 
 export function saveCurrentGame(data: CurrentGameInput) {
-  const stmt = db.prepare(`INSERT INTO current_game (game_data) VALUES (?)`)
-  stmt.run(data.game_data)
+  const stmt = db.prepare(`INSERT INTO current_game (
+    game_id, is_cooperative, game_mode, players, scores, characters, extensions, winner, win_condition, date, duration, completed, coop_result, dead_characters, new_character_names, character_history
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+  stmt.run(
+    data.game_id,
+    data.is_cooperative ? 1 : 0,
+    data.game_mode ?? 'competitive',
+    data.players,
+    data.scores,
+    data.characters ?? null,
+    data.extensions ?? null,
+    data.winner ?? null,
+    data.win_condition ?? null,
+    data.date ?? new Date().toISOString(),
+    data.duration ?? null,
+    data.completed ? 1 : 0,
+    data.coop_result ?? null,
+    data.dead_characters ?? null,
+    data.new_character_names ?? null,
+    data.character_history ?? null
+  )
   return getCurrentGame()
 }
 
-export function updateCurrentGame(id: number, game_data: string) {
-  const stmt = db.prepare(
-    `UPDATE current_game SET game_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
+// Pour simplifier, on attend un objet CurrentGameInput
+// (on peut adapter pour un patch partiel si besoin)
+// Ici, on met à jour tous les champs sauf id/created_at
+export function updateCurrentGame(id: number, data: CurrentGameInput) {
+  const stmt = db.prepare(`UPDATE current_game SET
+    game_id = ?,
+    is_cooperative = ?,
+    game_mode = ?,
+    players = ?,
+    scores = ?,
+    characters = ?,
+    extensions = ?,
+    winner = ?,
+    win_condition = ?,
+    date = ?,
+    duration = ?,
+    completed = ?,
+    coop_result = ?,
+    dead_characters = ?,
+    new_character_names = ?,
+    character_history = ?,
+    updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?`)
+  stmt.run(
+    data.game_id,
+    data.is_cooperative ? 1 : 0,
+    data.game_mode ?? 'competitive',
+    data.players,
+    data.scores,
+    data.characters ?? null,
+    data.extensions ?? null,
+    data.winner ?? null,
+    data.win_condition ?? null,
+    data.date ?? new Date().toISOString(),
+    data.duration ?? null,
+    data.completed ? 1 : 0,
+    data.coop_result ?? null,
+    data.dead_characters ?? null,
+    data.new_character_names ?? null,
+    data.character_history ?? null,
+    id
   )
-  stmt.run(game_data, id)
   return getCurrentGame()
 }
 
@@ -54,41 +139,53 @@ export function finishCurrentGameAsSession(
     throw new Error('Partie en cours introuvable')
   }
 
-  // 2. Parser les données de la partie
-  const gameData = JSON.parse(currentGame.game_data)
-
-  // 3. Créer la session dans game_sessions
+  // 2. Créer la session dans game_sessions
   const sessionStmt = db.prepare(`
     INSERT INTO game_sessions (
       sessions_game_id,
+      is_cooperative,
       game_mode,
       sessions_players,
       sessions_scores,
+      sessions_characters,
+      sessions_extensions,
+      sessions_winner,
+      win_condition,
       sessions_date,
-      sessions_completed
-    ) VALUES (?, ?, ?, ?, ?, ?)
+      sessions_duration,
+      sessions_completed,
+      sessions_coop_result,
+      sessions_dead_characters,
+      sessions_new_character_names,
+      sessions_character_history
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
 
-  // Préparer les données de la session
-  const sessionPlayers = JSON.stringify(gameData.players || [])
-  const sessionScores = JSON.stringify(finalScores || {})
-  const sessionDate = new Date().toISOString()
-
   const sessionResult = sessionStmt.run(
-    gameData.game_id,
-    gameData.game_mode || 'competitive',
-    sessionPlayers,
-    sessionScores,
-    sessionDate,
-    1 // sessions_completed = 1
+    currentGame.game_id,
+    currentGame.is_cooperative ? 1 : 0,
+    currentGame.game_mode,
+    currentGame.players,
+    finalScores ? JSON.stringify(finalScores) : currentGame.scores,
+    currentGame.characters ?? null,
+    currentGame.extensions ?? null,
+    currentGame.winner ?? null,
+    currentGame.win_condition ?? null,
+    currentGame.date ?? new Date().toISOString(),
+    currentGame.duration ?? null,
+    1, // sessions_completed = 1
+    currentGame.coop_result ?? null,
+    currentGame.dead_characters ?? null,
+    currentGame.new_character_names ?? null,
+    currentGame.character_history ?? null
   )
 
-  // 4. Supprimer la partie en cours
+  // 3. Supprimer la partie en cours
   deleteCurrentGame(id)
 
-  // 5. Retourner les infos de la session créée
+  // 4. Retourner les infos de la session créée
   return {
     sessionId: sessionResult.lastInsertRowid,
-    gameData: gameData
+    gameData: currentGame
   }
 }
