@@ -1,240 +1,315 @@
 # 🎯 Board Game Score Tracker
 
-## 🚀 Status du Projet
+## 🚀 Project Status
 
-### ✅ Foundation Technique Complète (Septembre 2025)
+### ✅ Complete Infrastructure
 
-- **Backend Express.js + SQLite** : 10 endpoints, 33/33 tests ✅
-- **Frontend React + TypeScript** : Pages CRUD Players & Games complètes ✅
-- **Intégration BoardGameGeek** : Service BGG complet, composant BGGSearch ✅
-- **Types TypeScript** : Interfaces complètes pour Game, Player, BGG avec gestion hybride ✅
-- **Services Frontend** : BGGService, PlayersService, GamesService documentés ✅
-- **Documentation** : Structure complète docs/{backend,frontend,general}/ ✅
-- **Qualité Code** : 0 erreurs ESLint, typage TypeScript strict ✅
+- [docs/README.md](docs/README.md): Complete navigation index
 
-### 🎨 Prochaine Phase : UI/UX Refonte
+### 🎯 Development Rules
 
-Foundation technique solide permettant de se concentrer sur l'amélioration de l'interface utilisateur et de l'expérience globale.
+- **No `any` type**: Strict TypeScript applied
+- **Frontend/backend separation**: REST APIs only
+- **Mandatory modularity**: Separate services, components, types
+- **Mandatory tests**: 100% critical coverage
+- **DB migrations**: Any change requires a migration
+- **Validation**: Inputs validated on backend
+- **Documentation**: Updated with every feature
 
----
+### � Quality Tools
 
-## Commit automatique au format Conventional Commits
+- **EditorConfig**: Uniform formatting (LF, UTF-8, 2 spaces)
+- **Prettier**: Automatic code formatting
+- **ESLint**: Strict linting (React, TypeScript, Hooks)
+- **Husky**: Git hooks (pre-commit, commit-msg)
+- **Commitlint**: Mandatory conventional messages
 
-Un hook Husky corrige automatiquement le message de commit si ## Database
+### � Commit Conventions
 
-### ✅ Infrastructure complète
+```
+│   │   ├── database.ts        # SQLite config
+│   │   ├── server.ts          # Express server
+│   │   └── init*.ts           # Init scripts
+│   ├── database/
+│   │   ├── database.db        # Production DB
+│   │   ├── test.db           # Test DB
+│   │   └── docs/
+```
 
-- ## Tests
+## Correction History
 
-✅ **Status : Infrastructure complète et robuste**
+### �️ Recent Fixes (September 2025)
 
-- **Framework** : Vitest avec configuration série pour éviter les conflits de DB
-- **Coverage** :La structure complète, les tables, relations, migrations et requêtes sont ## Documentation
+- **Line endings**: Normalized CRLF → LF for lint compatibility
+- **TypeScript config**: moduleResolution `bundler` for React Router 7
+- **PostCSS**: Migration to @tailwindcss/postcss for Tailwind v4
+- **ESLint**: Fixed unescaped characters and empty interfaces
+- **CI/CD**: Functional GitHub Actions pipeline with npm
+- **Build**: Optimized production builds without errors
 
-### 📚 Docum- Séparation stLa structure complète, les tables, relations, migrations et requêtes sont documentées dans : ➡️ [docs/backend/database-structure.md](docs/backend/database-structure.md)icte frontend/backend
+### ✅ Current State
 
-- Modularité et tests obligatoires
-- Migrations pour toute modif DB
-- Validation et sécurité systématiques
-- Documentation à jour (docs/general/CONTEXT.md, docs/backend/database-structure.md, README.md)
-- Conventions de commit et scripts qualité
+- **0 ESLint errors** on the whole project → [Linting Documentation](docs/LINTING.md)
+- **33/33 tests** pass serially
+- **Production build** functional
+- **CI/CD pipeline** green on GitHub Actions
+- **Frontend architecture** ready for CRUD development
 
 ## Documentation
 
-- [docs/README.md](docs/README.md) : Index navigation complète
-- [docs/general/CONTEXT.md](docs/general/CONTEXT.md) : Règles IA, standards, workflow
-- [docs/backend/database-structure.md](docs/backend/database-structure.md) : Structure DB
-- [commitlint.config.cjs](commitlint.config.cjs) : Convention de commit
-- [eslint.config.cjs](eslint.config.cjs) : Linting
-- [.prettierrc.cjs](.prettierrc.cjs) : Formatageipale
-- **[README.md](README.md)** : Documentation générale du projet (ce fichier)
-- **[docs/general/ROADMAP.md](docs/general/ROADMAP.md)** : Feuille de route et planning des fonctionnalités
-- **[docs/general/CONTEXT.md](docs/general/CONTEXT.md)** : Règles IA, standards, workflow et contraintes
-- **[docs/general/ARCHITECTURE.md](docs/general/ARCHITECTURE.md)** : Principes SOLID, bonnes pratiques architecture
-- **[docs/general/TECHNICAL_STATE.md](docs/general/TECHNICAL_STATE.md)** : État technique & configuration complète
+### 📚 References
 
-### 🔌 Documentation API & Backend
+- **[docs/README.md](docs/README.md)**: Complete navigation index
+- **[docs/general/CONTEXT.md](docs/general/CONTEXT.md)**: IA rules, standards, workflow
+- **[docs/general/DEVELOPMENT_GUIDELINES.md](docs/general/DEVELOPMENT_GUIDELINES.md)**: Best practices guide
+- **[docs/general/LINTING.md](docs/general/LINTING.md)**: ESLint configuration and best practices
+- **[docs/general/TECHNICAL_STATE.md](docs/general/TECHNICAL_STATE.md)**: Technical state & full configuration
+- **[docs/backend/database-structure.md](docs/backend/database-structure.md)**: Complete DB structure
+- **[docs/backend/API_DOC.md](docs/backend/API_DOC.md)**: REST endpoints documentation
+- **[docs/general/ROADMAP.md](docs/general/ROADMAP.md)**: Feature roadmap
 
-- **[docs/backend/API_DOC.md](docs/backend/API_DOC.md)** : Documentation complète des endpoints REST
-- **[docs/backend/database-structure.md](docs/backend/database-structure.md)** : Structure complète de la base de données
-- **[backend/README.md](backend/README.md)** : Documentation spécifique du backend
+### ⚠️ Development Notes
 
-### 🧪 Documentation Tests
+- **SQLite types**: Boolean conversion → integers (see [DEVELOPMENT_GUIDELINES.md](docs/general/DEVELOPMENT_GUIDELINES.md))
+- **Null/undefined values**: Specific JavaScript ↔ SQLite handling
+- **React forms**: Default values required for inputs
 
-- **[**tests**/backend/README.md](**tests**/backend/README.md)** : Documentation des tests backend
+### � Maintenance
 
-### 🔍 Documentation Qualité & Linting
+- **Tests**: Automatically run on every commit
+- **Linting**: Checked before every commit via Husky
+- **Documentation**: Updated with every feature
+- **Migrations**: Versioned and documented
+- **Dependencies**: Regular security audit
+- **Test types**:
+  - API integration tests (22 tests)
+  - Service unit tests (11 tests)
+- **Isolation**: Separate test DB with automatic fixtures
+- **CI/CD**: Husky blocks commits if tests or lint fail
+- **Configuration**: Serial tests (`singleFork: true`) to eliminate concurrency conflicts
+- **Main DB**: `backend/database/database.db` - Production DB with full schema
+- **Test DB**: `backend/database/test.db` - Isolated DB for automated tests
+- **Automatic selection**: System chooses the right DB based on environment
+- **Fixtures**: Test data injection system with consistent FKs
+- **Tests**: 33/33 tests pass with full DB isolation
 
-- **[docs/general/LINTING.md](docs/general/LINTING.md)** : Configuration ESLint, règles et bonnes pratiques
-
-### ⚙️ Configuration
-
-- **[commitlint.config.cjs](commitlint.config.cjs)** : Convention de commit
-- **[eslint.config.cjs](eslint.config.cjs)** : Configuration linting
-- **[.prettierrc.cjs](.prettierrc.cjs)** : Configuration formatage
-- **[tsconfig.json](tsconfig.json)** : Configuration TypeScript
-- **[vite.config.ts](vite.config.ts)** : Configuration build Vitetées dans : ➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)
-
-## Standards & Best Practices
-
-### 🎯 Règles de Développement
-
-- **Pas de type `any`** : TypeScript strict appliqué
-- **Séparation frontend/backend** : APIs REST uniquement
-- **Modularité obligatoire** : Services, composants, types séparés
-- **Tests obligatoires** : Coverage critique à 100%
-- **Migrations DB** : Toute modification nécessite une migration
-- **Validation** : Entrées validées côté backend
-- **Documentation** : À jour à chaque feature
-
-### 🔧 Outils de Qualité
-
-- **EditorConfig** : Formatage uniforme (LF, UTF-8, 2 spaces)
-- **Prettier** : Formatage automatique du code
-- **ESLint** : Linting strict (React, TypeScript, Hooks)
-- **Husky** : Hooks Git (pre-commit, commit-msg)
-- **Commitlint** : Messages conventionnels obligatoires
-
-### 📝 Conventions de Commit
-
-```
-feat: nouvelle fonctionnalité
-fix: correction de bug
-docs: mise à jour documentation
-style: formatage, lint
-refactor: refactoring sans changement fonctionnel
-test: ajout/modification tests
-chore: tâches de maintenance
-```
-
-## Historique des Corrections
-
-### 🛠️ Corrections Récentes (Septembre 2025)
-
-- **Line endings** : Normalisé CRLF → LF pour compatibilité lint
-- **TypeScript config** : moduleResolution `bundler` pour React Router 7
-- **PostCSS** : Migration vers @tailwindcss/postcss pour Tailwind v4
-- **ESLint** : Correction caractères non-échappés et interfaces vides
-- **CI/CD** : Pipeline GitHub Actions fonctionnelle avec npm
-- **Build** : Production builds optimisés sans erreur
-
-### ✅ État Actuel
-
-- **0 erreur** ESLint sur tout le projet → [Documentation Linting](docs/LINTING.md)
-- **33/33 tests** passent en série
-- **Build** production fonctionnel
-- **Pipeline CI/CD** verte sur GitHub Actions
-- **Architecture frontend** prête pour développement CRUD
-
-## Documentation
-
-### 📚 Références
-
-- **[docs/README.md](docs/README.md)** : Index navigation complète
-- **[docs/general/CONTEXT.md](docs/general/CONTEXT.md)** : Règles IA, standards, workflow
-- **[docs/general/DEVELOPMENT_GUIDELINES.md](docs/general/DEVELOPMENT_GUIDELINES.md)** : Guide des bonnes pratiques
-- **[docs/general/LINTING.md](docs/general/LINTING.md)** : Configuration ESLint et bonnes pratiques
-- **[docs/general/TECHNICAL_STATE.md](docs/general/TECHNICAL_STATE.md)** : État technique & configuration complète
-- **[docs/backend/database-structure.md](docs/backend/database-structure.md)** : Structure complète DB
-- **[docs/backend/API_DOC.md](docs/backend/API_DOC.md)** : Documentation endpoints REST
-- **[docs/general/ROADMAP.md](docs/general/ROADMAP.md)** : Feuille de route fonctionnalités
-
-### ⚠️ Points d'attention développement
-
-- **Types SQLite** : Conversion booléens → entiers (voir [DEVELOPMENT_GUIDELINES.md](docs/general/DEVELOPMENT_GUIDELINES.md))
-- **Valeurs null/undefined** : Gestion spécifique JavaScript ↔ SQLite
-- **Formulaires React** : Valeurs par défaut obligatoires pour inputs
-
-### 🔄 Maintenance
-
-- **Tests** : Exécutés automatiquement sur chaque commit
-- **Linting** : Vérifié avant chaque commit via Husky
-- **Documentation** : Mise à jour avec chaque feature
-- **Migrations** : Versionnées et documentées
-- **Dependencies** : Audit de sécurité régulier33/33 tests réussissent (100% des fonctionnalités critiques)
-- **Types de tests** :
-  - Tests d'intégration API (22 tests)
-  - Tests unitaires services (11 tests)
-- **Isolation** : Base de test séparée avec fixtures automatiques
-- **CI/CD** : Husky empêche les commits si tests ou lint échouent
-- **Configuration** : Tests en série (`singleFork: true`) pour éliminer les conflits de concurrencee principale\*\* : `backend/database/database.db` - Base de production avec schéma complet
-- **Base de test** : `backend/database/test.db` - Base isolée pour les tests automatisés
-- **Sélection automatique** : Le système choisit la bonne base selon l'environnement
-- **Fixtures** : Système d'injection de données de test avec FK cohérentes
-- **Tests** : 33/33 tests passent avec isolation complète des bases
-
-### Initialisation des bases de données
+### Database Initialization
 
 ```bash
-# Base principale (production)
+# Main database (production)
 node backend/src/initDatabase.ts
 
-# Base de test (développement)
+# Test database (development)
 node backend/src/initTestDatabase.ts
 ```
 
-La structure complète, les tables, relations et migrations sont documentées dans :  
-➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)Conventional Commit n'est pas respecté. Si tu fais un commit avec un message libre, il sera préfixé par `chore:` pour garantir la conformité.
-
-Exemple :
-
-```
-git commit -m "ajout doc et tests"
-```
-
-devient automatiquement :
-
-```
-chore: ajout doc et tests
-```
-
-Ce mécanisme permet de ne jamais bloquer les commits à cause du format.
+The complete structure, tables, relations, and migrations are documented at:  
+➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)
 
 # Board Game Score Tracker
 
-Application web pour gérer les parties de jeux de société, suivi multi-modes, gestion des personnages, statistiques avancées, et intégration BoardGameGeek.
+Web application to manage board game sessions, multi-mode tracking, character management, advanced statistics, and BoardGameGeek integration.
 
 ![Screenshot](assets/screenshot.png)
 
-## ✅ État du Projet - Septembre 2025
+## ✅ Project State - September 2025
 
-- **Backend** : 100% fonctionnel avec 33/33 tests qui passent ✅
-- **API REST** : 10 endpoints avec validation complète ✅
-- **Base de données** : SQLite avec schéma complet et fixtures ✅
-- **Tests d'intégration** : Coverage complète des endpoints ✅
-- **Tests unitaires** : Tous les services backend testés ✅
-- **Frontend** : Architecture en place, dashboard fonctionnel ✅
-- **CI/CD** : Pipeline GitHub Actions fonctionnelle ✅
-- **Linting** : Aucune erreur ESLint ✅
-- **Build** : Production builds sans erreur ✅
+│ │ └── database-structure.md │ └── tsconfig.json ├── 📁 **tests**/ # Automated tests │ ├── integration/ # 22 API integration tests │ ├── backend/ # 11 unit tests │ └── fixtures/ # Test data ├── 📁 .github/ │ └── workflows/ │ └── ci.yml # GitHub Actions pipeline ├── 📁 .husky/ # Git hooks ├── 📄 Configuration │ ├── .editorconfig │ ├── .prettierrc.cjs │ ├── commitlint.config.cjs │ ├── eslint.config.cjs │ ├── postcss.config.cjs # Tailwind CSS 4 config │ ├── tailwind.config.js │ ├── tsconfig.json # TypeScript config │ └── vite.config.ts ├── 📄 Documentation │ ├── README.md # This file │ └── docs/ # Organized technical docs │ ├── README.md # Navigation index │ ├── backend/ # Backend docs │ │ ├── API_DOC.md # REST endpoints │ │ └── database-structure.md # DB schema │ ├── frontend/ # Frontend docs │ │ └── (coming soon) │ └── general/ # General docs │ ├── CONTEXT.md # Standards and IA rules │ ├── ARCHITECTURE.md # SOLID principles │ ├── DEVELOPMENT_GUIDELINES.md # Dev guide │ ├── LINTING.md # ESLint & quality config │ ├── ROADMAP.md # Roadmap │ └── TECHNICAL_STATE.md # Technical state & config └── package.json
+
+````
+
+## CI/CD Pipeline
+
+### 🚀 GitHub Actions
+
+```yaml
+name: CI
+on: [push, pull_request]
+jobs:
+  lint: # ESLint on src, backend/src, __tests__
+  build: # npm run build (Vite + TypeScript)
+  test: # npm test (33 Vitest tests)
+````
+
+### 🔒 Quality Gates
+
+- **Husky hooks**: Lint + tests before commit
+- **Commitlint**: Conventional commit messages
+- **Mandatory pipeline**: All jobs must pass
+- **No errors tolerated**: 0 ESLint warnings
+
+## Database Initialization
+
+### 🗄️ Initialization Scripts
+
+```bash
+# Main database (production)
+node backend/src/initDatabase.ts
+
+# Test database (development)
+node backend/src/initTestDatabase.ts
+```
+
+### 📊 Automatic Fixtures
+
+- **Consistent data**: Automatic FKs, realistic timestamps
+- **Players**: Alice, Bob with histories
+- **Games**: Catan, 7 Wonders with metadata
+- **Sessions**: Games with scores and statistics
+- **Relations**: Characters, extensions, cross stats
+
+Full structure documented at:  
+➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)
+
+![](assets/template-usage.png)
+
+## 🚀 Getting Started
+
+### ⚡ Quick Start (Recommended)
+
+```bash
+# Clone and install
+git clone https://github.com/thibaud200/boardGameScore.git
+cd boardGameScore
+npm install
+
+# Full start (frontend + backend)
+npm run dev:full
+# ➡️ Frontend: http://localhost:5173
+# ➡️ Backend: http://localhost:3001
+```
+
+### 🔧 Separate Start
+
+#### Frontend only
+
+```bash
+npm run dev
+# ➡️ http://localhost:5173
+```
+
+#### Backend only
+
+```bash
+npm run dev:backend
+# ➡️ http://localhost:3001
+# Shows: "Server running on port 3001"
+```
+
+#### Manual backend start
+
+```bash
+cd backend
+npm install
+tsx src/server.ts
+# ➡️ Database initialized automatically
+```
+
+### ✅ Backend Startup Verification
+
+Backend server displays on startup:
+
+```
+Database initialized with schema.
+Server running on port 3001
+```
+
+**Connectivity tests:**
+
+```bash
+# Test Players API
+curl http://localhost:3001/api/players
+# Response: [] (empty list)
+
+# BGG integration test
+curl "http://localhost:3001/api/bgg/search?q=Catan"
+# Response: JSON with BGG results
+```
+
+## Scripts
+
+- `npm run dev`: Start frontend/backend in development mode
+- `npm run lint`: ESLint check (no errors)
+- `npm run format`: Automatic Prettier formatting
+- `npm run test`: **33/33 tests passing** ✅
+- `npm run build`: Optimized production build
+
+## Database
+
+### Database Initialization
+
+Two scripts initialize the SQLite databases:
+
+- **Main database**: `node backend/src/initDatabase.ts` creates/initializes the real database (`database.db`) with the full schema.
+- **Test database**: `node backend/src/initTestDatabase.ts` creates/initializes a dedicated test database (`test.db`) with the same schema.
+
+Full structure, tables, relations, migrations, and queries are documented at: ➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)
+
+## Standards & Constraints
+
+- No `any` type
+- Strict frontend/backend separation
+- Mandatory modularity and tests
+- Migrations for any DB change
+- Systematic validation and security
+- Up-to-date documentation (CONTEXT.md, database-structure.md, README.md)
+- Commit conventions and quality scripts
+
+## Documentation
+
+- [CONTEXT.md](CONTEXT.md): IA rules, standards, workflow
+- [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md): DB structure
+- [commitlint.config.cjs](commitlint.config.cjs): Commit convention
+- [eslint.config.cjs](eslint.config.cjs): Linting
+- [.prettierrc.cjs](.prettierrc.cjs): Formatting
+
+## Tests
+
+- **Vitest**: Backend/frontend unit tests
+- **Coverage**: >80% required
+- **Husky**: Prevents commits if tests or lint fail
+
+---
+
+## Translated continuation
+
+- **Backend**: 100% functional with 33/33 passing tests ✅
+- **REST API**: 10 endpoints with full validation ✅
+- **Database**: SQLite with complete schema and fixtures ✅
+- **Integration Tests**: Full coverage of endpoints ✅
+- **Unit Tests**: All backend services tested ✅
+- **Frontend**: Architecture in place, functional dashboard ✅
+- **CI/CD**: Functional GitHub Actions pipeline ✅
+- **Linting**: No ESLint errors ✅
+- **Build**: Production builds without errors ✅
 
 ## About
 
-Board Game Score Tracker propose une stack moderne, des outils de qualité et une structure modulaire pour le suivi des jeux de société.
+Board Game Score Tracker offers a modern stack, quality tools, and modular structure for board game tracking.
 
-## Stack Technique
+## Technical Stack
 
 ### Frontend
 
-- **React 19** avec TypeScript 5.x
-- **React Router 7** pour la navigation
-- **Tailwind CSS 4** avec @tailwindcss/forms
-- **Vite 7** comme bundler
-- **API client** avec gestion d'erreurs robuste
+- **React 19** with TypeScript 5.x
+- **React Router 7** for navigation
+- **Tailwind CSS 4** with @tailwindcss/forms
+- **Vite 7** as bundler
+- **API client** with robust error handling
 
 ### Backend
 
-- **Node.js 24** avec Express.js 5
-- **TypeScript 5.x** strict
-- **better-sqlite3** pour SQLite
-- **Architecture en services** modulaires
+- **Node.js 24** with Express.js 5
+- **Strict TypeScript 5.x**
+- **better-sqlite3** for SQLite
+- **Modular service architecture**
 
-### Outils de Développement
+### Development Tools
 
-- **Vitest** pour les tests
-- **ESLint 9** + Prettier 3\*\* pour la qualité du code
-- **Husky 9** + Commitlint pour les conventions Git
-- **GitHub Actions** pour CI/CD
+- **Vitest** for testing
+- **ESLint 9** + Prettier 3 for code quality
+- **Husky 9** + Commitlint for Git conventions
+- **GitHub Actions** for CI/CD
 
 ## Frontend Architecture
 
@@ -242,33 +317,33 @@ Board Game Score Tracker propose une stack moderne, des outils de qualité et un
 
 ```
 src/
-├── components/          # Composants réutilisables
-│   └── Layout.tsx      # Layout principal avec navigation
-├── pages/              # Pages de l'application
-│   └── Dashboard.tsx   # Page d'accueil avec statistiques
-├── services/           # Services API
-│   ├── apiClient.ts    # Client HTTP avec gestion d'erreurs
+├── components/          # Reusable components
+│   └── Layout.tsx      # Main layout with navigation
+├── pages/              # Application pages
+│   └── Dashboard.tsx   # Home page with statistics
+├── services/           # API services
+│   ├── apiClient.ts    # HTTP client with error handling
 │   ├── playersService.ts
 │   └── gamesService.ts
-├── types/              # Types TypeScript
-│   └── index.ts        # Interfaces complètes (Player, Game, etc.)
-├── main.tsx           # Point d'entrée avec React Router
-└── index.css          # Styles Tailwind
+├── types/              # TypeScript types
+│   └── index.ts        # Complete interfaces (Player, Game, etc.)
+├── main.tsx           # Entry point with React Router
+└── index.css          # Tailwind styles
 ```
 
-### 🎯 Pages Implémentées ✅
+### 🎯 Implemented Pages ✅
 
-- **Dashboard** : Vue d'ensemble avec statistiques en temps réel
-- **Players** : CRUD complet (liste, création, édition, suppression)
-- **Games** : CRUD complet avec intégration BoardGameGeek
-- **Layout** : Navigation responsive avec menu principal
+- **Dashboard**: Overview with real-time statistics
+- **Players**: Full CRUD (list, create, edit, delete)
+- **Games**: Full CRUD with BoardGameGeek integration
+- **Layout**: Responsive navigation with main menu
 
 ### 🔗 API Integration ✅
 
-- Client HTTP robuste avec gestion d'erreurs
-- Services typés pour chaque endpoint backend
-- Types TypeScript synchronisés avec la base de données
-- **Intégration BoardGameGeek** : Recherche, import automatique, cache intelligent
+- Robust HTTP client with error handling
+- Typed services for each backend endpoint
+- TypeScript types synchronized with the database
+- **BoardGameGeek Integration**: Search, auto-import, smart cache
 
 ## Backend Architecture
 
@@ -277,61 +352,61 @@ src/
 ```
 backend/
 ├── src/
-│   ├── services/           # Services métier (10 modules)
-│   ├── database.ts         # Configuration SQLite
-│   └── server.ts          # Serveur Express
+│   ├── services/           # Business services (10 modules)
+│   ├── database.ts         # SQLite configuration
+│   └── server.ts          # Express server
 └── database/
-    ├── database.db         # Base de production
-    ├── test.db            # Base de test
+    ├── database.db         # Production database
+    ├── test.db            # Test database
     └── docs/
         └── database-structure.md
 ```
 
 ### 🚀 API Endpoints (10) ✅
 
-- **Players** : CRUD complet + statistiques
-- **Games** : Gestion des jeux avec métadonnées BGG
-- **Game Sessions** : Sessions de jeu avec scores
-- **Game Characters** : Personnages par jeu
-- **Game Extensions** : Extensions/DLC
-- **Game Stats** : Statistiques des parties
-- **BGG Service** : Intégration BoardGameGeek (recherche, import, cache)
-- **Player Stats** : Statistiques des joueurs
-- **Player Game Stats** : Stats croisées joueur/jeu
-- **Current Game** : Partie en cours
+- **Players**: Full CRUD + statistics
+- **Games**: Game management with BGG metadata
+- **Game Sessions**: Game sessions with scores
+- **Game Characters**: Characters per game
+- **Game Extensions**: Extensions/DLC
+- **Game Stats**: Game statistics
+- **BGG Service**: BoardGameGeek integration (search, import, cache)
+- **Player Stats**: Player statistics
+- **Player Game Stats**: Cross player/game stats
+- **Current Game**: Ongoing game
 
-## Documentation API
+## API Documentation
 
-Consultez la documentation complète des endpoints backend ici : [docs/API_DOC.md](./docs/API_DOC.md)
+See full backend endpoint documentation here: [docs/API_DOC.md](./docs/API_DOC.md)
 
-## Tests automatisés
+## Automated Tests
 
-✅ **Status : 33/33 tests réussissent** (Septembre 2025)
+✅ **Status: 33/33 tests passing** (September 2025)
 
-### 🧪 Types de Tests
+### 🧪 Test Types
 
-- **Tests d'intégration API** : 22 tests couvrant tous les endpoints
-- **Tests unitaires backend** : 11 tests pour tous les services
-- **Coverage** : 100% des fonctionnalités critiques
-- **Isolation** : Tests en série pour éviter les conflits SQLite
-- **Fixtures** : Système d'injection automatique avec FK cohérentes
+- **API integration tests**: 22 tests covering all endpoints
+- **Backend unit tests**: 11 tests for all services
+- **Coverage**: 100% of critical features
+- **Isolation**: Serial tests to avoid SQLite conflicts
+- **Fixtures**: Automatic injection system with consistent FKs
 
 ### 🔧 Configuration
 
-- **Framework** : Vitest avec `singleFork: true`
-- **Bases séparées** : `database.db` (prod) / `test.db` (tests)
-- **Fixtures automatiques** : Injection de données cohérentes
-- **CI/CD** : Tests obligatoires avant merge
+- **Framework**: Vitest with `singleFork: true`
+- **Separate databases**: `database.db` (prod) / `test.db` (tests)
+- **Automatic fixtures**: Injection of consistent data
+- **CI/CD**: Mandatory tests before merge
 
-### 📊 Détails par Service
+### 📊 Service Details
 
-- **Players** : 5 tests (CRUD + validation)
-- **Game Sessions** : 4 tests (création + relations)
-- **Tous les autres services** : 2 tests chacun (get + create)
+- **Players**: 5 tests (CRUD + validation)
+- **Game Sessions**: 4 tests (creation + relations)
+- **All other services**: 2 tests each (get + create)
 
-Consultez la documentation détaillée : [**tests**/backend/README.md](./__tests__/backend/README.md)
+See detailed documentation: [**tests**/backend/README.md](./__tests__/backend/README.md)
 
-## Configuration et Standards
+## Configuration and Standards
 
 ### 🔧 Build & Development
 
@@ -339,35 +414,35 @@ Consultez la documentation détaillée : [**tests**/backend/README.md](./__tests
 # Installation
 npm install
 
-# Développement (frontend + backend)
+# Development (frontend + backend)
 npm run dev
 
-# Tests (tous les tests)
+# Tests (all tests)
 npm test
 
-# Build production
+# Production build
 npm run build
 
-# Linting (aucune erreur)
+# Linting (no errors)
 npm run lint
 
-# Formatage automatique
+# Automatic formatting
 npm run format
 ```
 
-### 📋 Configuration TypeScript
+### 📋 TypeScript Configuration
 
-- **moduleResolution** : `bundler` (compatibilité React Router 7)
-- **target** : `ESNext`
-- **strict** : `true`
-- **skipLibCheck** : `true`
+- **moduleResolution**: `bundler` (React Router 7 compatibility)
+- **target**: `ESNext`
+- **strict**: `true`
+- **skipLibCheck**: `true`
 
-### 🎨 Configuration ESLint/Prettier
+### 🎨 ESLint/Prettier Configuration
 
-- **ESLint 9** avec configuration flat
-- **Prettier 3** avec formatage automatique
-- **Règles strictes** : React, TypeScript, Hooks
-- **Format sur sauvegarde** activé
+- **ESLint 9** with flat config
+- **Prettier 3** with automatic formatting
+- **Strict rules**: React, TypeScript, Hooks
+- **Format on save** enabled
 
 ## Project Structure
 
@@ -375,62 +450,62 @@ npm run format
 boardGameScore/
 ├── 📁 src/                     # Frontend React + TypeScript
 │   ├── components/
-│   │   └── Layout.tsx          # Layout avec navigation
+│   │   └── Layout.tsx          # Layout with navigation
 │   ├── pages/
-│   │   └── Dashboard.tsx       # Page d'accueil
+│   │   └── Dashboard.tsx       # Home page
 │   ├── services/
-│   │   ├── apiClient.ts        # Client HTTP
-│   │   ├── playersService.ts   # Service joueurs
-│   │   └── gamesService.ts     # Service jeux
+│   │   ├── apiClient.ts        # HTTP client
+│   │   ├── playersService.ts   # Player service
+│   │   └── gamesService.ts     # Game service
 │   ├── types/
-│   │   └── index.ts           # Types TypeScript
-│   ├── main.tsx               # Point d'entrée
-│   └── index.css              # Styles Tailwind
+│   │   └── index.ts           # TypeScript types
+│   ├── main.tsx               # Entry point
+│   └── index.css              # Tailwind styles
 ├── 📁 backend/
 │   ├── src/
-│   │   ├── services/          # 10 services métier
-│   │   ├── database.ts        # Config SQLite
-│   │   ├── server.ts          # Serveur Express
-│   │   └── init*.ts           # Scripts d'initialisation
+│   │   ├── services/          # 10 business services
+│   │   ├── database.ts        # SQLite config
+│   │   ├── server.ts          # Express server
+│   │   └── init*.ts           # Init scripts
 │   ├── database/
-│   │   ├── database.db        # Base de production
-│   │   ├── test.db           # Base de test
+│   │   ├── database.db        # Production DB
+│   │   ├── test.db           # Test DB
 │   │   └── docs/
 │   │       └── database-structure.md
 │   └── tsconfig.json
-├── 📁 __tests__/              # Tests automatisés
-│   ├── integration/           # 22 tests d'intégration API
-│   ├── backend/              # 11 tests unitaires
-│   └── fixtures/             # Données de test
+├── 📁 __tests__/              # Automated tests
+│   ├── integration/           # 22 API integration tests
+│   ├── backend/              # 11 unit tests
+│   └── fixtures/             # Test data
 ├── 📁 .github/
 │   └── workflows/
-│       └── ci.yml            # Pipeline GitHub Actions
-├── 📁 .husky/                # Hooks Git
+│       └── ci.yml            # GitHub Actions pipeline
+├── 📁 .husky/                # Git hooks
 ├── 📄 Configuration
 │   ├── .editorconfig
 │   ├── .prettierrc.cjs
 │   ├── commitlint.config.cjs
 │   ├── eslint.config.cjs
-│   ├── postcss.config.cjs    # Config Tailwind CSS 4
+│   ├── postcss.config.cjs    # Tailwind CSS 4 config
 │   ├── tailwind.config.js
-│   ├── tsconfig.json         # Config TypeScript
+│   ├── tsconfig.json         # TypeScript config
 │   └── vite.config.ts
 ├── 📄 Documentation
-│   ├── README.md             # Ce fichier
-│   └── docs/                 # Documentation technique organisée
-│       ├── README.md         # Index navigation
-│       ├── backend/          # Documentation backend
-│       │   ├── API_DOC.md    # Endpoints REST
-│       │   └── database-structure.md # Schéma DB
-│       ├── frontend/         # Documentation frontend
-│       │   └── (à venir)
-│       └── general/          # Documentation générale
-│           ├── CONTEXT.md    # Standards et règles IA
-│           ├── ARCHITECTURE.md # Principes SOLID
-│           ├── DEVELOPMENT_GUIDELINES.md # Guide développement
-│           ├── LINTING.md    # Configuration ESLint & qualité
-│           ├── ROADMAP.md    # Feuille de route
-│           └── TECHNICAL_STATE.md # État technique & config
+│   ├── README.md             # This file
+│   └── docs/                 # Organized technical docs
+│       ├── README.md         # Navigation index
+│       ├── backend/          # Backend docs
+│       │   ├── API_DOC.md    # REST endpoints
+│       │   └── database-structure.md # DB schema
+│       ├── frontend/         # Frontend docs
+│       │   └── (coming soon)
+│       └── general/          # General docs
+│           ├── CONTEXT.md    # Standards and IA rules
+│           ├── ARCHITECTURE.md # SOLID principles
+│           ├── DEVELOPMENT_GUIDELINES.md # Dev guide
+│           ├── LINTING.md    # ESLint & quality config
+│           ├── ROADMAP.md    # Roadmap
+│           └── TECHNICAL_STATE.md # Technical state & config
 └── package.json
 ```
 
@@ -442,145 +517,145 @@ boardGameScore/
 name: CI
 on: [push, pull_request]
 jobs:
-  lint: # ESLint sur src, backend/src, __tests__
+  lint: # ESLint on src, backend/src, __tests__
   build: # npm run build (Vite + TypeScript)
-  test: # npm test (33 tests Vitest)
+  test: # npm test (33 Vitest tests)
 ```
 
 ### 🔒 Quality Gates
 
-- **Husky hooks** : Lint + tests avant commit
-- **Commitlint** : Messages de commit conventionnels
-- **Pipeline obligatoire** : Tous les jobs doivent passer
-- **Aucune erreur tolérée** : 0 warning ESLint
+- **Husky hooks**: Lint + tests before commit
+- **Commitlint**: Conventional commit messages
+- **Mandatory pipeline**: All jobs must pass
+- **No errors tolerated**: 0 ESLint warnings
 
-## Initialisation Database
+## Database Initialization
 
-### 🗄️ Scripts d'Initialisation
+### 🗄️ Initialization Scripts
 
 ```bash
-# Base principale (production)
+# Main database (production)
 node backend/src/initDatabase.ts
 
-# Base de test (développement)
+# Test database (development)
 node backend/src/initTestDatabase.ts
 ```
 
-### 📊 Fixtures Automatiques
+### 📊 Automatic Fixtures
 
-- **Données cohérentes** : FK automatiques, timestamps réalistes
-- **Joueurs** : Alice, Bob avec historiques
-- **Jeux** : Catan, 7 Wonders avec métadonnées
-- **Sessions** : Parties avec scores et statistiques
-- **Relations** : Personnages, extensions, stats croisées
+- **Consistent data**: Automatic FKs, realistic timestamps
+- **Players**: Alice, Bob with histories
+- **Games**: Catan, 7 Wonders with metadata
+- **Sessions**: Games with scores and statistics
+- **Relations**: Characters, extensions, cross stats
 
-La structure complète est documentée dans :  
+Full structure documented at:  
 ➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)
 
 ![](assets/template-usage.png)
 
-## 🚀 Démarrage
+## 🚀 Getting Started
 
-### ⚡ Démarrage Rapide (Recommandé)
+### ⚡ Quick Start (Recommended)
 
 ```bash
-# Clone et installation
+# Clone and install
 git clone https://github.com/thibaud200/boardGameScore.git
 cd boardGameScore
 npm install
 
-# Démarrage complet (frontend + backend)
+# Full start (frontend + backend)
 npm run dev:full
 # ➡️ Frontend: http://localhost:5173
 # ➡️ Backend: http://localhost:3001
 ```
 
-### 🔧 Démarrage Séparé
+### 🔧 Separate Start
 
-#### Frontend uniquement
+#### Frontend only
 
 ```bash
 npm run dev
 # ➡️ http://localhost:5173
 ```
 
-#### Backend uniquement
+#### Backend only
 
 ```bash
 npm run dev:backend
 # ➡️ http://localhost:3001
-# Affiche: "Server running on port 3001"
+# Shows: "Server running on port 3001"
 ```
 
-#### Démarrage manuel backend
+#### Manual backend start
 
 ```bash
 cd backend
 npm install
 tsx src/server.ts
-# ➡️ Base de données initialisée automatiquement
+# ➡️ Database initialized automatically
 ```
 
-### ✅ Vérification du Démarrage Backend
+### ✅ Backend Startup Verification
 
-Le serveur backend affiche au démarrage :
+Backend server displays on startup:
 
 ```
-Base de données initialisée avec le schéma.
+Database initialized with schema.
 Server running on port 3001
 ```
 
-**Tests de connectivité :**
+**Connectivity tests:**
 
 ```bash
-# Test API Players
+# Test Players API
 curl http://localhost:3001/api/players
-# Réponse: [] (liste vide)
+# Response: [] (empty list)
 
-# Test intégration BGG
+# BGG integration test
 curl "http://localhost:3001/api/bgg/search?q=Catan"
-# Réponse: JSON avec résultats BGG
+# Response: JSON with BGG results
 ```
 
 ## Scripts
 
-- `npm run dev` : Démarrage frontend/backend en mode développement
-- `npm run lint` : Vérification ESLint (aucune erreur)
-- `npm run format` : Formatage Prettier automatique
-- `npm run test` : **33/33 tests réussissent** ✅
-- `npm run build` : Build production optimisé
+- `npm run dev`: Start frontend/backend in development mode
+- `npm run lint`: ESLint check (no errors)
+- `npm run format`: Automatic Prettier formatting
+- `npm run test`: **33/33 tests passing** ✅
+- `npm run build`: Optimized production build
 
 ## Database
 
-### Initialisation de la base de données
+### Database Initialization
 
-Deux scripts permettent d’initialiser les bases SQLite :
+Two scripts initialize the SQLite databases:
 
-- **Base principale** : `node backend/src/initDatabase.ts` crée/initialise la base réelle (`database.db`) avec le schéma complet.
-- **Base de test** : `node backend/src/initTestDatabase.ts` crée/initialise une base dédiée aux tests (`test.db`) avec le même schéma.
+- **Main database**: `node backend/src/initDatabase.ts` creates/initializes the real database (`database.db`) with the full schema.
+- **Test database**: `node backend/src/initTestDatabase.ts` creates/initializes a dedicated test database (`test.db`) with the same schema.
 
-La structure complète, les tables, relations, migrations et requêtes sont documentées dans : ➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)
+Full structure, tables, relations, migrations, and queries are documented at: ➡️ [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md)
 
 ## Standards & Constraints
 
-- Pas de type `any`
-- Séparation stricte frontend/backend
-- Modularité et tests obligatoires
-- Migrations pour toute modif DB
-- Validation et sécurité systématiques
-- Documentation à jour (CONTEXT.md, database-structure.md, README.md)
-- Conventions de commit et scripts qualité
+- No `any` type
+- Strict frontend/backend separation
+- Mandatory modularity and tests
+- Migrations for any DB change
+- Systematic validation and security
+- Up-to-date documentation (CONTEXT.md, database-structure.md, README.md)
+- Commit conventions and quality scripts
 
 ## Documentation
 
-- [CONTEXT.md](CONTEXT.md) : Règles IA, standards, workflow
-- [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md) : Structure DB
-- [commitlint.config.cjs](commitlint.config.cjs) : Convention de commit
-- [eslint.config.cjs](eslint.config.cjs) : Linting
-- [.prettierrc.cjs](.prettierrc.cjs) : Formatage
+- [CONTEXT.md](CONTEXT.md): IA rules, standards, workflow
+- [backend/database/docs/database-structure.md](backend/database/docs/database-structure.md): DB structure
+- [commitlint.config.cjs](commitlint.config.cjs): Commit convention
+- [eslint.config.cjs](eslint.config.cjs): Linting
+- [.prettierrc.cjs](.prettierrc.cjs): Formatting
 
 ## Tests
 
-- **Vitest** : Tests unitaires backend/frontend
-- **Coverage** : >80% requis
-- **Husky** : Empêche les commits si tests ou lint échouent
+- **Vitest**: Backend/frontend unit tests
+- **Coverage**: >80% required
+- **Husky**: Prevents commits if tests or lint fail

@@ -235,7 +235,7 @@ Le projet suit les principes SOLID pour garantir un code maintenable, extensible
 ### Documentation
 
 - **JAMAIS** créer de nouveaux fichiers de documentation
-- **TOUJOURS** lors d'une MAJ de la documentation, toujours partir du dernier commit
+- **TOUJOURS** lors d'une MAJ de la documentation, toujours partir du dernier commit et la doc en anglais
 - **TOUJOURS** Faire les modifications de documentation dans les fichiers suivants :
 - **POSSIBLE** de créer un fichier de travail temporaire supprimé après utilisation si nécessaire
   - **API Docs** : `docs/API_DOC.md` - Documentation complète des endpoints

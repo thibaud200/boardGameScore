@@ -7,14 +7,12 @@ on:
   push:
     branches:
       - main
-
 jobs:
   lint:
-    runs-on: ubuntu-22.04
-    name: Lint
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '24.7'
           cache: 'npm'
@@ -22,15 +20,18 @@ jobs:
       - run: npm run lint
 
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: lint
-    name: Build
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '24.7'
           cache: 'npm'
+      - name: Supprimer node_modules et package-lock.json
+        run: |
+          rm -rf node_modules
+          rm -f package-lock.json
       - run: npm ci --legacy-peer-deps
       - run: npm run build
 
